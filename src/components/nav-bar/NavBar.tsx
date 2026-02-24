@@ -22,7 +22,8 @@ const NavBar = () => {
 		<Flex
 			top="0"
 			width="100%"
-			m="2rem"
+			px="2rem"
+			py="1.5rem"
 			direction="row"
 			alignItems="center"
 			justifyContent="space-around"

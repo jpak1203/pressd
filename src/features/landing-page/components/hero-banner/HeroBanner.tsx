@@ -14,7 +14,7 @@ const HeroBanner = () => {
 					></Image>
 				))}
 			</Grid>
-			<Flex alignContent="center" justifyContent="center" width="100vw">
+			<Flex alignContent="center" justifyContent="center" width="100%">
 				<Text
 					textStyle="4xl"
 					fontWeight="semibold"
@@ -28,7 +28,7 @@ const HeroBanner = () => {
 					listeners who get it.
 				</Text>
 			</Flex>
-			<Flex alignContent="center" justifyContent="center" width="100vw">
+			<Flex alignContent="center" justifyContent="center" width="100%">
 				<Button
 					margin="2rem"
 					variant="solid"
