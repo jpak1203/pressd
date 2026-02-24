@@ -1,5 +1,4 @@
-import React from 'react';
-import { Flex, Grid, Box, Text, Button, Image } from '@chakra-ui/react';
+import { Flex, Grid, Text, Button, Image } from '@chakra-ui/react';
 import blonde from '@/features/landing-page/assets/blonde.jpeg';
 
 const HeroBanner = () => {

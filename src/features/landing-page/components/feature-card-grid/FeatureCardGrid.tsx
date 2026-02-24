@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Grid } from '@chakra-ui/react';
 import type { FeatureCardType } from '@/features/landing-page/types/feature-card';
 import FeatureCard from '@/features/landing-page/components/feature-card/FeatureCard';

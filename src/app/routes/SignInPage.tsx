@@ -1,8 +1,7 @@
-import React from 'react';
 import UserAuthForm from '@/features/user-auth/components/UserAuthForm';
 
-const CreateAccountPage = () => {
+const SignInPage = () => {
 	return <UserAuthForm isCreateAccount={false} />;
 };
 
-export default CreateAccountPage;
+export default SignInPage;

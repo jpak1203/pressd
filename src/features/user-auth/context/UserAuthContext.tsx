@@ -53,7 +53,7 @@ export const UserAuthProvider = ({ children }: UserAuthProviderType) => {
 
 const signOut = async () => {
 	const { error } = await supabase.auth.signOut();
-	if (error) console.error('Error signing out:', error);
+	if (error) throw error;
 };
 
 const signIn = async ({

@@ -9,6 +9,9 @@ import prettier from 'eslint-config-prettier';
 import globals from 'globals';
 
 export default tseslint.config(
+	{
+		ignores: ['dist', 'node_modules'],
+	},
 	// Base JS rules
 	js.configs.recommended,
 
@@ -46,6 +49,7 @@ export default tseslint.config(
 			...jsxA11y.configs.recommended.rules,
 
 			// TypeScript
+			'no-unused-vars': 'off',
 			'@typescript-eslint/no-unused-vars': [
 				'warn',
 				{ argsIgnorePattern: '^_' },

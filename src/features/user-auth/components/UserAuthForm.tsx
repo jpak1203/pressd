@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Flex, Button, Text } from '@chakra-ui/react';
 import RouterLink from '@/components/router-link/RouterLink';
 import { useUserAuthForm } from '@/features/user-auth/hooks/useUserAuthForm';

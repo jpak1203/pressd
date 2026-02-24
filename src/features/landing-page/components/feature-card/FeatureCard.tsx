@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FeatureCardType } from '@/features/landing-page/types/feature-card';
 import { Card, Icon } from '@chakra-ui/react';
 import { FaHeart } from 'react-icons/fa';

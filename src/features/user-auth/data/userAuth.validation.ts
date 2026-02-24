@@ -1,8 +1,5 @@
-import type { UseFormWatch } from 'react-hook-form';
-import type { Inputs } from '@/features/user-auth/types/user-auth';
-
 const passwordPattern =
-	/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+	/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
 export const emailRules = {
 	required: {

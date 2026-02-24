@@ -1,16 +1,21 @@
-import React from 'react';
 import { useNavigate } from 'react-router';
 import { Flex, Button, Heading } from '@chakra-ui/react';
+import { Link } from 'react-router';
 import RouterLink from '@/components/router-link/RouterLink';
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext';
+import logo from '@/assets/logo.svg';
 
 const NavBar = () => {
 	const { signOut, isLoggedIn } = useUserAuth();
 	const navigate = useNavigate();
 
 	const handleSignOut = async () => {
-		await signOut();
-		navigate('/');
+		try {
+			await signOut();
+			navigate('/');
+		} catch (error) {
+			console.error('Error signing out:', error);
+		}
 	};
 
 	return (
@@ -23,8 +28,8 @@ const NavBar = () => {
 			justifyContent="space-around"
 		>
 			<Button variant="plain" className="logo" asChild>
-				<a href="/">
-					<img src="/src/assets/logo.svg" alt="logo" />
+				<Link to="/">
+					<img src={logo} alt="logo" />
 					<Heading
 						letterSpacing="-0.05rem"
 						fontWeight="600"
@@ -32,7 +37,7 @@ const NavBar = () => {
 					>
 						pressd
 					</Heading>
-				</a>
+				</Link>
 			</Button>
 			<nav>
 				<Flex direction="row" gap="1.25rem">
