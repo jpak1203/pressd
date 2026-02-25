@@ -94,7 +94,6 @@ const NavBar = () => {
 								<TiDeleteOutline />
 							</IconButton>
 						</Box>
-
 						<Icon
 							zIndex="2"
 							position="absolute"
@@ -107,7 +106,6 @@ const NavBar = () => {
 						>
 							<LuSearch />
 						</Icon>
-
 						<Input
 							type="search"
 							value={searchValue}

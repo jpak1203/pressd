@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { ProtectedRoute } from '@/components/protected-route/ProtectedRoute';
 import LandingPage from '@/app/routes/LandingPage';
 import CreateAccountPage from '@/app/routes/CreateAccountPage';
 import SignInPage from '@/app/routes/SignInPage';
@@ -16,13 +17,14 @@ function App() {
 					path="/"
 					element={
 						isLoading ? null : isLoggedIn ? (
-							<HomePage />
+							<ProtectedRoute>
+								<HomePage />
+							</ProtectedRoute>
 						) : (
 							<LandingPage />
 						)
 					}
 				/>
-				<Route path="/landing" element={<LandingPage />} />
 				<Route path="/signup" element={<CreateAccountPage />} />
 				<Route path="/signin" element={<SignInPage />} />
 			</Routes>

@@ -16,33 +16,49 @@ type UserAuthContextType = {
 
 type UserAuthProviderType = {
 	children: ReactNode;
+	initialSession?: Session | null;
+	initialSessionResolved?: boolean;
 };
 
 const UserAuthContext = createContext<UserAuthContextType | null>(null);
 
-export const UserAuthProvider = ({ children }: UserAuthProviderType) => {
-	const [session, setSession] = useState<Session | null>(null);
-	const [isLoading, setIsLoading] = useState(true);
+export const UserAuthProvider = ({
+	children,
+	initialSession = null,
+	initialSessionResolved = false,
+}: UserAuthProviderType) => {
+	const [session, setSession] = useState<Session | null>(initialSession);
+	const [isLoading, setIsLoading] = useState(!initialSessionResolved);
 
 	useEffect(() => {
-		// get initial session
-		supabase.auth.getSession().then(({ data }) => {
-			setSession(data.session);
-			setIsLoading(false);
-		});
-
 		const {
 			data: { subscription },
-		} = supabase.auth.onAuthStateChange((event, session) => {
+		} = supabase.auth.onAuthStateChange((event, nextSession) => {
+			if (event === 'INITIAL_SESSION') {
+				setSession(nextSession);
+				setIsLoading(false);
+				return;
+			}
+
 			if (event === 'SIGNED_OUT') {
 				setSession(null);
-			} else if (session) {
-				setSession(session);
+				return;
+			}
+
+			if (nextSession) {
+				setSession(nextSession);
 			}
 		});
 
+		if (!initialSessionResolved) {
+			void supabase.auth.getSession().then(({ data }) => {
+				setSession(data.session);
+				setIsLoading(false);
+			});
+		}
+
 		return () => subscription.unsubscribe();
-	}, []);
+	}, [initialSessionResolved]);
 
 	return (
 		<UserAuthContext.Provider value={{ session, isLoading }}>
