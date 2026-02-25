@@ -59,7 +59,7 @@ const NavBar = () => {
 				justifyContent="space-between"
 				gap="20px"
 			>
-				<PressdLogo size="small" />
+				<PressdLogo size="medium" />
 				<Flex
 					as="nav"
 					alignItems="center"
