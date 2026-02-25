@@ -11,8 +11,8 @@ import {
 
 const HomePage = () => {
 	return (
-		<Box minH="100%" py={{ base: '8', md: '12' }}>
-			<Container maxW="7xl" px={{ base: '4', md: '8' }}>
+		<Box minH="100%" py={{ base: '5', md: '7' }}>
+			<Container maxW="1200px" px={{ base: '4', md: '7' }}>
 				<Flex direction="column" gap={{ base: '10', md: '12' }}>
 					<RowModule
 						headerText="Featured Songs"

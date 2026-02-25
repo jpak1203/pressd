@@ -24,14 +24,27 @@ const GridModule = ({ data, linkText, headerText }: GridModuleProps) => {
 			<Flex
 				alignItems="center"
 				justifyContent="space-between"
-				borderBottom="1px solid"
-				pb="2"
-				mb="5"
+				borderBottom="1px solid var(--pressd-border)"
+				pb="10px"
+				mb="12px"
 			>
-				<Heading size="md" textTransform="uppercase">
+				<Heading
+					size="md"
+					textTransform="uppercase"
+					className="pressd-mono"
+					letterSpacing="0.08em"
+					fontSize="11px"
+					color="var(--pressd-text-muted)"
+				>
 					{headerText}
 				</Heading>
-				<Link asChild fontSize="xs" textTransform="uppercase">
+				<Link
+					asChild
+					fontSize="11px"
+					textTransform="uppercase"
+					color="var(--pressd-text-muted)"
+					_hover={{ color: 'var(--pressd-accent)' }}
+				>
 					<RouterLink to={data.moreHref}>{linkText}</RouterLink>
 				</Link>
 			</Flex>
@@ -43,10 +56,9 @@ const GridModule = ({ data, linkText, headerText }: GridModuleProps) => {
 				{data.items.map((review) => (
 					<Box
 						key={review.id}
-						bg="whiteAlpha.50"
-						border="1px solid"
-						borderColor="whiteAlpha.200"
-						borderRadius="md"
+						bg="var(--pressd-surface)"
+						border="1px solid var(--pressd-border)"
+						borderRadius="10px"
 						p="4"
 					>
 						<Flex gap="4" mb="4" alignItems="stretch">
@@ -105,13 +117,13 @@ const GridModule = ({ data, linkText, headerText }: GridModuleProps) => {
 									<RouterLink to={review.song.href}>
 										<Heading
 											lineHeight="1.1"
-											color="whiteAlpha.900"
+											color="var(--pressd-text)"
 											lineClamp={1}
 										>
 											{review.song.title}{' '}
 											<Text
 												as="span"
-												color="whiteAlpha.700"
+												color="var(--pressd-text-muted)"
 												fontWeight="400"
 											>
 												{review.song.releaseYear}
@@ -121,26 +133,26 @@ const GridModule = ({ data, linkText, headerText }: GridModuleProps) => {
 								</Link>
 								<Link asChild display="block">
 									<RouterLink to={review.song.artist.href}>
-										<Text
-											color="whiteAlpha.700"
-											mb="1"
-											lineClamp={1}
-										>
+										<Text color="var(--pressd-text-sub)" mb="1" lineClamp={1}>
 											{review.song.artist.name}
 										</Text>
 									</RouterLink>
 								</Link>
 							</Flex>
-							<Flex alignItems="center" gap="1" color="green.400">
+							<Flex
+								alignItems="center"
+								gap="1"
+								color="var(--pressd-green)"
+							>
 								<FaStar />
 								<Text>{review.userRating.toFixed(1)}</Text>
 							</Flex>
 						</Flex>
 
 						<Text
-							color="whiteAlpha.800"
-							fontSize="lg"
-							lineHeight="1.8"
+							color="var(--pressd-text-sub)"
+							fontSize="16px"
+							lineHeight="1.75"
 							mb="4"
 						>
 							{review.reviewText}
@@ -151,14 +163,14 @@ const GridModule = ({ data, linkText, headerText }: GridModuleProps) => {
 							justifyContent="space-between"
 						>
 							<Link
-								color="whiteAlpha.800"
+								color="var(--pressd-text-sub)"
 								px="0"
-								_hover={{ color: 'whiteAlpha.900' }}
+								_hover={{ color: 'var(--pressd-text)' }}
 							>
 								<FaHeart />{' '}
 								<Text textStyle="xs"> Like review</Text>
 							</Link>
-							<Text color="whiteAlpha.700" fontSize="sm">
+							<Text color="var(--pressd-text-muted)" fontSize="sm">
 								{review.reviewLikes} likes
 							</Text>
 						</Flex>

@@ -17,15 +17,24 @@ const UserAuthFormField = ({
 	error,
 }: UserAuthFormFieldType) => {
 	return (
-		<Field.Root width="50%" pt="24px" pr="24px" pl="24px" invalid={!!error}>
-			<Field.Label>{label}</Field.Label>
+		<Field.Root width="100%" pt="16px" invalid={!!error}>
+			<Field.Label color="var(--pressd-text-sub)" fontSize="13px">
+				{label}
+			</Field.Label>
 			<Input
-				variant="subtle"
+				variant="outline"
+				bg="var(--pressd-surface-2)"
+				borderColor="var(--pressd-border)"
+				color="var(--pressd-text)"
+				_focusVisible={{
+					borderColor: 'var(--pressd-accent)',
+					boxShadow: '0 0 0 1px var(--pressd-accent)',
+				}}
 				placeholder={placeholder}
 				type={type}
 				{...registration}
 			/>
-			<Field.ErrorText colorPalette="red">
+			<Field.ErrorText color="var(--pressd-red)">
 				{error?.message}
 			</Field.ErrorText>
 		</Field.Root>

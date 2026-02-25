@@ -4,7 +4,12 @@ import FeatureCardGrid from '@/features/landing-page/components/feature-card-gri
 
 const Hero = () => {
 	return (
-		<Flex direction="column" alignContent="center" justifyContent="center">
+		<Flex
+			direction="column"
+			maxW="1200px"
+			mx="auto"
+			px={{ base: '16px', md: '28px' }}
+		>
 			<HeroBanner />
 			<FeatureCardGrid />
 		</Flex>

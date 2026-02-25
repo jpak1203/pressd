@@ -15,15 +15,27 @@ const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
 			<Flex
 				alignItems="center"
 				justifyContent="space-between"
-				borderBottom="1px solid"
-				borderColor="whiteAlpha.300"
-				pb="2"
-				mb="4"
+				borderBottom="1px solid var(--pressd-border)"
+				pb="10px"
+				mb="12px"
 			>
-				<Heading size="md" textTransform="uppercase">
+				<Heading
+					size="md"
+					textTransform="uppercase"
+					className="pressd-mono"
+					letterSpacing="0.08em"
+					fontSize="11px"
+					color="var(--pressd-text-muted)"
+				>
 					{headerText}
 				</Heading>
-				<Link asChild fontSize="xs" textTransform="uppercase">
+				<Link
+					asChild
+					fontSize="11px"
+					textTransform="uppercase"
+					color="var(--pressd-text-muted)"
+					_hover={{ color: 'var(--pressd-accent)' }}
+				>
 					<RouterLink to={data.moreHref}>{linkText}</RouterLink>
 				</Link>
 			</Flex>
@@ -50,9 +62,8 @@ const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
 										w="100%"
 										aspectRatio={1}
 										objectFit="cover"
-										borderRadius="md"
-										border="1px solid"
-										borderColor="whiteAlpha.300"
+										borderRadius="6px"
+										border="1px solid var(--pressd-border)"
 									/>
 								</RouterLink>
 							</Link>
@@ -60,21 +71,21 @@ const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
 								<RouterLink to={song.href}>
 									<Text
 										mt="2"
-										fontWeight="700"
-										color="whiteAlpha.900"
+										fontWeight="500"
+										color="var(--pressd-text)"
 										lineClamp={1}
 									>
 										{song.title}
 									</Text>
 								</RouterLink>
 							</Link>
-							<Link asChild color="whiteAlpha.700">
+							<Link
+								asChild
+								color="var(--pressd-text-muted)"
+								_hover={{ color: 'var(--pressd-text-sub)' }}
+							>
 								<RouterLink to={song.artist.href}>
-									<Text
-										color="whiteAlpha.700"
-										fontSize="sm"
-										lineClamp={1}
-									>
+									<Text fontSize="sm" lineClamp={1}>
 										{song.artist.name}
 									</Text>
 								</RouterLink>
@@ -87,14 +98,14 @@ const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
 								<Flex
 									alignItems="center"
 									gap="1"
-									color="green.400"
+									color="var(--pressd-green)"
 									fontSize="sm"
 									fontWeight="700"
 								>
 									<FaStar />
 									<Text>{song.averageRating.toFixed(1)}</Text>
 								</Flex>
-								<Text color="whiteAlpha.700" fontSize="sm">
+								<Text color="var(--pressd-text-muted)" fontSize="sm">
 									{song.releaseDate}
 								</Text>
 							</Flex>

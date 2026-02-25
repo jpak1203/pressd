@@ -1,5 +1,5 @@
-import { Box, Flex, Button, Text } from '@chakra-ui/react';
-import RouterLink from '@/components/router-link/RouterLink';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Link } from 'react-router';
 import { useUserAuthForm } from '@/features/user-auth/hooks/useUserAuthForm';
 import UserAuthFormField from '@/features/user-auth/components/UserAuthFormField';
 import {
@@ -24,7 +24,39 @@ const UserAuthForm = ({ isCreateAccount }: FormType) => {
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>
-			<Flex direction="column" alignItems="center">
+			<Flex
+				direction="column"
+				alignItems="stretch"
+				maxW="460px"
+				mx="auto"
+				mt={{ base: '28px', md: '56px' }}
+				p={{ base: '18px', md: '28px' }}
+				bg="var(--pressd-surface)"
+				border="1px solid var(--pressd-border)"
+				borderRadius="16px"
+			>
+				<Text
+					className="pressd-mono"
+					fontSize="10px"
+					mb="8px"
+					color="var(--pressd-text-muted)"
+				>
+					{isCreateAccount ? 'Create account' : 'Sign in'}
+				</Text>
+				<Text
+					fontSize="26px"
+					fontWeight="500"
+					letterSpacing="-0.02em"
+					lineHeight="1.15"
+				>
+					{isCreateAccount
+						? 'Start your listening log.'
+						: 'Welcome back!'}
+				</Text>
+				<Text fontSize="14px" color="var(--pressd-text-sub)" mt="8px">
+					Track plays, rate records, and keep your music history in
+					one place.
+				</Text>
 				<UserAuthFormField
 					label="Email"
 					registration={register('email', emailRules)}
@@ -45,25 +77,38 @@ const UserAuthForm = ({ isCreateAccount }: FormType) => {
 					type="password"
 					error={errors.password}
 				/>
-				<Box padding="12px 24px">
-					<RouterLink
-						variant={undefined}
-						color="red"
-						slug={isCreateAccount ? '/signin' : '/signup'}
+				<Box padding="16px 0 8px 0">
+					<Text
+						asChild
+						fontSize="12px"
+						color="var(--pressd-text-muted)"
+						_hover={{ color: 'var(--pressd-accent)' }}
 					>
-						<Text textStyle="sm">
+						<Link to={isCreateAccount ? '/signin' : '/signup'}>
 							{isCreateAccount
 								? 'Already have an account? Sign in here'
 								: "Don't have an account? Sign up here"}
-						</Text>
-					</RouterLink>
+						</Link>
+					</Text>
 				</Box>
 				{authError && (
-					<Text textStyle="sm" color="#f87171" pb="8px">
+					<Text fontSize="13px" color="var(--pressd-red)" pb="8px">
 						{authError}
 					</Text>
 				)}
-				<Button loading={isLoading} mb="24px" type="submit">
+				<Button
+					loading={isLoading}
+					mb="4px"
+					type="submit"
+					bg="var(--pressd-accent)"
+					color="var(--pressd-bg)"
+					borderRadius="999px"
+					fontWeight="600"
+					_hover={{
+						bg: 'var(--pressd-accent-dim)',
+						color: 'var(--pressd-text)',
+					}}
+				>
 					Submit
 				</Button>
 			</Flex>

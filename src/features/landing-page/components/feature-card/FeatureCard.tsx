@@ -27,15 +27,29 @@ const getIconForCard = (icon: string) => {
 
 const FeatureCard = ({ title, description, icon }: FeatureCardType) => {
 	return (
-		<Card.Root variant="elevated" colorPalette="red">
+		<Card.Root
+			bg="var(--pressd-surface)"
+			border="1px solid var(--pressd-border)"
+			borderRadius="10px"
+			_hover={{ bg: 'var(--pressd-surface-2)' }}
+			transition="background 0.15s ease"
+		>
 			<Card.Body gap="2">
-				<Card.Title mb="2">
-					<Icon size="md" color="tomato" mr="2">
+				<Card.Title
+					mb="2"
+					fontSize="16px"
+					fontWeight="500"
+					letterSpacing="-0.02em"
+					color="var(--pressd-text)"
+				>
+					<Icon size="md" color="var(--pressd-accent)" mr="2">
 						{getIconForCard(icon)}
 					</Icon>
 					{title}
 				</Card.Title>
-				<Card.Description>{description}</Card.Description>
+				<Card.Description color="var(--pressd-text-sub)" fontSize="14px">
+					{description}
+				</Card.Description>
 			</Card.Body>
 		</Card.Root>
 	);

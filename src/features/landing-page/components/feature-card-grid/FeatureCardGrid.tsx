@@ -13,7 +13,11 @@ const FeatureCardGrid = () => {
 	}, []);
 
 	return (
-		<Grid templateColumns="repeat(3, 1fr)" gap="6" padding="12">
+		<Grid
+			templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
+			gap="12px"
+			py={{ base: '18px', md: '24px' }}
+		>
 			{featureCards.map((item: FeatureCardType, index: number) => (
 				<FeatureCard
 					key={index}
