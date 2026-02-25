@@ -1,73 +1,82 @@
-# React + TypeScript + Vite
+# Pressd
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Pressd is a React + TypeScript music-tracking app where users can create an account, sign in, and browse a personalized music discovery home feed.
 
-Currently, two official plugins are available:
+## Tech stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 19
+- TypeScript
+- Vite 7
+- React Router 7
+- Chakra UI 3
+- Supabase JS
+- Vitest + Testing Library
 
-## React Compiler
+## Prerequisites
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 20+ (recommended)
+- npm 10+ (recommended)
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. Install dependencies:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Create a local env file at `.env.local`:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+These variables are required by [`src/lib/supabase/client.ts`](/Users/jujubeguud/Documents/projects/web/pressd/src/lib/supabase/client.ts).
+
+## Run the app
+
+```bash
+npm run dev
+```
+
+Then open the URL printed by Vite (usually `http://localhost:5173`).
+
+## Available scripts
+
+- `npm run dev`: start development server
+- `npm run build`: type-check and build for production
+- `npm run preview`: preview the production build locally
+- `npm run lint`: run ESLint
+- `npm run lint:fix`: run ESLint with auto-fixes
+- `npm run test`: run tests once (Vitest)
+- `npm run test:watch`: run tests in watch mode
+
+## Environment setup
+
+- Required variables:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
+- These are used by [`src/lib/supabase/client.ts`](/Users/jujubeguud/Documents/projects/web/pressd/src/lib/supabase/client.ts).
+
+## Code quality
+
+- `npm run lint`: run ESLint checks across the codebase
+- `npm run lint:fix`: apply safe lint auto-fixes
+- `npm run test`: execute unit/component tests with Vitest
+- `npm run test:watch`: run tests in watch mode during development
+
+## Project structure
+
+```text
+src/
+  app/                  # App shell, providers, and route components
+  components/           # Shared UI components (navbar, footer, wrappers)
+  features/
+    landing-page/       # Marketing landing page UI and data
+    home-page/          # Signed-in home feed experience
+    user-auth/          # Authentication feature area
+  lib/
+    supabase/           # Supabase client setup
+  test/                 # Test setup
 ```
