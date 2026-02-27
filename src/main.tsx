@@ -1,12 +1,12 @@
-import { Provider } from '@/app/provider.tsx';
+import Provider from '@/app/provider.tsx';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
 import { UserAuthProvider } from '@/features/user-auth/context/UserAuthContext';
 import { supabase } from '@/lib/supabase/client';
 import type { Session } from '@supabase/supabase-js';
+import App from '@/app/App.tsx';
 import './index.less';
-import App from './app/App.tsx';
 
 type SessionBootstrapWindow = Window & {
 	__PRESSD_INITIAL_SESSION__?: Session | null;
