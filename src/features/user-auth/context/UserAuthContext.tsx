@@ -109,6 +109,7 @@ export const useUserAuth = () => {
 
 	return {
 		isLoggedIn: !!context.session?.access_token,
+		isGuestUser: context.session?.user?.is_anonymous,
 		user: context.session?.user,
 		isLoading: context.isLoading,
 		signOut,

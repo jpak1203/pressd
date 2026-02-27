@@ -4,11 +4,13 @@ import LandingPage from '@/app/routes/LandingPage';
 import CreateAccountPage from '@/app/routes/CreateAccountPage';
 import SignInPage from '@/app/routes/SignInPage';
 import HomePage from '@/app/routes/HomePage';
+import SearchResultsPage from '@/app/routes/SearchResultsPage';
 import LayoutWrapper from '@/components/layout-wrapper/LayoutWrapper';
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext';
 
 function App() {
-	const { isLoggedIn, isLoading } = useUserAuth();
+	const { isGuestUser, isLoggedIn, isLoading } = useUserAuth();
+	const shouldShowHomepage = !isGuestUser && isLoggedIn;
 
 	return (
 		<LayoutWrapper>
@@ -16,7 +18,7 @@ function App() {
 				<Route
 					path="/"
 					element={
-						isLoading ? null : isLoggedIn ? (
+						isLoading ? null : shouldShowHomepage ? (
 							<ProtectedRoute>
 								<HomePage />
 							</ProtectedRoute>
@@ -27,6 +29,7 @@ function App() {
 				/>
 				<Route path="/signup" element={<CreateAccountPage />} />
 				<Route path="/signin" element={<SignInPage />} />
+				<Route path="/search" element={<SearchResultsPage />} />
 			</Routes>
 		</LayoutWrapper>
 	);
