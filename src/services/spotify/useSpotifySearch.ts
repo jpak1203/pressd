@@ -30,6 +30,7 @@ export const useSpotifySearch = (
 	const runSearch = useCallback(async () => {
 		const trimmed = query.trim();
 		if (!enabled || trimmed.length < minQueryLength) {
+			abortRef.current?.abort();
 			setData(null);
 			setError(null);
 			setIsLoading(false);
