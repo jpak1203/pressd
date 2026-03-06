@@ -109,7 +109,9 @@ const SearchResultsPage = () => {
 						</Center>
 					) : (
 						<SimpleGrid columns={{ base: 1, lg: 3 }} gap="4">
-							{spotify.isLoading ? (
+							{spotify.isLoading ||
+							(spotify.data === null &&
+								queryFromUrl.length >= 2) ? (
 								<>
 									<SearchLoadingList title="tracks" />
 									<SearchLoadingList title="albums" />
