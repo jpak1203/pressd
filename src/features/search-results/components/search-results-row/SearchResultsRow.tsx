@@ -1,9 +1,18 @@
 import { HStack, Flex, Text } from '@chakra-ui/react';
-import RouterLink from '@/components/router-link/RouterLink';
+import { Link } from 'react-router';
 import type { SeachItemRowType } from '@/features/search-results/types/search-results';
 import { formatRating } from '@/features/search-results/utils/searchResultsUtils';
 import SearchResultsImage from '@/features/search-results/components/search-results-image/SearchResultsImage';
 import { FaStar } from 'react-icons/fa';
+
+const getDetailPath = (
+	itemType: SeachItemRowType['itemType'],
+	id: string,
+) => {
+	if (itemType === 'track') return `/track/${id}`;
+	if (itemType === 'album') return `/album/${id}`;
+	return `/artist/${id}`;
+};
 
 const SearchResultsRow = ({
 	id,
@@ -11,11 +20,17 @@ const SearchResultsRow = ({
 	image,
 	rating,
 	showRating,
+	itemType,
+	stateData,
 }: SeachItemRowType) => {
-	const slug = `/songs?${id}`;
+	const to = getDetailPath(itemType, id);
 
 	return (
-		<RouterLink variant="plain" color="" slug={slug}>
+		<Link
+			to={to}
+			state={stateData}
+			style={{ width: '100%', display: 'block' }}
+		>
 			<HStack
 				align="center"
 				gap="3"
@@ -52,7 +67,7 @@ const SearchResultsRow = ({
 					)}
 				</Flex>
 			</HStack>
-		</RouterLink>
+		</Link>
 	);
 };
 
