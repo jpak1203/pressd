@@ -133,8 +133,22 @@ const SearchResultsPage = () => {
 												id={track.id}
 												title={track.name}
 												image={track.album.image}
-												rating={track.rating}
+												rating={undefined}
 												showRating
+												itemType="track"
+												stateData={{
+													type: 'track',
+													id: track.id,
+													name: track.name,
+													image: track.album.image,
+													artists: track.artists,
+													album: {
+														id: track.album.id,
+														name: track.album.name,
+													},
+													duration_ms: track.duration_ms,
+													external_url: track.external_url,
+												}}
 											/>
 										))}
 									</SearchResultsList>
@@ -152,8 +166,20 @@ const SearchResultsPage = () => {
 												id={album.id}
 												title={album.name}
 												image={album.image}
-												rating={album.rating}
+												rating={undefined}
 												showRating
+												itemType="album"
+												stateData={{
+													type: 'album',
+													id: album.id,
+													name: album.name,
+													image: album.image,
+													artists: album.artists,
+													release_date: album.release_date,
+													total_tracks: album.total_tracks,
+													album_type: album.album_type,
+													external_url: album.external_url,
+												}}
 											/>
 										))}
 									</SearchResultsList>
@@ -172,6 +198,14 @@ const SearchResultsPage = () => {
 												title={artist.name}
 												image={artist.image}
 												showRating={false}
+												itemType="artist"
+												stateData={{
+													type: 'artist',
+													id: artist.id,
+													name: artist.name,
+													image: artist.image,
+													external_url: artist.external_url,
+												}}
 											/>
 										))}
 									</SearchResultsList>
