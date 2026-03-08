@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router';
-import { Link } from 'react-router-dom';
+import { useLocation, useParams, Link } from 'react-router';
 import {
 	Box,
 	Button,
@@ -17,6 +16,7 @@ import DetailHero from '@/features/detail/components/DetailHero';
 import StarRating from '@/features/detail/components/StarRating';
 import ActionBar from '@/features/detail/components/ActionBar';
 import ReviewSection from '@/features/detail/components/ReviewSection';
+import SectionCard from '@/features/detail/components/SectionCard';
 import { useDetailInteractions } from '@/features/detail/hooks/useDetailInteractions';
 
 type DetailPageProps = {
@@ -29,32 +29,6 @@ const formatDate = (iso: string) =>
 		month: 'short',
 		day: 'numeric',
 	});
-
-const SectionCard = ({
-	label,
-	children,
-}: {
-	label: string;
-	children: React.ReactNode;
-}) => (
-	<Box
-		bg="var(--pressd-surface)"
-		border="1px solid var(--pressd-border)"
-		borderRadius="16px"
-		p={{ base: '4', md: '6' }}
-	>
-		<Text
-			className="pressd-mono"
-			fontSize="10px"
-			color="var(--pressd-text-muted)"
-			mb="4"
-			letterSpacing="0.12em"
-		>
-			{label}
-		</Text>
-		{children}
-	</Box>
-);
 
 const DetailPage = ({ type }: DetailPageProps) => {
 	const { id } = useParams<{ id: string }>();

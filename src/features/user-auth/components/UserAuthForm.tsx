@@ -6,13 +6,13 @@ import {
 	emailRules,
 	usernameRules,
 	passwordRules,
-} from '@/features/user-auth/data/userAuth.validation';
+} from '@/features/user-auth/data/user-auth.validation';
 
-type FormType = {
+type UserAuthFormProps = {
 	isCreateAccount: boolean;
 };
 
-const UserAuthForm = ({ isCreateAccount }: FormType) => {
+const UserAuthForm = ({ isCreateAccount }: UserAuthFormProps) => {
 	const {
 		register,
 		handleSubmit,

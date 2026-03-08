@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSpotifySearch } from '@/services/spotify/useSpotifySearch';
+import { useSpotifySearch } from '@/features/search-results/hooks/useSpotifySearch';
 import { useSearchParams } from 'react-router';
 import {
 	Box,
@@ -21,11 +21,11 @@ import SearchResultsList from '@/features/search-results/components/search-resul
 const SearchResultsPage = () => {
 	const [searchParams] = useSearchParams();
 	const queryFromUrl = searchParams.get('query') ?? '';
-	const spotify = useSpotifySearch();
+	const { setQuery, ...spotify } = useSpotifySearch();
 
 	useEffect(() => {
-		spotify.setQuery(queryFromUrl);
-	}, [queryFromUrl, spotify.setQuery]);
+		setQuery(queryFromUrl);
+	}, [queryFromUrl, setQuery]);
 
 	return (
 		<Box minH="100%" py={{ base: '5', md: '7' }}>

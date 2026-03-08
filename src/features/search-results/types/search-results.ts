@@ -1,6 +1,7 @@
+import type { ReactNode } from 'react';
 import type { ItemDetail, ItemType } from '@/features/detail/types/detail';
 
-export type SeachItemRowType = {
+export type SearchItemRowType = {
 	id: string;
 	title: string;
 	image: string | null;
@@ -13,6 +14,6 @@ export type SeachItemRowType = {
 export type ResultsListType = {
 	title: string;
 	emptyText: string;
-	children: React.ReactNode;
+	children: ReactNode;
 	isEmpty: boolean;
 };

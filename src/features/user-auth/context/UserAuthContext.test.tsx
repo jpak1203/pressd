@@ -17,7 +17,7 @@ const {
 	unsubscribeMock: vi.fn(),
 }));
 
-let authStateCallback;
+let authStateCallback: ((event: string, session: unknown) => void) | undefined;
 
 vi.mock('@/lib/supabase/client', () => ({
 	supabase: {

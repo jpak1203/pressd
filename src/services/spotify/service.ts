@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase/client';
 import type {
 	SpotifySearchParams,
 	SpotifySearchResponse,
-} from '@/types/spotify';
+} from '@/services/spotify/types';
 
 const supabaseFnUrl = import.meta.env.VITE_SUPABASE_FN_URL;
 const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;

@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router';
 import ProtectedRoute from '@/components/protected-route/ProtectedRoute';
 import LandingPage from '@/app/routes/LandingPage';
 import CreateAccountPage from '@/app/routes/CreateAccountPage';

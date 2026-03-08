@@ -1,5 +1,3 @@
-'use client';
-
 import { ChakraProvider } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 import { pressdSystem } from './theme';

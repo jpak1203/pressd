@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { searchSpotify } from './service';
+import { searchSpotify } from '@/services/spotify/service';
 import type {
 	UseSpotifySearchOptions,
 	UseSpotifySearchResult,
 	SpotifySearchResponse,
-} from '@/types/spotify';
+} from '@/services/spotify/types';
 
 export const useSpotifySearch = (
 	options: UseSpotifySearchOptions = {},

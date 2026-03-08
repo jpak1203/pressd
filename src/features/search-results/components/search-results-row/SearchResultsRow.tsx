@@ -1,12 +1,12 @@
 import { HStack, Flex, Text } from '@chakra-ui/react';
 import { Link } from 'react-router';
-import type { SeachItemRowType } from '@/features/search-results/types/search-results';
+import type { SearchItemRowType } from '@/features/search-results/types/search-results';
 import { formatRating } from '@/features/search-results/utils/searchResultsUtils';
 import SearchResultsImage from '@/features/search-results/components/search-results-image/SearchResultsImage';
 import { FaStar } from 'react-icons/fa';
 
 const getDetailPath = (
-	itemType: SeachItemRowType['itemType'],
+	itemType: SearchItemRowType['itemType'],
 	id: string,
 ) => {
 	if (itemType === 'track') return `/track/${id}`;
@@ -22,7 +22,7 @@ const SearchResultsRow = ({
 	showRating,
 	itemType,
 	stateData,
-}: SeachItemRowType) => {
+}: SearchItemRowType) => {
 	const to = getDetailPath(itemType, id);
 
 	return (
