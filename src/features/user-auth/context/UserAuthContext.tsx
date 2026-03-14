@@ -8,6 +8,7 @@ import {
 import { supabase } from '@/lib/supabase/client';
 import type { Session } from '@supabase/supabase-js';
 import type { Inputs } from '@/features/user-auth/types/user-auth';
+import { createProfile } from '@/features/profile/api/profileApi';
 
 type UserAuthContextType = {
 	session: Session | null;
@@ -81,6 +82,16 @@ const signIn = async ({
 		password,
 	});
 	if (error) throw error;
+
+	if (data.user) {
+		const username =
+			(data.user.user_metadata?.username as string) ??
+			`user_${data.user.id.slice(0, 8)}`;
+		await createProfile(data.user.id, username).catch(() => {
+			// Swallow — profile likely already exists
+		});
+	}
+
 	return data;
 };
 
@@ -99,6 +110,11 @@ const createAccount = async ({
 		},
 	});
 	if (error) throw error;
+
+	if (data.user) {
+		await createProfile(data.user.id, username);
+	}
+
 	return data;
 };
 

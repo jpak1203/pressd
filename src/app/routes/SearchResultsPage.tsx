@@ -140,13 +140,14 @@ const SearchResultsPage = () => {
 													type: 'track',
 													id: track.id,
 													name: track.name,
-													image: track.album.image,
+													image: track.image_url ?? track.album.image,
 													artists: track.artists,
 													album: {
 														id: track.album.id,
 														name: track.album.name,
 													},
 													duration_ms: track.duration_ms,
+													release_date: track.release_date ?? null,
 													external_url: track.external_url,
 												}}
 											/>
@@ -204,6 +205,8 @@ const SearchResultsPage = () => {
 													id: artist.id,
 													name: artist.name,
 													image: artist.image,
+													genres: artist.genres,
+													popularity: artist.popularity,
 													external_url: artist.external_url,
 												}}
 											/>

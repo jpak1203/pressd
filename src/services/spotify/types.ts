@@ -34,6 +34,8 @@ export type SpotifyTrackItem = {
 	name: string;
 	artists: Array<{ id: string; name: string }>;
 	album: { id: string; name: string; image: string | null };
+	image_url: string | null;
+	release_date: string | null;
 	external_url: string;
 	duration_ms: number;
 };
@@ -42,6 +44,8 @@ export type SpotifyArtistItem = {
 	id: string;
 	name: string;
 	image: string | null;
+	genres: string[];
+	popularity: number | null;
 	external_url: string;
 };
 
