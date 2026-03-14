@@ -6,7 +6,7 @@ import PressdLogo from '@/components/pressd-logo/PressdLogo';
 import SearchBar from '../search-bar/SearchBar';
 
 const NavBar = () => {
-	const { signOut, isGuestUser } = useUserAuth();
+	const { signOut, isGuestUser, user } = useUserAuth();
 	const navigate = useNavigate();
 
 	const handleSignOut = async () => {
@@ -89,23 +89,37 @@ const NavBar = () => {
 							</Button>
 						</>
 					) : (
-						<Button
-							size="sm"
-							onClick={handleSignOut}
-							border="1px solid var(--pressd-border)"
-							backgroundColor="var(--pressd-surface-2)"
-							color="var(--pressd-text-sub)"
-							borderRadius="999px"
-							fontSize="12px"
-							className="pressd-mono"
-							px="14px"
-							_hover={{
-								color: 'var(--pressd-text)',
-								borderColor: 'var(--pressd-accent-dim)',
-							}}
-						>
-							sign out
-						</Button>
+						<>
+							<ChakraLink
+								asChild
+								fontSize="11px"
+								color="var(--pressd-text-muted)"
+								className="pressd-mono"
+								_hover={{ color: 'var(--pressd-text)' }}
+								transition="color 0.15s ease"
+							>
+								<RouterLink to={`/profile/${user?.id}`}>
+									profile
+								</RouterLink>
+							</ChakraLink>
+							<Button
+								size="sm"
+								onClick={handleSignOut}
+								border="1px solid var(--pressd-border)"
+								backgroundColor="var(--pressd-surface-2)"
+								color="var(--pressd-text-sub)"
+								borderRadius="999px"
+								fontSize="12px"
+								className="pressd-mono"
+								px="14px"
+								_hover={{
+									color: 'var(--pressd-text)',
+									borderColor: 'var(--pressd-accent-dim)',
+								}}
+							>
+								sign out
+							</Button>
+						</>
 					)}
 				</Flex>
 			</Flex>

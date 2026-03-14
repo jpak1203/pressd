@@ -6,6 +6,8 @@ import SignInPage from '@/app/routes/SignInPage';
 import HomePage from '@/app/routes/HomePage';
 import SearchResultsPage from '@/app/routes/SearchResultsPage';
 import DetailPage from '@/app/routes/DetailPage';
+import ProfilePage from '@/app/routes/ProfilePage';
+import { RatingsPage } from '@/app/routes/RatingsPage';
 import LayoutWrapper from '@/components/layout-wrapper/LayoutWrapper';
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext';
 
@@ -43,6 +45,8 @@ function App() {
 					path="/artist/:id"
 					element={<DetailPage type="artist" />}
 				/>
+				<Route path="/profile/:id" element={<ProfilePage />} />
+				<Route path="/profile/:id/ratings" element={<RatingsPage />} />
 			</Routes>
 		</LayoutWrapper>
 	);

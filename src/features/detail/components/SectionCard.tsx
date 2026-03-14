@@ -2,7 +2,7 @@ import { Box, Text } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 
 type SectionCardProps = {
-	label: string;
+	label: ReactNode;
 	children: ReactNode;
 };
 

@@ -8,6 +8,7 @@ export type TrackDetail = {
 	artists: Array<{ id: string; name: string }>;
 	album: { id: string; name: string };
 	duration_ms: number;
+	release_date: string | null;
 	external_url?: string;
 };
 
@@ -28,6 +29,8 @@ export type ArtistDetail = {
 	id: string;
 	name: string;
 	image: string | null;
+	genres: string[];
+	popularity: number | null;
 	external_url?: string;
 };
 

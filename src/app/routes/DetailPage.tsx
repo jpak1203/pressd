@@ -17,7 +17,8 @@ import StarRating from '@/features/detail/components/StarRating';
 import ActionBar from '@/features/detail/components/ActionBar';
 import ReviewSection from '@/features/detail/components/ReviewSection';
 import SectionCard from '@/features/detail/components/SectionCard';
-import { useDetailInteractions } from '@/features/detail/hooks/useDetailInteractions';
+import { usePersistInteractions } from '@/features/detail/hooks/usePersistInteractions';
+import { useUserAuth } from '@/features/user-auth/context/UserAuthContext';
 
 type DetailPageProps = {
 	type: ItemType;
@@ -33,6 +34,7 @@ const formatDate = (iso: string) =>
 const DetailPage = ({ type }: DetailPageProps) => {
 	const { id } = useParams<{ id: string }>();
 	const { state } = useLocation();
+	const { user } = useUserAuth();
 
 	const [item, setItem] = useState<ItemDetail | null>(() => {
 		if (state) return state as ItemDetail;
@@ -62,7 +64,7 @@ const DetailPage = ({ type }: DetailPageProps) => {
 		addReview,
 		removeReview,
 		addLogEntry,
-	} = useDetailInteractions(itemKey);
+	} = usePersistInteractions(itemKey, item, user?.id ?? null);
 
 	if (!item || !id) {
 		return (
