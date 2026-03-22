@@ -1,18 +1,7 @@
-export type SongRowItem = {
-	id: string;
-	title: string;
-	artist: {
-		name: string;
-		href: string;
-	};
-	releaseDate: string;
-	averageRating: number;
-	artworkUrl: string;
-	href: string;
-};
+import type { ItemDetail } from '@/features/detail/types/detail';
 
 export type RowModuleData = {
-	items: SongRowItem[];
+	items: ItemDetail[];
 	moreHref: string;
 };
 

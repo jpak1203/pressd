@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useLocation, useParams, Link } from 'react-router';
 import {
 	Box,
@@ -7,6 +7,7 @@ import {
 	Container,
 	Flex,
 	HStack,
+	Spinner,
 	Text,
 	VStack,
 } from '@chakra-ui/react';
@@ -18,6 +19,7 @@ import ActionBar from '@/features/detail/components/ActionBar';
 import ReviewSection from '@/features/detail/components/ReviewSection';
 import SectionCard from '@/features/detail/components/SectionCard';
 import { usePersistInteractions } from '@/features/detail/hooks/usePersistInteractions';
+import { useItemFallback } from '@/features/detail/hooks/useItemFallback';
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext';
 
 type DetailPageProps = {
@@ -36,7 +38,7 @@ const DetailPage = ({ type }: DetailPageProps) => {
 	const { state } = useLocation();
 	const { user } = useUserAuth();
 
-	const [item, setItem] = useState<ItemDetail | null>(() => {
+	const initialItem = useMemo<ItemDetail | null>(() => {
 		if (state) return state as ItemDetail;
 		if (!id) return null;
 		try {
@@ -45,14 +47,19 @@ const DetailPage = ({ type }: DetailPageProps) => {
 		} catch {
 			return null;
 		}
-	});
+	}, [id, state]);
 
 	useEffect(() => {
 		if (state && id) {
 			sessionStorage.setItem(`pressd_item_${id}`, JSON.stringify(state));
-			setItem(state as ItemDetail);
 		}
 	}, [state, id]);
+
+	const { item, isLoading, error: fetchError } = useItemFallback(
+		type,
+		id,
+		initialItem,
+	);
 
 	const itemKey = `${type}:${id ?? ''}`;
 	const {
@@ -65,6 +72,14 @@ const DetailPage = ({ type }: DetailPageProps) => {
 		removeReview,
 		addLogEntry,
 	} = usePersistInteractions(itemKey, item, user?.id ?? null);
+
+	if (isLoading) {
+		return (
+			<Center minH="60vh">
+				<Spinner size="lg" color="var(--pressd-accent)" />
+			</Center>
+		);
+	}
 
 	if (!item || !id) {
 		return (
@@ -82,7 +97,8 @@ const DetailPage = ({ type }: DetailPageProps) => {
 					textAlign="center"
 					maxW="320px"
 				>
-					Navigate here from search results to view this page.
+					{fetchError ??
+						'Navigate here from search results to view this page.'}
 				</Text>
 				<Button
 					asChild

@@ -2,6 +2,8 @@ import { Box, Flex, Grid, Heading, Image, Link, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router';
 import { FaStar } from 'react-icons/fa';
 import type { RowModuleData } from '@/features/home-page/types/home-page';
+import type { ItemDetail } from '@/features/detail/types/detail';
+import { useAverageRatings } from '@/features/home-page/hooks/useAverageRatings';
 
 type RowModuleProps = {
 	data: RowModuleData;
@@ -9,7 +11,15 @@ type RowModuleProps = {
 	headerText: string;
 };
 
+const itemHref = (item: ItemDetail): string => {
+	if (item.type === 'track') return `/track/${item.id}`;
+	if (item.type === 'album') return `/album/${item.id}`;
+	return `/artist/${item.id}`;
+};
+
 const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
+	const avgRatings = useAverageRatings(data.items);
+
 	return (
 		<Box as="section" w="100%">
 			<Flex
@@ -51,67 +61,99 @@ const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
 				pb="2"
 				w="100%"
 			>
-				{data.items.map((song) => (
-					<Flex key={song.id} minW={0}>
-						<Flex direction="column">
-							<Link asChild _hover={{ textDecoration: 'none' }}>
-								<RouterLink to={song.href}>
-									<Image
-										src={song.artworkUrl}
-										alt={`${song.title} artwork`}
-										w="100%"
-										aspectRatio={1}
-										objectFit="cover"
-										borderRadius="6px"
-										border="1px solid var(--pressd-border)"
-									/>
-								</RouterLink>
-							</Link>
-							<Link asChild _hover={{ textDecoration: 'none' }}>
-								<RouterLink to={song.href}>
-									<Text
-										mt="2"
-										fontWeight="500"
-										color="var(--pressd-text)"
-										lineClamp={1}
-									>
-										{song.title}
-									</Text>
-								</RouterLink>
-							</Link>
-							<Link
-								asChild
-								color="var(--pressd-text-muted)"
-								_hover={{ color: 'var(--pressd-text-sub)' }}
-							>
-								<RouterLink to={song.artist.href}>
-									<Text fontSize="sm" lineClamp={1}>
-										{song.artist.name}
-									</Text>
-								</RouterLink>
-							</Link>
-							<Flex
-								mt="2"
-								alignItems="center"
-								justifyContent="space-between"
-							>
-								<Flex
-									alignItems="center"
-									gap="1"
-									color="var(--pressd-green)"
-									fontSize="sm"
-									fontWeight="700"
-								>
-									<FaStar />
-									<Text>{song.averageRating.toFixed(1)}</Text>
-								</Flex>
-								<Text color="var(--pressd-text-muted)" fontSize="sm">
-									{song.releaseDate}
-								</Text>
+				{data.items.map((item) => {
+					const href = itemHref(item);
+					const isArtist = item.type === 'artist';
+
+					const subtitle =
+						item.type === 'artist'
+							? (item.genres[0] ?? null)
+							: item.artists[0]?.name ?? null;
+
+					const subtitleHref =
+						item.type !== 'artist' && item.artists[0]
+							? `/artist/${item.artists[0].id}`
+							: null;
+
+					const releaseYear =
+						item.type === 'track'
+							? (item.release_date?.slice(0, 4) ?? null)
+							: item.type === 'album'
+								? item.release_date.slice(0, 4)
+								: null;
+
+					return (
+						<Flex key={item.id} minW={0}>
+							<Flex direction="column">
+								<Link asChild _hover={{ textDecoration: 'none' }}>
+									<RouterLink to={href} state={item}>
+										<Image
+											src={item.image ?? undefined}
+											alt={`${item.name} artwork`}
+											w="100%"
+											aspectRatio={1}
+											objectFit="cover"
+											borderRadius={isArtist ? '9999px' : '6px'}
+											border="1px solid var(--pressd-border)"
+										/>
+									</RouterLink>
+								</Link>
+								<Link asChild _hover={{ textDecoration: 'none' }}>
+									<RouterLink to={href} state={item}>
+										<Text
+											mt="2"
+											fontWeight="500"
+											color="var(--pressd-text)"
+											lineClamp={1}
+										>
+											{item.name}
+										</Text>
+									</RouterLink>
+								</Link>
+								{subtitle &&
+									(subtitleHref ? (
+										<Link
+											asChild
+											color="var(--pressd-text-muted)"
+											_hover={{ color: 'var(--pressd-text-sub)' }}
+										>
+											<RouterLink to={subtitleHref}>
+												<Text fontSize="sm" lineClamp={1}>
+													{subtitle}
+												</Text>
+											</RouterLink>
+										</Link>
+									) : (
+										<Text
+											fontSize="sm"
+											lineClamp={1}
+											color="var(--pressd-text-muted)"
+										>
+											{subtitle}
+										</Text>
+									))}
+								{item.type !== 'artist' && (
+									<Flex mt="2" alignItems="center" justifyContent="space-between">
+										{(() => {
+											const avg = avgRatings.get(`${item.type}:${item.id}`);
+											return avg !== undefined ? (
+												<Flex alignItems="center" gap="1" color="var(--pressd-green)" fontSize="sm" fontWeight="700">
+													<FaStar />
+													<Text>{avg.toFixed(1)}</Text>
+												</Flex>
+											) : (
+												<Text color="var(--pressd-text-muted)" fontSize="sm">N/A</Text>
+											);
+										})()}
+										{releaseYear && (
+											<Text color="var(--pressd-text-muted)" fontSize="sm">{releaseYear}</Text>
+										)}
+									</Flex>
+								)}
 							</Flex>
 						</Flex>
-					</Flex>
-				))}
+					);
+				})}
 			</Grid>
 		</Box>
 	);

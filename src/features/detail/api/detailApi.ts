@@ -1,0 +1,149 @@
+import { supabase } from '@/lib/supabase/client';
+import type { ItemDetail, ItemType } from '@/features/detail/types/detail';
+
+type ArtistRef = { id: string; name: string };
+
+type SongRow = {
+	spotify_id: string;
+	name: string;
+	image_url: string | null;
+	duration_ms: number;
+	release_date: string | null;
+	external_url: string | null;
+	artists: ArtistRef[] | null;
+	albums: { spotify_id: string; name: string } | null;
+};
+
+type AlbumRow = {
+	spotify_id: string;
+	name: string;
+	image_url: string | null;
+	release_date: string | null;
+	album_type: string | null;
+	total_tracks: number | null;
+	external_url: string | null;
+	artists: ArtistRef[] | null;
+};
+
+type ArtistRow = {
+	spotify_id: string;
+	name: string;
+	image_url: string | null;
+	external_url: string | null;
+	genres: string[] | null;
+	popularity: number | null;
+};
+
+const fetchTrackFromCatalog = async (id: string): Promise<ItemDetail | null> => {
+	const { data, error } = await supabase
+		.from('songs')
+		.select(
+			'spotify_id, name, image_url, duration_ms, release_date, external_url, artists, albums!songs_album_fk(spotify_id, name)',
+		)
+		.eq('spotify_id', id)
+		.maybeSingle();
+
+	if (error || !data) return null;
+
+	const row = data as unknown as SongRow;
+	if (!row.albums) return null;
+
+	return {
+		type: 'track',
+		id: row.spotify_id,
+		name: row.name,
+		image: row.image_url,
+		artists: row.artists ?? [],
+		album: { id: row.albums.spotify_id, name: row.albums.name },
+		duration_ms: row.duration_ms,
+		release_date: row.release_date,
+		external_url: row.external_url ?? undefined,
+	};
+};
+
+const fetchAlbumFromCatalog = async (id: string): Promise<ItemDetail | null> => {
+	const { data, error } = await supabase
+		.from('albums')
+		.select(
+			'spotify_id, name, image_url, release_date, album_type, total_tracks, external_url, artists',
+		)
+		.eq('spotify_id', id)
+		.maybeSingle();
+
+	if (error || !data) return null;
+
+	const row = data as unknown as AlbumRow;
+	if (row.album_type === null || row.total_tracks === null) return null;
+
+	return {
+		type: 'album',
+		id: row.spotify_id,
+		name: row.name,
+		image: row.image_url,
+		artists: row.artists ?? [],
+		release_date: row.release_date ?? '',
+		album_type: row.album_type,
+		total_tracks: row.total_tracks,
+		external_url: row.external_url ?? undefined,
+	};
+};
+
+const fetchArtistFromCatalog = async (id: string): Promise<ItemDetail | null> => {
+	const { data, error } = await supabase
+		.from('artists')
+		.select('spotify_id, name, image_url, external_url, genres, popularity')
+		.eq('spotify_id', id)
+		.maybeSingle();
+
+	if (error || !data) return null;
+
+	const row = data as unknown as ArtistRow;
+
+	return {
+		type: 'artist',
+		id: row.spotify_id,
+		name: row.name,
+		image: row.image_url,
+		genres: row.genres ?? [],
+		popularity: row.popularity,
+		external_url: row.external_url ?? undefined,
+	};
+};
+
+type RatingAvgInput = { type: 'track' | 'album'; id: string };
+type RatingAvgMap = Map<string, number>;
+
+export const fetchAverageRatings = async (items: RatingAvgInput[]): Promise<RatingAvgMap> => {
+	if (items.length === 0) return new Map();
+
+	const ids = items.map((i) => i.id);
+
+	const { data, error } = await supabase
+		.from('ratings')
+		.select('item_type, spotify_id, rating')
+		.in('spotify_id', ids);
+
+	if (error || !data) return new Map();
+
+	const totals = new Map<string, { sum: number; count: number }>();
+	for (const row of data) {
+		const key = `${row.item_type}:${row.spotify_id}`;
+		const existing = totals.get(key) ?? { sum: 0, count: 0 };
+		totals.set(key, { sum: existing.sum + row.rating, count: existing.count + 1 });
+	}
+
+	const result: RatingAvgMap = new Map();
+	for (const [key, { sum, count }] of totals) {
+		result.set(key, sum / count);
+	}
+	return result;
+};
+
+export const fetchItemFromCatalog = async (
+	type: ItemType,
+	id: string,
+): Promise<ItemDetail | null> => {
+	if (type === 'track') return fetchTrackFromCatalog(id);
+	if (type === 'album') return fetchAlbumFromCatalog(id);
+	return fetchArtistFromCatalog(id);
+};
