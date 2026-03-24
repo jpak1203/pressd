@@ -36,6 +36,11 @@ export type ArtistDetail = {
 
 export type ItemDetail = TrackDetail | AlbumDetail | ArtistDetail;
 
+export type DiscographyResult = {
+	albums: AlbumDetail[];
+	singles: AlbumDetail[];
+};
+
 export type Review = {
 	id: string;
 	text: string;
