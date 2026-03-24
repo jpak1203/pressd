@@ -1,7 +1,7 @@
-import Hero from '@/features/landing-page/components/hero/Hero';
+import Hero from '@/features/landing-page/components/hero/Hero'
 
 const LandingPage = () => {
-	return <Hero />;
-};
+    return <Hero />
+}
 
-export default LandingPage;
+export default LandingPage
