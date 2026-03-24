@@ -1,32 +1,32 @@
 [
-	{
-		"title": "Rate Every Song",
-		"description": "Build your personal music history by rating songs as you discover them. Your ratings help shape the community's taste and create a lasting record of what you've listened to.",
-		"icon": "heart"
-	},
-	{
-		"title": "Keep a Music Diary",
-		"description": "Every rating becomes an entry in your diary. Track when you discovered a song, revisit your listening journey, and see how your taste evolves over time.",
-		"icon": "journal"
-	},
-	{
-		"title": "Curate & Share Playlists",
-		"description": "Create custom playlists for any mood, moment, or genre. Share them with the community and discover collections curated by listeners with similar taste.",
-		"icon": "playlist"
-	},
-	{
-		"title": "Write Reviews That Matter",
-		"description": "Go beyond the rating. Write detailed reviews, share your thoughts on tracks that move you, and join conversations about the music that matters.",
-		"icon": "review"
-	},
-	{
-		"title": "Follow Music Lovers",
-		"description": "Connect with listeners who share your taste. Follow users to see their latest ratings, reviews, and playlists in your personalized activity feed.",
-		"icon": "user"
-	},
-	{
-		"title": "Discover Through Community",
-		"description": "Browse trending songs, explore top-rated albums, and find your next favorite track through the collective wisdom of music lovers everywhere.",
-		"icon": "magnifying-glass"
-	}
+    {
+        "title": "Rate Every Song",
+        "description": "Build your personal music history by rating songs as you discover them. Your ratings help shape the community's taste and create a lasting record of what you've listened to.",
+        "icon": "heart"
+    },
+    {
+        "title": "Keep a Music Diary",
+        "description": "Every rating becomes an entry in your diary. Track when you discovered a song, revisit your listening journey, and see how your taste evolves over time.",
+        "icon": "journal"
+    },
+    {
+        "title": "Curate & Share Playlists",
+        "description": "Create custom playlists for any mood, moment, or genre. Share them with the community and discover collections curated by listeners with similar taste.",
+        "icon": "playlist"
+    },
+    {
+        "title": "Write Reviews That Matter",
+        "description": "Go beyond the rating. Write detailed reviews, share your thoughts on tracks that move you, and join conversations about the music that matters.",
+        "icon": "review"
+    },
+    {
+        "title": "Follow Music Lovers",
+        "description": "Connect with listeners who share your taste. Follow users to see their latest ratings, reviews, and playlists in your personalized activity feed.",
+        "icon": "user"
+    },
+    {
+        "title": "Discover Through Community",
+        "description": "Browse trending songs, explore top-rated albums, and find your next favorite track through the collective wisdom of music lovers everywhere.",
+        "icon": "magnifying-glass"
+    }
 ]

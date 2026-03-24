@@ -1,225 +1,237 @@
-import { useEffect } from 'react';
-import { useSpotifySearch } from '@/features/search-results/hooks/useSpotifySearch';
-import { useSearchParams } from 'react-router';
+import { useEffect } from 'react'
+import { useSpotifySearch } from '@/features/search-results/hooks/useSpotifySearch'
+import { useSearchParams } from 'react-router'
 import {
-	Box,
-	Button,
-	Center,
-	Container,
-	Flex,
-	Heading,
-	HStack,
-	SimpleGrid,
-	Spinner,
-	Text,
-	VStack,
-} from '@chakra-ui/react';
-import SearchLoadingList from '@/features/search-results/components/search-loading-list/SearchLoadingList';
-import SearchResultsRow from '@/features/search-results/components/search-results-row/SearchResultsRow';
-import SearchResultsList from '@/features/search-results/components/search-results-list/SearchResultsList';
+    Box,
+    Button,
+    Center,
+    Container,
+    Flex,
+    Heading,
+    HStack,
+    SimpleGrid,
+    Spinner,
+    Text,
+    VStack,
+} from '@chakra-ui/react'
+import SearchLoadingList from '@/features/search-results/components/search-loading-list/SearchLoadingList'
+import SearchResultsRow from '@/features/search-results/components/search-results-row/SearchResultsRow'
+import SearchResultsList from '@/features/search-results/components/search-results-list/SearchResultsList'
 
 const SearchResultsPage = () => {
-	const [searchParams] = useSearchParams();
-	const queryFromUrl = searchParams.get('query') ?? '';
-	const { setQuery, ...spotify } = useSpotifySearch();
+    const [searchParams] = useSearchParams()
+    const queryFromUrl = searchParams.get('query') ?? ''
+    const { setQuery, ...spotify } = useSpotifySearch()
 
-	useEffect(() => {
-		setQuery(queryFromUrl);
-	}, [queryFromUrl, setQuery]);
+    useEffect(() => {
+        setQuery(queryFromUrl)
+    }, [queryFromUrl, setQuery])
 
-	return (
-		<Box minH="100%" py={{ base: '5', md: '7' }}>
-			<Container maxW="1200px" px={{ base: '4', md: '7' }}>
-				<VStack align="stretch" gap="5">
-					<Flex
-						align={{ base: 'flex-start', md: 'center' }}
-						justify="space-between"
-						gap="3"
-						flexDirection={{ base: 'column', md: 'row' }}
-					>
-						<Box>
-							<Text
-								className="pressd-mono"
-								fontSize="10px"
-								color="var(--pressd-text-muted)"
-								mb="1"
-							>
-								search results
-							</Text>
-							<Heading
-								size="lg"
-								fontWeight="600"
-								color="var(--pressd-text)"
-							>
-								{queryFromUrl
-									? `"${queryFromUrl}"`
-									: 'Start searching'}
-							</Heading>
-						</Box>
-						{spotify.isLoading && (
-							<HStack color="var(--pressd-accent)">
-								<Spinner size="sm" />
-								<Text fontSize="sm">Searching Spotify...</Text>
-							</HStack>
-						)}
-					</Flex>
+    return (
+        <Box minH="100%" py={{ base: '5', md: '7' }}>
+            <Container maxW="1200px" px={{ base: '4', md: '7' }}>
+                <VStack align="stretch" gap="5">
+                    <Flex
+                        align={{ base: 'flex-start', md: 'center' }}
+                        justify="space-between"
+                        gap="3"
+                        flexDirection={{ base: 'column', md: 'row' }}
+                    >
+                        <Box>
+                            <Text
+                                className="pressd-mono"
+                                fontSize="10px"
+                                color="var(--pressd-text-muted)"
+                                mb="1"
+                            >
+                                search results
+                            </Text>
+                            <Heading
+                                size="lg"
+                                fontWeight="600"
+                                color="var(--pressd-text)"
+                            >
+                                {queryFromUrl
+                                    ? `"${queryFromUrl}"`
+                                    : 'Start searching'}
+                            </Heading>
+                        </Box>
+                        {spotify.isLoading && (
+                            <HStack color="var(--pressd-accent)">
+                                <Spinner size="sm" />
+                                <Text fontSize="sm">Searching Spotify...</Text>
+                            </HStack>
+                        )}
+                    </Flex>
 
-					{spotify.error && !spotify.isLoading ? (
-						<Center
-							minH="360px"
-							p="8"
-							bg="var(--pressd-surface)"
-							border="1px solid var(--pressd-border)"
-							borderRadius="16px"
-							flexDirection="column"
-							textAlign="center"
-						>
-							<Text
-								className="pressd-mono"
-								fontSize="10px"
-								color="var(--pressd-red)"
-								mb="2"
-							>
-								spotify error
-							</Text>
-							<Heading size="md" mb="2">
-								We couldn&apos;t load search results.
-							</Heading>
-							<Text
-								color="var(--pressd-text-sub)"
-								maxW="560px"
-								mb="5"
-							>
-								{spotify.error}
-							</Text>
-							<Button
-								onClick={() => {
-									void spotify.refetch();
-								}}
-								bg="var(--pressd-accent)"
-								color="var(--pressd-bg)"
-								borderRadius="999px"
-								_hover={{
-									bg: 'var(--pressd-accent-dim)',
-									color: 'var(--pressd-text)',
-								}}
-							>
-								Try again
-							</Button>
-						</Center>
-					) : (
-						<SimpleGrid columns={{ base: 1, lg: 3 }} gap="4">
-							{spotify.isLoading ||
-							(spotify.data === null &&
-								queryFromUrl.length >= 2) ? (
-								<>
-									<SearchLoadingList title="tracks" />
-									<SearchLoadingList title="albums" />
-									<SearchLoadingList title="artists" />
-								</>
-							) : (
-								<>
-									<SearchResultsList
-										title="tracks"
-										emptyText="No tracks found."
-										isEmpty={
-											(spotify.data?.tracks.length ??
-												0) === 0
-										}
-									>
-										{spotify.data?.tracks.map((track) => (
-											<SearchResultsRow
-												key={track.id}
-												id={track.id}
-												title={track.name}
-												image={track.album.image}
-												rating={undefined}
-												showRating
-												itemType="track"
-												stateData={{
-													type: 'track',
-													id: track.id,
-													name: track.name,
-													image: track.image_url ?? track.album.image,
-													artists: track.artists,
-													album: {
-														id: track.album.id,
-														name: track.album.name,
-													},
-													duration_ms: track.duration_ms,
-													release_date: track.release_date ?? null,
-													external_url: track.external_url,
-												}}
-											/>
-										))}
-									</SearchResultsList>
-									<SearchResultsList
-										title="albums"
-										emptyText="No albums found."
-										isEmpty={
-											(spotify.data?.albums.length ??
-												0) === 0
-										}
-									>
-										{spotify.data?.albums.map((album) => (
-											<SearchResultsRow
-												key={album.id}
-												id={album.id}
-												title={album.name}
-												image={album.image}
-												rating={undefined}
-												showRating
-												itemType="album"
-												stateData={{
-													type: 'album',
-													id: album.id,
-													name: album.name,
-													image: album.image,
-													artists: album.artists,
-													release_date: album.release_date,
-													total_tracks: album.total_tracks,
-													album_type: album.album_type,
-													external_url: album.external_url,
-												}}
-											/>
-										))}
-									</SearchResultsList>
-									<SearchResultsList
-										title="artists"
-										emptyText="No artists found."
-										isEmpty={
-											(spotify.data?.artists.length ??
-												0) === 0
-										}
-									>
-										{spotify.data?.artists.map((artist) => (
-											<SearchResultsRow
-												key={artist.id}
-												id={artist.id}
-												title={artist.name}
-												image={artist.image}
-												showRating={false}
-												itemType="artist"
-												stateData={{
-													type: 'artist',
-													id: artist.id,
-													name: artist.name,
-													image: artist.image,
-													genres: artist.genres,
-													popularity: artist.popularity,
-													external_url: artist.external_url,
-												}}
-											/>
-										))}
-									</SearchResultsList>
-								</>
-							)}
-						</SimpleGrid>
-					)}
-				</VStack>
-			</Container>
-		</Box>
-	);
-};
+                    {spotify.error && !spotify.isLoading ? (
+                        <Center
+                            minH="360px"
+                            p="8"
+                            bg="var(--pressd-surface)"
+                            border="1px solid var(--pressd-border)"
+                            borderRadius="16px"
+                            flexDirection="column"
+                            textAlign="center"
+                        >
+                            <Text
+                                className="pressd-mono"
+                                fontSize="10px"
+                                color="var(--pressd-red)"
+                                mb="2"
+                            >
+                                spotify error
+                            </Text>
+                            <Heading size="md" mb="2">
+                                We couldn&apos;t load search results.
+                            </Heading>
+                            <Text
+                                color="var(--pressd-text-sub)"
+                                maxW="560px"
+                                mb="5"
+                            >
+                                {spotify.error}
+                            </Text>
+                            <Button
+                                onClick={() => {
+                                    void spotify.refetch()
+                                }}
+                                bg="var(--pressd-accent)"
+                                color="var(--pressd-bg)"
+                                borderRadius="999px"
+                                _hover={{
+                                    bg: 'var(--pressd-accent-dim)',
+                                    color: 'var(--pressd-text)',
+                                }}
+                            >
+                                Try again
+                            </Button>
+                        </Center>
+                    ) : (
+                        <SimpleGrid columns={{ base: 1, lg: 3 }} gap="4">
+                            {spotify.isLoading ||
+                            (spotify.data === null &&
+                                queryFromUrl.length >= 2) ? (
+                                <>
+                                    <SearchLoadingList title="tracks" />
+                                    <SearchLoadingList title="albums" />
+                                    <SearchLoadingList title="artists" />
+                                </>
+                            ) : (
+                                <>
+                                    <SearchResultsList
+                                        title="tracks"
+                                        emptyText="No tracks found."
+                                        isEmpty={
+                                            (spotify.data?.tracks.length ??
+                                                0) === 0
+                                        }
+                                    >
+                                        {spotify.data?.tracks.map((track) => (
+                                            <SearchResultsRow
+                                                key={track.id}
+                                                id={track.id}
+                                                title={track.name}
+                                                image={track.album.image}
+                                                rating={undefined}
+                                                showRating
+                                                itemType="track"
+                                                stateData={{
+                                                    type: 'track',
+                                                    id: track.id,
+                                                    name: track.name,
+                                                    image:
+                                                        track.image_url ??
+                                                        track.album.image,
+                                                    artists: track.artists,
+                                                    album: {
+                                                        id: track.album.id,
+                                                        name: track.album.name,
+                                                    },
+                                                    duration_ms:
+                                                        track.duration_ms,
+                                                    release_date:
+                                                        track.release_date ??
+                                                        null,
+                                                    external_url:
+                                                        track.external_url,
+                                                }}
+                                            />
+                                        ))}
+                                    </SearchResultsList>
+                                    <SearchResultsList
+                                        title="albums"
+                                        emptyText="No albums found."
+                                        isEmpty={
+                                            (spotify.data?.albums.length ??
+                                                0) === 0
+                                        }
+                                    >
+                                        {spotify.data?.albums.map((album) => (
+                                            <SearchResultsRow
+                                                key={album.id}
+                                                id={album.id}
+                                                title={album.name}
+                                                image={album.image}
+                                                rating={undefined}
+                                                showRating
+                                                itemType="album"
+                                                stateData={{
+                                                    type: 'album',
+                                                    id: album.id,
+                                                    name: album.name,
+                                                    image: album.image,
+                                                    artists: album.artists,
+                                                    release_date:
+                                                        album.release_date,
+                                                    total_tracks:
+                                                        album.total_tracks,
+                                                    album_type:
+                                                        album.album_type,
+                                                    external_url:
+                                                        album.external_url,
+                                                }}
+                                            />
+                                        ))}
+                                    </SearchResultsList>
+                                    <SearchResultsList
+                                        title="artists"
+                                        emptyText="No artists found."
+                                        isEmpty={
+                                            (spotify.data?.artists.length ??
+                                                0) === 0
+                                        }
+                                    >
+                                        {spotify.data?.artists.map((artist) => (
+                                            <SearchResultsRow
+                                                key={artist.id}
+                                                id={artist.id}
+                                                title={artist.name}
+                                                image={artist.image}
+                                                showRating={false}
+                                                itemType="artist"
+                                                stateData={{
+                                                    type: 'artist',
+                                                    id: artist.id,
+                                                    name: artist.name,
+                                                    image: artist.image,
+                                                    genres: artist.genres,
+                                                    popularity:
+                                                        artist.popularity,
+                                                    external_url:
+                                                        artist.external_url,
+                                                }}
+                                            />
+                                        ))}
+                                    </SearchResultsList>
+                                </>
+                            )}
+                        </SimpleGrid>
+                    )}
+                </VStack>
+            </Container>
+        </Box>
+    )
+}
 
-export default SearchResultsPage;
+export default SearchResultsPage
