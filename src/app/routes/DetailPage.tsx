@@ -20,6 +20,7 @@ import ReviewSection from '@/features/detail/components/ReviewSection'
 import SectionCard from '@/features/detail/components/SectionCard'
 import { usePersistInteractions } from '@/features/detail/hooks/usePersistInteractions'
 import { useItemFallback } from '@/features/detail/hooks/useItemFallback'
+import { DiscographySection } from '@/features/detail/components/DiscographySection'
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext'
 
 type DetailPageProps = {
@@ -133,111 +134,116 @@ const DetailPage = ({ type }: DetailPageProps) => {
                 px={{ base: '4', md: '7' }}
                 py={{ base: '6', md: '8' }}
             >
-                <VStack align="stretch" gap="5">
-                    {/* Rating + Actions */}
-                    <SectionCard label="your activity">
-                        <VStack align="stretch" gap="5">
-                            <Flex
-                                align={{ base: 'flex-start', sm: 'center' }}
-                                justify="space-between"
-                                flexDirection={{ base: 'column', sm: 'row' }}
-                                gap="4"
-                            >
-                                <Box>
-                                    <Text
-                                        fontSize="11px"
-                                        color="var(--pressd-text-muted)"
-                                        mb="2"
-                                    >
-                                        Rate this {type}
-                                    </Text>
-                                    <StarRating
-                                        value={interactions.rating}
-                                        onChange={setRating}
-                                        size="26px"
+                {item.type === 'artist' ? (
+                    <DiscographySection artistId={item.id} />
+                ) : (
+                    <VStack align="stretch" gap="5">
+                        {/* Rating + Actions */}
+                        <SectionCard label="your activity">
+                            <VStack align="stretch" gap="5">
+                                <Flex
+                                    align={{ base: 'flex-start', sm: 'center' }}
+                                    justify="space-between"
+                                    flexDirection={{ base: 'column', sm: 'row' }}
+                                    gap="4"
+                                >
+                                    <Box>
+                                        <Text
+                                            fontSize="11px"
+                                            color="var(--pressd-text-muted)"
+                                            mb="2"
+                                        >
+                                            Rate this {type}
+                                        </Text>
+                                        <StarRating
+                                            value={interactions.rating}
+                                            onChange={setRating}
+                                            size="26px"
+                                        />
+                                    </Box>
+                                    {interactions.rating !== null && (
+                                        <HStack
+                                            gap="1"
+                                            bg="var(--pressd-accent-glow)"
+                                            border="1px solid var(--pressd-accent)"
+                                            borderRadius="999px"
+                                            px="14px"
+                                            py="6px"
+                                        >
+                                            <Text
+                                                fontSize="18px"
+                                                fontWeight="700"
+                                                color="var(--pressd-accent)"
+                                                lineHeight="1"
+                                                className="pressd-mono"
+                                            >
+                                                {ratingLabel}
+                                            </Text>
+                                        </HStack>
+                                    )}
+                                </Flex>
+
+                                <Box
+                                    borderTop="1px solid var(--pressd-border)"
+                                    pt="4"
+                                >
+                                    <ActionBar
+                                        interactions={interactions}
+                                        onToggleLike={toggleLike}
+                                        onToggleListened={toggleListened}
+                                        onToggleWantToListen={toggleWantToListen}
+                                        onAddLog={addLogEntry}
                                     />
                                 </Box>
-                                {interactions.rating !== null && (
-                                    <HStack
-                                        gap="1"
-                                        bg="var(--pressd-accent-glow)"
-                                        border="1px solid var(--pressd-accent)"
-                                        borderRadius="999px"
-                                        px="14px"
-                                        py="6px"
-                                    >
-                                        <Text
-                                            fontSize="18px"
-                                            fontWeight="700"
-                                            color="var(--pressd-accent)"
-                                            lineHeight="1"
-                                            className="pressd-mono"
-                                        >
-                                            {ratingLabel}
-                                        </Text>
-                                    </HStack>
-                                )}
-                            </Flex>
-
-                            <Box
-                                borderTop="1px solid var(--pressd-border)"
-                                pt="4"
-                            >
-                                <ActionBar
-                                    interactions={interactions}
-                                    onToggleLike={toggleLike}
-                                    onToggleListened={toggleListened}
-                                    onToggleWantToListen={toggleWantToListen}
-                                    onAddLog={addLogEntry}
-                                />
-                            </Box>
-                        </VStack>
-                    </SectionCard>
-
-                    {/* Log Entries */}
-                    {interactions.logEntries.length > 0 && (
-                        <SectionCard
-                            label={`listening log (${interactions.logEntries.length})`}
-                        >
-                            <VStack align="stretch" gap="2">
-                                {interactions.logEntries.map((entry) => (
-                                    <HStack
-                                        key={entry.id}
-                                        gap="2.5"
-                                        color="var(--pressd-text-sub)"
-                                        fontSize="13px"
-                                    >
-                                        <Box
-                                            color="var(--pressd-accent)"
-                                            fontSize="11px"
-                                            flexShrink={0}
-                                        >
-                                            <FaCalendarAlt />
-                                        </Box>
-                                        <Text>
-                                            Listened on {formatDate(entry.date)}
-                                        </Text>
-                                    </HStack>
-                                ))}
                             </VStack>
                         </SectionCard>
-                    )}
 
-                    {/* Reviews */}
-                    <SectionCard
-                        label={`reviews (${interactions.reviews.length})`}
-                    >
-                        <ReviewSection
-                            reviews={interactions.reviews}
-                            onAddReview={(text, rating) => {
-                                addReview(text, rating)
-                                if (rating !== null) setRating(rating)
-                            }}
-                            onRemoveReview={removeReview}
-                            currentRating={interactions.rating}
-                        />
-                    </SectionCard>
-                </VStack>
+                        {/* Log Entries */}
+                        {interactions.logEntries.length > 0 && (
+                            <SectionCard
+                                label={`listening log (${interactions.logEntries.length})`}
+                            >
+                                <VStack align="stretch" gap="2">
+                                    {interactions.logEntries.map((entry) => (
+                                        <HStack
+                                            key={entry.id}
+                                            gap="2.5"
+                                            color="var(--pressd-text-sub)"
+                                            fontSize="13px"
+                                        >
+                                            <Box
+                                                color="var(--pressd-accent)"
+                                                fontSize="11px"
+                                                flexShrink={0}
+                                            >
+                                                <FaCalendarAlt />
+                                            </Box>
+                                            <Text>
+                                                Listened on{' '}
+                                                {formatDate(entry.date)}
+                                            </Text>
+                                        </HStack>
+                                    ))}
+                                </VStack>
+                            </SectionCard>
+                        )}
+
+                        {/* Reviews */}
+                        <SectionCard
+                            label={`reviews (${interactions.reviews.length})`}
+                        >
+                            <ReviewSection
+                                reviews={interactions.reviews}
+                                onAddReview={(text, rating) => {
+                                    addReview(text, rating)
+                                    if (rating !== null) setRating(rating)
+                                }}
+                                onRemoveReview={removeReview}
+                                currentRating={interactions.rating}
+                            />
+                        </SectionCard>
+                    </VStack>
+                )}
             </Container>
         </Box>
     )

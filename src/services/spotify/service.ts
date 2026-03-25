@@ -3,7 +3,11 @@ import type {
     SpotifySearchParams,
     SpotifySearchResponse,
 } from '@/services/spotify/types'
-import type { ItemDetail, ItemType } from '@/features/detail/types/detail'
+import type {
+    DiscographyResult,
+    ItemDetail,
+    ItemType,
+} from '@/features/detail/types/detail'
 
 const supabaseFnUrl = import.meta.env.VITE_SUPABASE_FN_URL
 const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
@@ -97,4 +101,27 @@ export const lookupSpotifyItem = async (
     }
 
     return res.json() as Promise<ItemDetail>
+}
+
+export const fetchDiscographyFromEdge = async (
+    artistId: string,
+    signal?: AbortSignal
+): Promise<DiscographyResult> => {
+    if (!supabaseFnUrl || !supabasePublishableKey)
+        throw new Error('Missing env vars')
+
+    const accessToken = await getAccessToken()
+    const res = await fetch(`${supabaseFnUrl}/spotify-discography`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            apikey: supabasePublishableKey,
+        },
+        body: JSON.stringify({ id: artistId }),
+        signal,
+    })
+
+    if (!res.ok) throw new Error(`Discography fetch failed (${res.status})`)
+    return res.json() as Promise<DiscographyResult>
 }
