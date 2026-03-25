@@ -6,7 +6,7 @@ import type {
     ItemType,
 } from '@/features/detail/types/detail'
 
-const DISCOGRAPHY_TTL_MS = 1
+const DISCOGRAPHY_TTL_MS = 1000 * 60 * 60 * 24 // 24 hours
 
 type ArtistRef = { id: string; name: string }
 
