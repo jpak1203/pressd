@@ -1,5 +1,5 @@
 export type Inputs = {
-	email: string;
-	username: string;
-	password: string;
-};
+    email: string
+    username: string
+    password: string
+}
