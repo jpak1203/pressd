@@ -1,6 +1,6 @@
 import { Box, Image, Text, VStack } from '@chakra-ui/react'
 import { Link } from 'react-router'
-import type { Top5Category } from '../types/profile'
+import type { Top5Category } from '@/features/profile/types/profile'
 
 type Top5CardProps = {
     spotifyId: string

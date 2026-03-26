@@ -1,20 +1,7 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Image, Text } from '@chakra-ui/react'
 import { Link } from 'react-router'
-import { FaStar } from 'react-icons/fa'
-import type { RatingItem } from '../types/profile'
-
-const StarDisplay = ({ rating }: { rating: number }) => {
-    const stars = Math.round(rating / 2)
-    return (
-        <Flex gap="0.5" color="var(--pressd-accent)">
-            {Array.from({ length: 5 }, (_, i) => (
-                <Box key={i} opacity={i < stars ? 1 : 0.2} fontSize="10px">
-                    <FaStar />
-                </Box>
-            ))}
-        </Flex>
-    )
-}
+import type { RatingItem } from '@/features/profile/types/profile'
+import { StarDisplay } from './StarDisplay'
 
 type RatedItemCardProps = {
     item: RatingItem

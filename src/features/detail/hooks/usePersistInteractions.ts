@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import type { ItemDetail } from '../types/detail'
+import type { ItemDetail } from '@/features/detail/types/detail'
 import { useDetailInteractions } from './useDetailInteractions'
 import {
     upsertRating,

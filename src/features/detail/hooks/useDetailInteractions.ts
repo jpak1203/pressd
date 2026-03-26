@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import type { ItemInteraction, Review, LogEntry } from '../types/detail'
+import type { ItemInteraction, Review, LogEntry } from '@/features/detail/types/detail'
 
 const STORAGE_KEY = 'pressd_interactions'
 

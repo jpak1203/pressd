@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react'
-import type { RatingItem } from '../types/profile'
+import type { RatingItem } from '@/features/profile/types/profile'
 
 type RatingBarGraphProps = {
     ratings: RatingItem[]

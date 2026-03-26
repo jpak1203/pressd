@@ -1,12 +1,17 @@
+import type { ItemType } from '@/features/detail/types/detail'
+
 export type Top5Category = 'album' | 'artist' | 'track'
 
-export type Top5Item = {
-    id: string
-    position: number
+type MusicItemRef = {
     spotify_id: string
     name: string
     image_url: string | null
     artist_name: string | null
+}
+
+export type Top5Item = MusicItemRef & {
+    id: string
+    position: number
 }
 
 export type ProfileData = {
@@ -25,13 +30,9 @@ export type ProfileWithTop5 = {
     top5Tracks: Top5Item[]
 }
 
-export type RatingItem = {
+export type RatingItem = MusicItemRef & {
     id: string
     item_type: 'track' | 'album'
-    spotify_id: string
-    name: string
-    image_url: string | null
-    artist_name: string | null
     rating: number
     updated_at: string
     release_date: string | null
@@ -51,14 +52,10 @@ export type DiaryAction =
     | 'want_to_listen'
     | 'reviewed'
 
-export type DiaryEntry = {
+export type DiaryEntry = MusicItemRef & {
     id: string
     action: DiaryAction
-    item_type: 'track' | 'album' | 'artist'
-    spotify_id: string
-    name: string
-    image_url: string | null
-    artist_name: string | null
+    item_type: ItemType
     rating: number | null
     review_text: string | null
     created_at: string
@@ -75,17 +72,13 @@ export type FollowRow = {
     created_at: string
 }
 
-export type ReviewRow = {
+export type ReviewRow = MusicItemRef & {
     id: string
     profile_id: string
     item_type: 'track' | 'album'
-    spotify_id: string
     rating: number | null
     body: string
     created_at: string
-    name: string
-    image_url: string | null
-    artist_name: string | null
 }
 
 export type PlaylistRow = {
@@ -98,15 +91,11 @@ export type PlaylistRow = {
     updated_at: string
 }
 
-export type PlaylistItemRow = {
+export type PlaylistItemRow = MusicItemRef & {
     id: string
     playlist_id: string
     position: number
     item_type: 'track' | 'album'
-    spotify_id: string
-    name: string
-    image_url: string | null
-    artist_name: string | null
     added_at: string
 }
 

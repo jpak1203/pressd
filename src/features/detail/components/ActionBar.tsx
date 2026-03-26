@@ -7,7 +7,7 @@ import {
     FaRegBookmark,
     FaPlus,
 } from 'react-icons/fa'
-import type { ItemInteraction } from '../types/detail'
+import type { ItemInteraction } from '@/features/detail/types/detail'
 
 type ActionBarProps = {
     interactions: ItemInteraction
