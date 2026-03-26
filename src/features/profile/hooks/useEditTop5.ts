@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { upsertTop5 } from '../api/profileApi'
-import type { Top5Category, Top5Item } from '../types/profile'
+import { upsertTop5 } from '@/features/profile/api/profileApi'
+import type { Top5Category, Top5Item } from '@/features/profile/types/profile'
 
 export const useEditTop5 = (profileId: string, onSuccess: () => void) => {
     const [isSubmitting, setIsSubmitting] = useState(false)

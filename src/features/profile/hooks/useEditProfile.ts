@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { updateProfile } from '../api/profileApi'
+import { updateProfile } from '@/features/profile/api/profileApi'
 
 export const useEditProfile = (profileId: string, onSuccess: () => void) => {
     const [isSubmitting, setIsSubmitting] = useState(false)

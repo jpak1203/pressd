@@ -4,8 +4,8 @@ import {
     fetchTop5,
     fetchRatings,
     fetchDiary,
-} from '../api/profileApi'
-import type { FullProfileData, Top5Category, Top5Item } from '../types/profile'
+} from '@/features/profile/api/profileApi'
+import type { FullProfileData, Top5Category, Top5Item } from '@/features/profile/types/profile'
 
 export const useProfile = (id: string | undefined) => {
     const [data, setData] = useState<FullProfileData | null>(null)

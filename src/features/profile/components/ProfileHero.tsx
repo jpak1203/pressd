@@ -9,19 +9,14 @@ import {
     VStack,
 } from '@chakra-ui/react'
 import { FaEdit } from 'react-icons/fa'
-import type { ProfileData } from '../types/profile'
+import type { ProfileData } from '@/features/profile/types/profile'
+import { formatMemberSince } from '@/lib/formatters'
 
 type ProfileHeroProps = {
     profile: ProfileData
     isOwnProfile: boolean
     onEdit: () => void
 }
-
-const formatMemberSince = (iso: string) =>
-    new Date(iso).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-    })
 
 const ProfileHero = ({ profile, isOwnProfile, onEdit }: ProfileHeroProps) => {
     const avatarSrc = profile.avatar_url ?? undefined

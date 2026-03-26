@@ -9,7 +9,7 @@ import type {
     ReviewRow,
     PlaylistRow,
     PlaylistItemRow,
-} from '../types/profile'
+} from '@/features/profile/types/profile'
 
 export const createProfile = async (id: string, username: string) => {
     const { error } = await supabase

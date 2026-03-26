@@ -3,7 +3,7 @@ import { Box, Button, Flex, Link as ChakraLink } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router'
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext'
 import PressdLogo from '@/components/pressd-logo/PressdLogo'
-import SearchBar from '../search-bar/SearchBar'
+import SearchBar from '@/components/search-bar/SearchBar'
 
 const NavBar = () => {
     const { signOut, isGuestUser, user } = useUserAuth()

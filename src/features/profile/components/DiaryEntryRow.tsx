@@ -7,7 +7,8 @@ import {
     FaBookmark,
     FaPen,
 } from 'react-icons/fa'
-import type { DiaryAction, DiaryEntry } from '../types/profile'
+import type { DiaryAction, DiaryEntry } from '@/features/profile/types/profile'
+import { formatShortDate } from '@/lib/formatters'
 
 type DiaryEntryRowProps = {
     entry: DiaryEntry
@@ -23,12 +24,6 @@ const actionConfig: Record<
     want_to_listen: { icon: <FaBookmark />, label: 'Want to listen' },
     reviewed: { icon: <FaPen />, label: 'Reviewed' },
 }
-
-const formatDate = (iso: string) =>
-    new Date(iso).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-    })
 
 const DiaryEntryRow = ({ entry }: DiaryEntryRowProps) => {
     const config = actionConfig[entry.action]
@@ -50,7 +45,7 @@ const DiaryEntryRow = ({ entry }: DiaryEntryRowProps) => {
                     minW="44px"
                     className="pressd-mono"
                 >
-                    {formatDate(entry.created_at)}
+                    {formatShortDate(entry.created_at)}
                 </Text>
 
                 <Box

@@ -2,7 +2,7 @@ import { Box, Flex, Text } from '@chakra-ui/react'
 import { Link } from 'react-router'
 import SectionCard from '@/features/detail/components/SectionCard'
 import { RatingBarGraph } from './RatingBarGraph'
-import type { RatingItem } from '../types/profile'
+import type { RatingItem } from '@/features/profile/types/profile'
 
 type RatingsSectionProps = {
     ratings: RatingItem[]

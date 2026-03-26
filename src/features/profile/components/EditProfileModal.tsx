@@ -10,8 +10,8 @@ import {
     Textarea,
     VStack,
 } from '@chakra-ui/react'
-import { useEditProfile } from '../hooks/useEditProfile'
-import type { ProfileData } from '../types/profile'
+import { useEditProfile } from '@/features/profile/hooks/useEditProfile'
+import type { ProfileData } from '@/features/profile/types/profile'
 
 type EditProfileModalProps = {
     profile: ProfileData

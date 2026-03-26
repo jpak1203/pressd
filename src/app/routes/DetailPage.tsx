@@ -22,17 +22,11 @@ import { usePersistInteractions } from '@/features/detail/hooks/usePersistIntera
 import { useItemFallback } from '@/features/detail/hooks/useItemFallback'
 import { DiscographySection } from '@/features/detail/components/DiscographySection'
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext'
+import { formatFullDate } from '@/lib/formatters'
 
 type DetailPageProps = {
     type: ItemType
 }
-
-const formatDate = (iso: string) =>
-    new Date(iso).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    })
 
 const DetailPage = ({ type }: DetailPageProps) => {
     const { id } = useParams<{ id: string }>()
@@ -220,7 +214,7 @@ const DetailPage = ({ type }: DetailPageProps) => {
                                             </Box>
                                             <Text>
                                                 Listened on{' '}
-                                                {formatDate(entry.date)}
+                                                {formatFullDate(entry.date)}
                                             </Text>
                                         </HStack>
                                     ))}

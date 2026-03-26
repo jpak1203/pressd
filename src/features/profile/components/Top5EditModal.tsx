@@ -13,8 +13,8 @@ import {
 } from '@chakra-ui/react'
 import { FaTimes } from 'react-icons/fa'
 import { useSpotifySearch } from '@/features/search-results/hooks/useSpotifySearch'
-import { useEditTop5 } from '../hooks/useEditTop5'
-import type { Top5Category, Top5Item } from '../types/profile'
+import { useEditTop5 } from '@/features/profile/hooks/useEditTop5'
+import type { Top5Category, Top5Item } from '@/features/profile/types/profile'
 import type { SpotifySearchResponse } from '@/services/spotify/types'
 
 type Top5EditModalProps = {

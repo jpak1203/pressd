@@ -9,13 +9,8 @@ import {
     VStack,
 } from '@chakra-ui/react'
 import { FaSpotify } from 'react-icons/fa'
-import type { ItemDetail } from '../types/detail'
-
-const formatDuration = (ms: number) => {
-    const mins = Math.floor(ms / 60000)
-    const secs = Math.floor((ms % 60000) / 1000)
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-}
+import type { ItemDetail } from '@/features/detail/types/detail'
+import { formatDuration } from '@/lib/formatters'
 
 type DetailHeroProps = {
     item: ItemDetail
