@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { useLocation, useParams, Link } from 'react-router'
+import { useLocation, useNavigate, useParams, Link } from 'react-router'
 import {
     Box,
     Button,
@@ -12,7 +12,13 @@ import {
     VStack,
 } from '@chakra-ui/react'
 import { FaCalendarAlt } from 'react-icons/fa'
-import type { ItemDetail, ItemType } from '@/features/detail/types/detail'
+import type {
+    AlbumDetail,
+    ItemDetail,
+    ItemType,
+    TrackDetail,
+} from '@/features/detail/types/detail'
+import { useAlbumTracks } from '@/features/detail/hooks/useAlbumTracks'
 import DetailHero from '@/features/detail/components/DetailHero'
 import StarRating from '@/features/detail/components/StarRating'
 import ActionBar from '@/features/detail/components/ActionBar'
@@ -32,6 +38,7 @@ type DetailPageProps = {
 const DetailPage = ({ type }: DetailPageProps) => {
     const { id } = useParams<{ id: string }>()
     const { state } = useLocation()
+    const navigate = useNavigate()
     const { user } = useUserAuth()
 
     const initialItem = useMemo<ItemDetail | null>(() => {
@@ -69,7 +76,41 @@ const DetailPage = ({ type }: DetailPageProps) => {
         addLogEntry,
     } = usePersistInteractions(itemKey, item, user?.id ?? null)
 
-    if (isLoading) {
+    const isSingleTrackAlbum =
+        item?.type === 'album' && item.total_tracks === 1
+    const albumForTracks = isSingleTrackAlbum ? (item as AlbumDetail) : null
+    const { tracks: singleAlbumTracks, isLoading: isLoadingTracks } =
+        useAlbumTracks(
+            albumForTracks ?? ({ id: '', type: 'album' } as AlbumDetail)
+        )
+
+    useEffect(() => {
+        if (!isSingleTrackAlbum || isLoadingTracks || !albumForTracks) return
+        if (singleAlbumTracks.length !== 1) return
+
+        const track = singleAlbumTracks[0]
+        const trackState: TrackDetail = {
+            type: 'track',
+            id: track.id,
+            name: track.name,
+            image: albumForTracks.image,
+            artists: track.artists,
+            album: { id: albumForTracks.id, name: albumForTracks.name },
+            duration_ms: track.duration_ms,
+            release_date: albumForTracks.release_date,
+            external_url: track.external_url,
+        }
+
+        navigate(`/track/${track.id}`, { replace: true, state: trackState })
+    }, [
+        isSingleTrackAlbum,
+        isLoadingTracks,
+        singleAlbumTracks,
+        albumForTracks,
+        navigate,
+    ])
+
+    if (isLoading || isSingleTrackAlbum) {
         return (
             <Center minH="60vh">
                 <Spinner size="lg" color="var(--pressd-accent)" />

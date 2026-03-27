@@ -1,13 +1,13 @@
 import { Box, Image, Text } from '@chakra-ui/react'
-import { Link } from 'react-router'
 import type { AlbumDetail } from '@/features/detail/types/detail'
+import { AlbumLink } from '@/components/album-link/AlbumLink'
 
 const getReleaseYear = (date: string): string => date.slice(0, 4)
 
 type AlbumCardProps = { album: AlbumDetail }
 
 const AlbumCard = ({ album }: AlbumCardProps) => (
-    <Link to={`/album/${album.id}`} state={album} style={{ display: 'block' }}>
+    <AlbumLink album={album} style={{ display: 'block' }}>
         <Box
             borderRadius="6px"
             overflow="hidden"
@@ -58,7 +58,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => (
                 </Text>
             </Box>
         </Box>
-    </Link>
+    </AlbumLink>
 )
 
 export { AlbumCard }
