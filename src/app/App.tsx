@@ -5,7 +5,9 @@ import CreateAccountPage from '@/app/routes/CreateAccountPage'
 import SignInPage from '@/app/routes/SignInPage'
 import HomePage from '@/app/routes/HomePage'
 import SearchResultsPage from '@/app/routes/SearchResultsPage'
-import DetailPage from '@/app/routes/DetailPage'
+import { TrackDetailPage } from '@/app/routes/TrackDetailPage'
+import { AlbumDetailPage } from '@/app/routes/AlbumDetailPage'
+import { ArtistDetailPage } from '@/app/routes/ArtistDetailPage'
 import ProfilePage from '@/app/routes/ProfilePage'
 import { RatingsPage } from '@/app/routes/RatingsPage'
 import LayoutWrapper from '@/components/layout-wrapper/LayoutWrapper'
@@ -33,18 +35,9 @@ function App() {
                 <Route path="/signup" element={<CreateAccountPage />} />
                 <Route path="/signin" element={<SignInPage />} />
                 <Route path="/search" element={<SearchResultsPage />} />
-                <Route
-                    path="/track/:id"
-                    element={<DetailPage key="track" type="track" />}
-                />
-                <Route
-                    path="/album/:id"
-                    element={<DetailPage key="album" type="album" />}
-                />
-                <Route
-                    path="/artist/:id"
-                    element={<DetailPage key="artist" type="artist" />}
-                />
+                <Route path="/track/:id" element={<TrackDetailPage />} />
+                <Route path="/album/:id" element={<AlbumDetailPage />} />
+                <Route path="/artist/:id" element={<ArtistDetailPage />} />
                 <Route path="/profile/:id" element={<ProfilePage />} />
                 <Route path="/profile/:id/ratings" element={<RatingsPage />} />
             </Routes>
