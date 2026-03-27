@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase/client'
 import type {
     AlbumDetail,
+    AlbumTrackItem,
     DiscographyResult,
     ItemDetail,
     ItemType,
@@ -19,6 +20,7 @@ type SongRow = {
     external_url: string | null
     artists: ArtistRef[] | null
     albums: { spotify_id: string; name: string } | null
+    track_number: number | null
 }
 
 type AlbumRow = {
@@ -111,6 +113,8 @@ const fetchArtistFromCatalog = async (
     if (error || !data) return null
 
     const row = data as unknown as ArtistRow
+
+    if (!row.image_url) return null
 
     return {
         type: 'artist',
@@ -213,4 +217,29 @@ export const fetchArtistDiscography = async (
         albums: validRows.filter((r) => r.album_type === 'album').map(mapRow),
         singles: validRows.filter((r) => r.album_type === 'single').map(mapRow),
     }
+}
+
+export const fetchAlbumTracks = async (
+    albumId: string,
+    fetchFresh: (id: string) => Promise<AlbumTrackItem[]>
+): Promise<AlbumTrackItem[]> => {
+    const { data } = await supabase
+        .from('songs')
+        .select('spotify_id, name, track_number, duration_ms, artists, external_url')
+        .eq('album_spotify_id', albumId)
+        .not('track_number', 'is', null)
+        .order('track_number', { ascending: true })
+
+    if (data && data.length > 0) {
+        return data.map((r) => ({
+            id: r.spotify_id as string,
+            name: r.name as string,
+            track_number: r.track_number as number,
+            duration_ms: r.duration_ms as number,
+            artists: (r.artists as Array<{ id: string; name: string }>) ?? [],
+            external_url: (r.external_url as string | undefined) ?? undefined,
+        }))
+    }
+
+    return fetchFresh(albumId)
 }

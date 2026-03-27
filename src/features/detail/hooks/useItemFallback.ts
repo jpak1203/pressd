@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import type { ItemDetail, ItemType } from '@/features/detail/types/detail'
 import { fetchItemFromCatalog } from '@/features/detail/api/detailApi'
 import { lookupSpotifyItem } from '@/services/spotify/service'
@@ -8,7 +8,6 @@ export const useItemFallback = (
     id: string | undefined,
     initialItem: ItemDetail | null
 ): { item: ItemDetail | null; isLoading: boolean; error: string | null } => {
-    const initialItemRef = useRef(initialItem)
     const [item, setItem] = useState<ItemDetail | null>(initialItem)
     const [isLoading, setIsLoading] = useState(
         initialItem === null && id !== undefined
@@ -16,10 +15,21 @@ export const useItemFallback = (
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        if (initialItemRef.current !== null || id === undefined) return
+        if (initialItem !== null) {
+            setItem(initialItem)
+            setIsLoading(false)
+            setError(null)
+            return
+        }
+
+        if (id === undefined) return
 
         let cancelled = false
         const controller = new AbortController()
+
+        setItem(null)
+        setIsLoading(true)
+        setError(null)
 
         const load = async () => {
             try {
@@ -61,7 +71,7 @@ export const useItemFallback = (
             cancelled = true
             controller.abort()
         }
-    }, [type, id])
+    }, [type, id, initialItem])
 
     return { item, isLoading, error }
 }

@@ -4,6 +4,7 @@ import type {
     SpotifySearchResponse,
 } from '@/services/spotify/types'
 import type {
+    AlbumTrackItem,
     DiscographyResult,
     ItemDetail,
     ItemType,
@@ -124,4 +125,28 @@ export const fetchDiscographyFromEdge = async (
 
     if (!res.ok) throw new Error(`Discography fetch failed (${res.status})`)
     return res.json() as Promise<DiscographyResult>
+}
+
+export const fetchAlbumTracksFromEdge = async (
+    albumId: string,
+    signal?: AbortSignal
+): Promise<AlbumTrackItem[]> => {
+    if (!supabaseFnUrl || !supabasePublishableKey)
+        throw new Error('Missing env vars')
+
+    const accessToken = await getAccessToken()
+    const res = await fetch(`${supabaseFnUrl}/spotify-album-tracks`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            apikey: supabasePublishableKey,
+        },
+        body: JSON.stringify({ id: albumId }),
+        signal,
+    })
+
+    if (!res.ok) throw new Error(`Album tracks fetch failed (${res.status})`)
+    const data = await res.json() as { tracks: AlbumTrackItem[] }
+    return data.tracks
 }

@@ -41,6 +41,15 @@ export type DiscographyResult = {
 	singles: AlbumDetail[];
 };
 
+export type AlbumTrackItem = {
+    id: string
+    name: string
+    track_number: number
+    duration_ms: number
+    artists: Array<{ id: string; name: string }>
+    external_url?: string
+}
+
 export type Review = {
     id: string
     text: string
