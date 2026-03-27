@@ -114,6 +114,8 @@ const fetchArtistFromCatalog = async (
 
     const row = data as unknown as ArtistRow
 
+    if (!row.image_url) return null
+
     return {
         type: 'artist',
         id: row.spotify_id,
