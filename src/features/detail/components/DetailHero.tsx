@@ -8,6 +8,7 @@ import {
     Text,
     VStack,
 } from '@chakra-ui/react'
+import { Link } from 'react-router'
 import { FaSpotify } from 'react-icons/fa'
 import type { ItemDetail } from '@/features/detail/types/detail'
 import { formatDuration } from '@/lib/formatters'
@@ -140,15 +141,22 @@ const DetailHero = ({ item }: DetailHeroProps) => {
                                     }}
                                 >
                                     {item.artists.map((a, i) => (
-                                        <Text
+                                        <Link
                                             key={a.id}
-                                            color="var(--pressd-text-sub)"
-                                            fontSize="15px"
-                                            fontWeight="500"
+                                            to={`/artist/${a.id}`}
+                                            style={{ textDecoration: 'none' }}
                                         >
-                                            {a.name}
-                                            {i < item.artists.length - 1 && ','}
-                                        </Text>
+                                            <Text
+                                                color="var(--pressd-text-sub)"
+                                                fontSize="15px"
+                                                fontWeight="500"
+                                                _hover={{ color: 'var(--pressd-text)' }}
+                                                transition="color 0.15s"
+                                            >
+                                                {a.name}
+                                                {i < item.artists.length - 1 && ','}
+                                            </Text>
+                                        </Link>
                                     ))}
                                 </HStack>
                                 <HStack
@@ -160,7 +168,19 @@ const DetailHero = ({ item }: DetailHeroProps) => {
                                         md: 'flex-start',
                                     }}
                                 >
-                                    <Text>{item.album.name}</Text>
+                                    <Link
+                                        to={`/album/${item.album.id}`}
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Text
+                                            color="var(--pressd-text-muted)"
+                                            fontSize="13px"
+                                            _hover={{ color: 'var(--pressd-text-sub)' }}
+                                            transition="color 0.15s"
+                                        >
+                                            {item.album.name}
+                                        </Text>
+                                    </Link>
                                     {item.duration_ms > 0 && (
                                         <>
                                             <Text>·</Text>
@@ -190,15 +210,22 @@ const DetailHero = ({ item }: DetailHeroProps) => {
                                     }}
                                 >
                                     {item.artists.map((a, i) => (
-                                        <Text
+                                        <Link
                                             key={a.id}
-                                            color="var(--pressd-text-sub)"
-                                            fontSize="15px"
-                                            fontWeight="500"
+                                            to={`/artist/${a.id}`}
+                                            style={{ textDecoration: 'none' }}
                                         >
-                                            {a.name}
-                                            {i < item.artists.length - 1 && ','}
-                                        </Text>
+                                            <Text
+                                                color="var(--pressd-text-sub)"
+                                                fontSize="15px"
+                                                fontWeight="500"
+                                                _hover={{ color: 'var(--pressd-text)' }}
+                                                transition="color 0.15s"
+                                            >
+                                                {a.name}
+                                                {i < item.artists.length - 1 && ','}
+                                            </Text>
+                                        </Link>
                                     ))}
                                 </HStack>
                                 <HStack

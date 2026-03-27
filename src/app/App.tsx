@@ -35,15 +35,15 @@ function App() {
                 <Route path="/search" element={<SearchResultsPage />} />
                 <Route
                     path="/track/:id"
-                    element={<DetailPage type="track" />}
+                    element={<DetailPage key="track" type="track" />}
                 />
                 <Route
                     path="/album/:id"
-                    element={<DetailPage type="album" />}
+                    element={<DetailPage key="album" type="album" />}
                 />
                 <Route
                     path="/artist/:id"
-                    element={<DetailPage type="artist" />}
+                    element={<DetailPage key="artist" type="artist" />}
                 />
                 <Route path="/profile/:id" element={<ProfilePage />} />
                 <Route path="/profile/:id/ratings" element={<RatingsPage />} />

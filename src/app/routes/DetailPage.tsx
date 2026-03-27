@@ -21,6 +21,7 @@ import SectionCard from '@/features/detail/components/SectionCard'
 import { usePersistInteractions } from '@/features/detail/hooks/usePersistInteractions'
 import { useItemFallback } from '@/features/detail/hooks/useItemFallback'
 import { DiscographySection } from '@/features/detail/components/DiscographySection'
+import { AlbumTracklist } from '@/features/detail/components/AlbumTracklist'
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext'
 import { formatFullDate } from '@/lib/formatters'
 
@@ -220,6 +221,11 @@ const DetailPage = ({ type }: DetailPageProps) => {
                                     ))}
                                 </VStack>
                             </SectionCard>
+                        )}
+
+                        {/* Track listing (albums only) */}
+                        {item.type === 'album' && (
+                            <AlbumTracklist album={item} />
                         )}
 
                         {/* Reviews */}
