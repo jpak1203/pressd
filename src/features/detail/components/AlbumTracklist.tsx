@@ -2,8 +2,9 @@ import { Box, Flex, Skeleton, Text, VStack } from '@chakra-ui/react'
 import { Link } from 'react-router'
 import SectionCard from '@/features/detail/components/SectionCard'
 import { useAlbumTracks } from '@/features/detail/hooks/useAlbumTracks'
+import { buildTrackDetail } from '@/features/detail/utils/buildTrackDetail'
 import { formatDuration } from '@/lib/formatters'
-import type { AlbumDetail, TrackDetail } from '@/features/detail/types/detail'
+import type { AlbumDetail } from '@/features/detail/types/detail'
 
 type AlbumTracklistProps = { album: AlbumDetail }
 
@@ -40,17 +41,7 @@ export const AlbumTracklist = ({ album }: AlbumTracklistProps) => {
             ) : (
                 <VStack align="stretch" gap="0">
                     {tracks.map((track) => {
-                        const trackState: TrackDetail = {
-                            type: 'track',
-                            id: track.id,
-                            name: track.name,
-                            image: album.image,
-                            artists: track.artists,
-                            album: { id: album.id, name: album.name },
-                            duration_ms: track.duration_ms,
-                            release_date: album.release_date,
-                            external_url: track.external_url,
-                        }
+                        const trackState = buildTrackDetail(track, album)
                         return (
                             <Link
                                 key={track.id}

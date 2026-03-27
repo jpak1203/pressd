@@ -12,13 +12,9 @@ import {
     VStack,
 } from '@chakra-ui/react'
 import { FaCalendarAlt } from 'react-icons/fa'
-import type {
-    AlbumDetail,
-    ItemDetail,
-    ItemType,
-    TrackDetail,
-} from '@/features/detail/types/detail'
+import type { ItemDetail, ItemType } from '@/features/detail/types/detail'
 import { useAlbumTracks } from '@/features/detail/hooks/useAlbumTracks'
+import { buildTrackDetail } from '@/features/detail/utils/buildTrackDetail'
 import DetailHero from '@/features/detail/components/DetailHero'
 import StarRating from '@/features/detail/components/StarRating'
 import ActionBar from '@/features/detail/components/ActionBar'
@@ -76,41 +72,20 @@ const DetailPage = ({ type }: DetailPageProps) => {
         addLogEntry,
     } = usePersistInteractions(itemKey, item, user?.id ?? null)
 
-    const isSingleTrackAlbum =
-        item?.type === 'album' && item.total_tracks === 1
-    const albumForTracks = isSingleTrackAlbum ? (item as AlbumDetail) : null
+    const singleTrackAlbum =
+        item?.type === 'album' && item.total_tracks === 1 ? item : null
     const { tracks: singleAlbumTracks, isLoading: isLoadingTracks } =
-        useAlbumTracks(
-            albumForTracks ?? ({ id: '', type: 'album' } as AlbumDetail)
-        )
+        useAlbumTracks(singleTrackAlbum)
 
     useEffect(() => {
-        if (!isSingleTrackAlbum || isLoadingTracks || !albumForTracks) return
+        if (!singleTrackAlbum || isLoadingTracks) return
         if (singleAlbumTracks.length !== 1) return
 
-        const track = singleAlbumTracks[0]
-        const trackState: TrackDetail = {
-            type: 'track',
-            id: track.id,
-            name: track.name,
-            image: albumForTracks.image,
-            artists: track.artists,
-            album: { id: albumForTracks.id, name: albumForTracks.name },
-            duration_ms: track.duration_ms,
-            release_date: albumForTracks.release_date,
-            external_url: track.external_url,
-        }
+        const trackState = buildTrackDetail(singleAlbumTracks[0], singleTrackAlbum)
+        navigate(`/track/${trackState.id}`, { replace: true, state: trackState })
+    }, [singleTrackAlbum, isLoadingTracks, singleAlbumTracks, navigate])
 
-        navigate(`/track/${track.id}`, { replace: true, state: trackState })
-    }, [
-        isSingleTrackAlbum,
-        isLoadingTracks,
-        singleAlbumTracks,
-        albumForTracks,
-        navigate,
-    ])
-
-    if (isLoading || isSingleTrackAlbum) {
+    if (isLoading || singleTrackAlbum) {
         return (
             <Center minH="60vh">
                 <Spinner size="lg" color="var(--pressd-accent)" />

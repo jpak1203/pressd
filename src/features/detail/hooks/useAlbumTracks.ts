@@ -8,13 +8,18 @@ type AlbumTracksState = {
     isLoading: boolean
 }
 
-export const useAlbumTracks = (album: AlbumDetail): AlbumTracksState => {
+export const useAlbumTracks = (
+    album: AlbumDetail | null
+): AlbumTracksState => {
     const [state, setState] = useState<AlbumTracksState>({
         tracks: [],
-        isLoading: true,
+        isLoading: album !== null,
     })
 
     useEffect(() => {
+        if (!album) return
+
+        setState({ tracks: [], isLoading: true })
         const controller = new AbortController()
         fetchAlbumTracks(album.id, (id) =>
             fetchAlbumTracksFromEdge(id, controller.signal)
@@ -25,7 +30,7 @@ export const useAlbumTracks = (album: AlbumDetail): AlbumTracksState => {
                 setState({ tracks: [], isLoading: false })
             })
         return () => controller.abort()
-    }, [album.id])
+    }, [album?.id])
 
     return state
 }

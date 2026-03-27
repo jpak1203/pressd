@@ -1,6 +1,7 @@
 import { type ReactNode, type MouseEvent, useCallback, useRef } from 'react'
 import { Link, useNavigate } from 'react-router'
-import type { AlbumDetail, TrackDetail } from '@/features/detail/types/detail'
+import type { AlbumDetail } from '@/features/detail/types/detail'
+import { buildTrackDetail } from '@/features/detail/utils/buildTrackDetail'
 import { fetchAlbumTracks } from '@/features/detail/api/detailApi'
 import { fetchAlbumTracksFromEdge } from '@/services/spotify/service'
 
@@ -23,33 +24,21 @@ export const AlbumLink = ({ album, children, style }: AlbumLinkProps) => {
             const controller = new AbortController()
             controllerRef.current = controller
 
+            const goToAlbum = () =>
+                navigate(`/album/${album.id}`, { state: album })
+
             fetchAlbumTracks(album.id, (id) =>
                 fetchAlbumTracksFromEdge(id, controller.signal)
             )
                 .then((tracks) => {
                     if (controller.signal.aborted) return
+                    if (tracks.length !== 1) return goToAlbum()
 
-                    if (tracks.length === 1) {
-                        const track = tracks[0]
-                        const trackState: TrackDetail = {
-                            type: 'track',
-                            id: track.id,
-                            name: track.name,
-                            image: album.image,
-                            artists: track.artists,
-                            album: { id: album.id, name: album.name },
-                            duration_ms: track.duration_ms,
-                            release_date: album.release_date,
-                            external_url: track.external_url,
-                        }
-                        navigate(`/track/${track.id}`, { state: trackState })
-                    } else {
-                        navigate(`/album/${album.id}`, { state: album })
-                    }
+                    const trackState = buildTrackDetail(tracks[0], album)
+                    navigate(`/track/${tracks[0].id}`, { state: trackState })
                 })
                 .catch(() => {
-                    if (controller.signal.aborted) return
-                    navigate(`/album/${album.id}`, { state: album })
+                    if (!controller.signal.aborted) goToAlbum()
                 })
         },
         [album, navigate]

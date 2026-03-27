@@ -1,7 +1,6 @@
 import { HStack, Flex, Text } from '@chakra-ui/react'
 import { Link } from 'react-router'
 import type { SearchItemRowType } from '@/features/search-results/types/search-results'
-import type { AlbumDetail } from '@/features/detail/types/detail'
 import { formatRating } from '@/features/search-results/utils/searchResultsUtils'
 import SearchResultsImage from '@/features/search-results/components/search-results-image/SearchResultsImage'
 import { AlbumLink } from '@/components/album-link/AlbumLink'
@@ -65,9 +64,9 @@ const SearchResultsRow = ({
         </HStack>
     )
 
-    if (itemType === 'album' && stateData.type === 'album') {
+    if (stateData.type === 'album') {
         return (
-            <AlbumLink album={stateData as AlbumDetail} style={linkStyle}>
+            <AlbumLink album={stateData} style={linkStyle}>
                 {content}
             </AlbumLink>
         )
