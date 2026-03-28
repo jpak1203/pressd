@@ -59,7 +59,7 @@ const RatingsSection = ({ ratings, profileId }: RatingsSectionProps) => {
                             color="var(--pressd-accent)"
                             lineHeight="1"
                         >
-                            {avgRating.toFixed(1)}
+                            {(avgRating / 2).toFixed(2)}
                         </Text>
                         <Text
                             className="pressd-mono"

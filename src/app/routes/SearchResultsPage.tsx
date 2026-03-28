@@ -1,5 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSpotifySearch } from '@/features/search-results/hooks/useSpotifySearch'
+import { useAverageRatings } from '@/features/home-page/hooks/useAverageRatings'
+import type { ItemDetail } from '@/features/detail/types/detail'
 import { useSearchParams } from 'react-router'
 import {
     Box,
@@ -26,6 +28,35 @@ const SearchResultsPage = () => {
     useEffect(() => {
         setQuery(queryFromUrl)
     }, [queryFromUrl, setQuery])
+
+    const ratableItems = useMemo<ItemDetail[]>(() => {
+        if (!spotify.data) return []
+        const tracks: ItemDetail[] = spotify.data.tracks.map((t) => ({
+            type: 'track' as const,
+            id: t.id,
+            name: t.name,
+            image: t.image_url ?? t.album.image,
+            artists: t.artists,
+            album: { id: t.album.id, name: t.album.name },
+            duration_ms: t.duration_ms,
+            release_date: t.release_date ?? null,
+            external_url: t.external_url,
+        }))
+        const albums: ItemDetail[] = spotify.data.albums.map((a) => ({
+            type: 'album' as const,
+            id: a.id,
+            name: a.name,
+            image: a.image,
+            artists: a.artists,
+            release_date: a.release_date,
+            total_tracks: a.total_tracks,
+            album_type: a.album_type,
+            external_url: a.external_url,
+        }))
+        return [...tracks, ...albums]
+    }, [spotify.data])
+
+    const avgRatings = useAverageRatings(ratableItems)
 
     return (
         <Box minH="100%" py={{ base: '5', md: '7' }}>
@@ -133,7 +164,7 @@ const SearchResultsPage = () => {
                                                 id={track.id}
                                                 title={track.name}
                                                 image={track.album.image}
-                                                rating={undefined}
+                                                rating={avgRatings.get(`track:${track.id}`)}
                                                 showRating
                                                 itemType="track"
                                                 stateData={{
@@ -173,7 +204,7 @@ const SearchResultsPage = () => {
                                                 id={album.id}
                                                 title={album.name}
                                                 image={album.image}
-                                                rating={undefined}
+                                                rating={avgRatings.get(`album:${album.id}`)}
                                                 showRating
                                                 itemType="album"
                                                 stateData={{

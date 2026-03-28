@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import type { ItemInteraction, Review, LogEntry } from '@/features/detail/types/detail'
+import type { ItemInteraction, Review } from '@/features/detail/types/detail'
 
 const STORAGE_KEY = 'pressd_interactions'
 
@@ -42,7 +42,14 @@ export const useDetailInteractions = (itemKey: string) => {
     )
 
     const setRating = useCallback(
-        (rating: number | null) => persist({ ...interactions, rating }),
+        (rating: number | null) =>
+            persist({
+                ...interactions,
+                rating,
+                ...(rating !== null
+                    ? { listened: true, wantToListen: false }
+                    : {}),
+            }),
         [interactions, persist]
     )
 
@@ -95,19 +102,6 @@ export const useDetailInteractions = (itemKey: string) => {
         [interactions, persist]
     )
 
-    const addLogEntry = useCallback(() => {
-        const newEntry: LogEntry = {
-            id: crypto.randomUUID(),
-            date: new Date().toISOString(),
-        }
-        persist({
-            ...interactions,
-            logEntries: [newEntry, ...interactions.logEntries],
-            listened: true,
-            wantToListen: false,
-        })
-    }, [interactions, persist])
-
     return {
         interactions,
         setRating,
@@ -116,6 +110,5 @@ export const useDetailInteractions = (itemKey: string) => {
         toggleWantToListen,
         addReview,
         removeReview,
-        addLogEntry,
     }
 }

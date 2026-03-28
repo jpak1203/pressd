@@ -1,12 +1,9 @@
 import { Box, Flex, HStack, Text, VStack } from '@chakra-ui/react'
-import { FaCalendarAlt } from 'react-icons/fa'
 import type { ItemType, ItemInteraction } from '@/features/detail/types/detail'
 import SectionCard from '@/features/detail/components/SectionCard'
-import StarRating from '@/features/detail/components/StarRating'
+import { StarRating } from '@/features/detail/components/StarRating'
 import ActionBar from '@/features/detail/components/ActionBar'
 import ReviewSection from '@/features/detail/components/ReviewSection'
-import { formatFullDate } from '@/lib/formatters'
-
 type ActivitySectionProps = {
     type: ItemType
     interactions: ItemInteraction
@@ -16,7 +13,6 @@ type ActivitySectionProps = {
     toggleWantToListen: () => void
     addReview: (text: string, rating: number | null) => void
     removeReview: (id: string) => void
-    addLogEntry: () => void
 }
 
 export const ActivitySection = ({
@@ -28,7 +24,6 @@ export const ActivitySection = ({
     toggleWantToListen,
     addReview,
     removeReview,
-    addLogEntry,
 }: ActivitySectionProps) => (
     <>
         <SectionCard label="your activity">
@@ -69,7 +64,7 @@ export const ActivitySection = ({
                                 lineHeight="1"
                                 className="pressd-mono"
                             >
-                                {interactions.rating} / 5
+                                {interactions.rating / 2} / 5
                             </Text>
                         </HStack>
                     )}
@@ -81,37 +76,10 @@ export const ActivitySection = ({
                         onToggleLike={toggleLike}
                         onToggleListened={toggleListened}
                         onToggleWantToListen={toggleWantToListen}
-                        onAddLog={addLogEntry}
                     />
                 </Box>
             </VStack>
         </SectionCard>
-
-        {interactions.logEntries.length > 0 && (
-            <SectionCard
-                label={`listening log (${interactions.logEntries.length})`}
-            >
-                <VStack align="stretch" gap="2">
-                    {interactions.logEntries.map((entry) => (
-                        <HStack
-                            key={entry.id}
-                            gap="2.5"
-                            color="var(--pressd-text-sub)"
-                            fontSize="13px"
-                        >
-                            <Box
-                                color="var(--pressd-accent)"
-                                fontSize="11px"
-                                flexShrink={0}
-                            >
-                                <FaCalendarAlt />
-                            </Box>
-                            <Text>Listened on {formatFullDate(entry.date)}</Text>
-                        </HStack>
-                    ))}
-                </VStack>
-            </SectionCard>
-        )}
 
         <SectionCard label={`reviews (${interactions.reviews.length})`}>
             <ReviewSection

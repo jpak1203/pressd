@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { FaTrash } from 'react-icons/fa'
 import type { Review } from '@/features/detail/types/detail'
-import StarRating from './StarRating'
+import { StarRating } from './StarRating'
 
 type ReviewSectionProps = {
     reviews: Review[]
