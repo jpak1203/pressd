@@ -12,11 +12,11 @@ import { DiarySection } from '@/features/profile/components/DiarySection'
 import type { Top5Category } from '@/features/profile/types/profile'
 
 const ProfilePage = () => {
-    const { id } = useParams<{ id: string }>()
+    const { username } = useParams<{ username: string }>()
     const { user } = useUserAuth()
-    const { data, isLoading, error, refetch } = useProfile(id)
+    const { data, isLoading, error, refetch } = useProfile(username)
 
-    const isOwnProfile = !!user && user.id === id
+    const isOwnProfile = !!user && data?.profile.id === user.id
 
     const [editProfileOpen, setEditProfileOpen] = useState(false)
     const [editTop5Category, setEditTop5Category] =
@@ -84,7 +84,7 @@ const ProfilePage = () => {
 
                     <RatingsSection
                         ratings={data.ratings}
-                        profileId={data.profile.id}
+                        username={data.profile.username}
                     />
                     <DiarySection entries={data.diary} />
                 </VStack>

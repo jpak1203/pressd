@@ -1,28 +1,30 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
-    fetchProfile,
+    fetchProfileByUsername,
     fetchTop5,
     fetchRatings,
     fetchDiary,
 } from '@/features/profile/api/profileApi'
 import type { FullProfileData, Top5Category, Top5Item } from '@/features/profile/types/profile'
 
-export const useProfile = (id: string | undefined) => {
+export const useProfile = (username: string | undefined) => {
     const [data, setData] = useState<FullProfileData | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
     const refetch = useCallback(async () => {
-        if (!id) return
+        if (!username) return
         setIsLoading(true)
         setError(null)
 
         try {
-            const [profile, top5Raw, ratings, diary] = await Promise.all([
-                fetchProfile(id),
-                fetchTop5(id),
-                fetchRatings(id),
-                fetchDiary(id),
+            const profile = await fetchProfileByUsername(username)
+            const profileId = profile.id as string
+
+            const [top5Raw, ratings, diary] = await Promise.all([
+                fetchTop5(profileId),
+                fetchRatings(profileId),
+                fetchDiary(profileId),
             ])
 
             const grouped: Record<Top5Category, Top5Item[]> = {
@@ -71,7 +73,7 @@ export const useProfile = (id: string | undefined) => {
         } finally {
             setIsLoading(false)
         }
-    }, [id])
+    }, [username])
 
     useEffect(() => {
         void refetch()

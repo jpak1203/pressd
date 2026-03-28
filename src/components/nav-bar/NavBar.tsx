@@ -68,7 +68,7 @@ const NavBar = () => {
                                 _hover={{ color: 'var(--pressd-text)' }}
                                 transition="color 0.15s ease"
                             >
-                                <RouterLink to={`/profile/${user.id}`}>
+                                <RouterLink to={`/profile/${(user.user_metadata?.username as string) ?? user.id}`}>
                                     profile
                                 </RouterLink>
                             </ChakraLink>

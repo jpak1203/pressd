@@ -6,17 +6,17 @@ import type { RatingItem } from '@/features/profile/types/profile'
 
 type RatingsSectionProps = {
     ratings: RatingItem[]
-    profileId: string
+    username: string
 }
 
-const RatingsSection = ({ ratings, profileId }: RatingsSectionProps) => {
+const RatingsSection = ({ ratings, username }: RatingsSectionProps) => {
     const avgRating =
         ratings.length > 0
             ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
             : 0
 
     const label = (
-        <Link to={`/profile/${profileId}/ratings`}>
+        <Link to={`/profile/${username}/ratings`}>
             <Text
                 as="span"
                 className="pressd-mono"

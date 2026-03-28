@@ -38,8 +38,8 @@ function App() {
                 <Route path="/track/:id" element={<TrackDetailPage />} />
                 <Route path="/album/:id" element={<AlbumDetailPage />} />
                 <Route path="/artist/:id" element={<ArtistDetailPage />} />
-                <Route path="/profile/:id" element={<ProfilePage />} />
-                <Route path="/profile/:id/ratings" element={<RatingsPage />} />
+                <Route path="/profile/:username" element={<ProfilePage />} />
+                <Route path="/profile/:username/ratings" element={<RatingsPage />} />
             </Routes>
         </LayoutWrapper>
     )
