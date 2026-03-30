@@ -29,6 +29,17 @@ export const fetchProfile = async (id: string) => {
     return data
 }
 
+export const fetchProfileByUsername = async (username: string) => {
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('username', username)
+        .single()
+
+    if (error) throw error
+    return data
+}
+
 export const fetchTop5 = async (profileId: string) => {
     const { data, error } = await supabase
         .from('top5')

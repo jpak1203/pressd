@@ -53,8 +53,8 @@ const sortRatings = (
 }
 
 const RatingsPage = () => {
-    const { id } = useParams<{ id: string }>()
-    const { data, isLoading, error } = useProfile(id)
+    const { username } = useParams<{ username: string }>()
+    const { data, isLoading, error } = useProfile(username)
     const [sort, setSort] = useState<RatingSortOption>('newest')
 
     const sortedRatings = useMemo(
@@ -87,7 +87,7 @@ const RatingsPage = () => {
             py={{ base: '6', md: '8' }}
         >
             <Flex align="center" gap="3" mb="2">
-                <Link to={`/profile/${id}`}>
+                <Link to={`/profile/${username}`}>
                     <Text
                         className="pressd-mono"
                         fontSize="10px"

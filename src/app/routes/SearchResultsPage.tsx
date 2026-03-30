@@ -1,5 +1,4 @@
-import { useEffect, useMemo } from 'react'
-import { useSpotifySearch } from '@/features/search-results/hooks/useSpotifySearch'
+import { useMemo } from 'react'
 import { useAverageRatings } from '@/features/home-page/hooks/useAverageRatings'
 import type { ItemDetail } from '@/features/detail/types/detail'
 import { useSearchParams } from 'react-router'
@@ -11,23 +10,273 @@ import {
     Flex,
     Heading,
     HStack,
-    SimpleGrid,
     Spinner,
     Text,
     VStack,
 } from '@chakra-ui/react'
+import { useUnifiedSearch } from '@/features/search-results/hooks/useUnifiedSearch'
+import { SearchFilterPills } from '@/features/search-results/components/search-filter-pills/SearchFilterPills'
+import { SearchSection } from '@/features/search-results/components/search-section/SearchSection'
 import SearchLoadingList from '@/features/search-results/components/search-loading-list/SearchLoadingList'
 import SearchResultsRow from '@/features/search-results/components/search-results-row/SearchResultsRow'
 import SearchResultsList from '@/features/search-results/components/search-results-list/SearchResultsList'
+import { UserSearchRow } from '@/features/search-results/components/user-search-row/UserSearchRow'
+import { PlaylistSearchRow } from '@/features/search-results/components/playlist-search-row/PlaylistSearchRow'
+import type { SearchFilter } from '@/features/search-results/types/search-results'
+
+const VALID_FILTERS = new Set<SearchFilter>([
+    'all',
+    'tracks',
+    'albums',
+    'artists',
+    'playlists',
+    'users',
+])
+
+const parseFilter = (value: string | null): SearchFilter => {
+    if (value && VALID_FILTERS.has(value as SearchFilter)) {
+        return value as SearchFilter
+    }
+    return 'all'
+}
 
 const SearchResultsPage = () => {
-    const [searchParams] = useSearchParams()
+    const [searchParams, setSearchParams] = useSearchParams()
     const queryFromUrl = searchParams.get('query') ?? ''
-    const { setQuery, ...spotify } = useSpotifySearch()
+    const filter = parseFilter(searchParams.get('filter'))
 
-    useEffect(() => {
-        setQuery(queryFromUrl)
-    }, [queryFromUrl, setQuery])
+    const { spotify, users, playlists, isAnyLoading } = useUnifiedSearch(
+        queryFromUrl,
+        filter
+    )
+
+    const setFilter = (newFilter: SearchFilter) => {
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev)
+            if (newFilter === 'all') {
+                next.delete('filter')
+            } else {
+                next.set('filter', newFilter)
+            }
+            return next
+        })
+    }
+
+    const isAll = filter === 'all'
+    const hasQuery = queryFromUrl.length >= 2
+    const showSpotifyLoading =
+        spotify.isLoading || (spotify.data === null && hasQuery)
+
+    const trackRows = spotify.data?.tracks.map((track) => (
+        <SearchResultsRow
+            key={track.id}
+            id={track.id}
+            title={track.name}
+            image={track.album.image}
+            rating={undefined}
+            showRating
+            itemType="track"
+            stateData={{
+                type: 'track',
+                id: track.id,
+                name: track.name,
+                image: track.image_url ?? track.album.image,
+                artists: track.artists,
+                album: { id: track.album.id, name: track.album.name },
+                duration_ms: track.duration_ms,
+                release_date: track.release_date ?? null,
+                external_url: track.external_url,
+            }}
+        />
+    ))
+
+    const albumRows = spotify.data?.albums.map((album) => (
+        <SearchResultsRow
+            key={album.id}
+            id={album.id}
+            title={album.name}
+            image={album.image}
+            rating={undefined}
+            showRating
+            itemType="album"
+            stateData={{
+                type: 'album',
+                id: album.id,
+                name: album.name,
+                image: album.image,
+                artists: album.artists,
+                release_date: album.release_date,
+                total_tracks: album.total_tracks,
+                album_type: album.album_type,
+                external_url: album.external_url,
+            }}
+        />
+    ))
+
+    const artistRows = spotify.data?.artists.map((artist) => (
+        <SearchResultsRow
+            key={artist.id}
+            id={artist.id}
+            title={artist.name}
+            image={artist.image}
+            showRating={false}
+            itemType="artist"
+            stateData={{
+                type: 'artist',
+                id: artist.id,
+                name: artist.name,
+                image: artist.image,
+                genres: artist.genres,
+                popularity: artist.popularity,
+                external_url: artist.external_url,
+            }}
+        />
+    ))
+
+    const userRows = users.data.map((user) => (
+        <UserSearchRow key={user.id} user={user} />
+    ))
+
+    const playlistRows = playlists.data.map((playlist) => (
+        <PlaylistSearchRow key={playlist.id} playlist={playlist} />
+    ))
+
+    const renderAllView = () => (
+        <VStack align="stretch" gap="4">
+            {showSpotifyLoading ? (
+                <>
+                    <SearchLoadingList title="tracks" />
+                    <SearchLoadingList title="albums" />
+                    <SearchLoadingList title="artists" />
+                </>
+            ) : (
+                <>
+                    <SearchSection
+                        title="tracks"
+                        emptyText="No tracks found."
+                        isEmpty={(spotify.data?.tracks.length ?? 0) === 0}
+                        onSeeAll={() => setFilter('tracks')}
+                        showSeeAll={(spotify.data?.tracks.length ?? 0) > 0}
+                    >
+                        {trackRows}
+                    </SearchSection>
+                    <SearchSection
+                        title="albums"
+                        emptyText="No albums found."
+                        isEmpty={(spotify.data?.albums.length ?? 0) === 0}
+                        onSeeAll={() => setFilter('albums')}
+                        showSeeAll={(spotify.data?.albums.length ?? 0) > 0}
+                    >
+                        {albumRows}
+                    </SearchSection>
+                    <SearchSection
+                        title="artists"
+                        emptyText="No artists found."
+                        isEmpty={(spotify.data?.artists.length ?? 0) === 0}
+                        onSeeAll={() => setFilter('artists')}
+                        showSeeAll={(spotify.data?.artists.length ?? 0) > 0}
+                    >
+                        {artistRows}
+                    </SearchSection>
+                </>
+            )}
+            {users.isLoading ? (
+                <SearchLoadingList title="users" />
+            ) : (
+                <SearchSection
+                    title="users"
+                    emptyText="No users found."
+                    isEmpty={users.data.length === 0}
+                    onSeeAll={() => setFilter('users')}
+                    showSeeAll={users.data.length > 0}
+                >
+                    {userRows}
+                </SearchSection>
+            )}
+            {playlists.isLoading ? (
+                <SearchLoadingList title="playlists" />
+            ) : (
+                <SearchSection
+                    title="playlists"
+                    emptyText="No playlists found."
+                    isEmpty={playlists.data.length === 0}
+                    onSeeAll={() => setFilter('playlists')}
+                    showSeeAll={playlists.data.length > 0}
+                >
+                    {playlistRows}
+                </SearchSection>
+            )}
+        </VStack>
+    )
+
+    const renderSingleCategory = () => {
+        if (filter === 'tracks') {
+            return showSpotifyLoading ? (
+                <SearchLoadingList title="tracks" />
+            ) : (
+                <SearchResultsList
+                    title="tracks"
+                    emptyText="No tracks found."
+                    isEmpty={(spotify.data?.tracks.length ?? 0) === 0}
+                >
+                    {trackRows}
+                </SearchResultsList>
+            )
+        }
+        if (filter === 'albums') {
+            return showSpotifyLoading ? (
+                <SearchLoadingList title="albums" />
+            ) : (
+                <SearchResultsList
+                    title="albums"
+                    emptyText="No albums found."
+                    isEmpty={(spotify.data?.albums.length ?? 0) === 0}
+                >
+                    {albumRows}
+                </SearchResultsList>
+            )
+        }
+        if (filter === 'artists') {
+            return showSpotifyLoading ? (
+                <SearchLoadingList title="artists" />
+            ) : (
+                <SearchResultsList
+                    title="artists"
+                    emptyText="No artists found."
+                    isEmpty={(spotify.data?.artists.length ?? 0) === 0}
+                >
+                    {artistRows}
+                </SearchResultsList>
+            )
+        }
+        if (filter === 'users') {
+            return users.isLoading ? (
+                <SearchLoadingList title="users" />
+            ) : (
+                <SearchResultsList
+                    title="users"
+                    emptyText="No users found."
+                    isEmpty={users.data.length === 0}
+                >
+                    {userRows}
+                </SearchResultsList>
+            )
+        }
+        if (filter === 'playlists') {
+            return playlists.isLoading ? (
+                <SearchLoadingList title="playlists" />
+            ) : (
+                <SearchResultsList
+                    title="playlists"
+                    emptyText="No playlists found."
+                    isEmpty={playlists.data.length === 0}
+                >
+                    {playlistRows}
+                </SearchResultsList>
+            )
+        }
+        return null
+    }
 
     const ratableItems = useMemo<ItemDetail[]>(() => {
         if (!spotify.data) return []
@@ -87,13 +336,18 @@ const SearchResultsPage = () => {
                                     : 'Start searching'}
                             </Heading>
                         </Box>
-                        {spotify.isLoading && (
+                        {isAnyLoading && (
                             <HStack color="var(--pressd-accent)">
                                 <Spinner size="sm" />
-                                <Text fontSize="sm">Searching Spotify...</Text>
+                                <Text fontSize="sm">Searching...</Text>
                             </HStack>
                         )}
                     </Flex>
+
+                    <SearchFilterPills
+                        activeFilter={filter}
+                        onFilterChange={setFilter}
+                    />
 
                     {spotify.error && !spotify.isLoading ? (
                         <Center
@@ -138,126 +392,10 @@ const SearchResultsPage = () => {
                                 Try again
                             </Button>
                         </Center>
+                    ) : isAll ? (
+                        renderAllView()
                     ) : (
-                        <SimpleGrid columns={{ base: 1, lg: 3 }} gap="4">
-                            {spotify.isLoading ||
-                            (spotify.data === null &&
-                                queryFromUrl.length >= 2) ? (
-                                <>
-                                    <SearchLoadingList title="tracks" />
-                                    <SearchLoadingList title="albums" />
-                                    <SearchLoadingList title="artists" />
-                                </>
-                            ) : (
-                                <>
-                                    <SearchResultsList
-                                        title="tracks"
-                                        emptyText="No tracks found."
-                                        isEmpty={
-                                            (spotify.data?.tracks.length ??
-                                                0) === 0
-                                        }
-                                    >
-                                        {spotify.data?.tracks.map((track) => (
-                                            <SearchResultsRow
-                                                key={track.id}
-                                                id={track.id}
-                                                title={track.name}
-                                                image={track.album.image}
-                                                rating={avgRatings.get(`track:${track.id}`)}
-                                                showRating
-                                                itemType="track"
-                                                stateData={{
-                                                    type: 'track',
-                                                    id: track.id,
-                                                    name: track.name,
-                                                    image:
-                                                        track.image_url ??
-                                                        track.album.image,
-                                                    artists: track.artists,
-                                                    album: {
-                                                        id: track.album.id,
-                                                        name: track.album.name,
-                                                    },
-                                                    duration_ms:
-                                                        track.duration_ms,
-                                                    release_date:
-                                                        track.release_date ??
-                                                        null,
-                                                    external_url:
-                                                        track.external_url,
-                                                }}
-                                            />
-                                        ))}
-                                    </SearchResultsList>
-                                    <SearchResultsList
-                                        title="albums"
-                                        emptyText="No albums found."
-                                        isEmpty={
-                                            (spotify.data?.albums.length ??
-                                                0) === 0
-                                        }
-                                    >
-                                        {spotify.data?.albums.map((album) => (
-                                            <SearchResultsRow
-                                                key={album.id}
-                                                id={album.id}
-                                                title={album.name}
-                                                image={album.image}
-                                                rating={avgRatings.get(`album:${album.id}`)}
-                                                showRating
-                                                itemType="album"
-                                                stateData={{
-                                                    type: 'album',
-                                                    id: album.id,
-                                                    name: album.name,
-                                                    image: album.image,
-                                                    artists: album.artists,
-                                                    release_date:
-                                                        album.release_date,
-                                                    total_tracks:
-                                                        album.total_tracks,
-                                                    album_type:
-                                                        album.album_type,
-                                                    external_url:
-                                                        album.external_url,
-                                                }}
-                                            />
-                                        ))}
-                                    </SearchResultsList>
-                                    <SearchResultsList
-                                        title="artists"
-                                        emptyText="No artists found."
-                                        isEmpty={
-                                            (spotify.data?.artists.length ??
-                                                0) === 0
-                                        }
-                                    >
-                                        {spotify.data?.artists.map((artist) => (
-                                            <SearchResultsRow
-                                                key={artist.id}
-                                                id={artist.id}
-                                                title={artist.name}
-                                                image={artist.image}
-                                                showRating={false}
-                                                itemType="artist"
-                                                stateData={{
-                                                    type: 'artist',
-                                                    id: artist.id,
-                                                    name: artist.name,
-                                                    image: artist.image,
-                                                    genres: artist.genres,
-                                                    popularity:
-                                                        artist.popularity,
-                                                    external_url:
-                                                        artist.external_url,
-                                                }}
-                                            />
-                                        ))}
-                                    </SearchResultsList>
-                                </>
-                            )}
-                        </SimpleGrid>
+                        renderSingleCategory()
                     )}
                 </VStack>
             </Container>

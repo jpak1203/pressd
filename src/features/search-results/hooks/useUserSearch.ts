@@ -1,37 +1,38 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { supabase } from '@/lib/supabase/client'
+import type { UserSearchResult } from '@/features/search-results/types/search-results'
 
-import { searchSpotify } from '@/services/spotify/service'
-import type {
-    UseSpotifySearchOptions,
-    UseSpotifySearchResult,
-    SpotifySearchResponse,
-} from '@/services/spotify/types'
+type UseUserSearchOptions = {
+    query: string
+    enabled?: boolean
+    limit?: number
+    debounceMs?: number
+    minQueryLength?: number
+}
 
-export const useSpotifySearch = (
-    options: UseSpotifySearchOptions = {}
-): UseSpotifySearchResult => {
-    const {
-        type = 'track,artist,album',
-        limit = 10,
-        market = 'US',
-        minQueryLength = 2,
-        debounceMs = 350,
-        enabled = true,
-    } = options
+type UseUserSearchResult = {
+    data: UserSearchResult[]
+    isLoading: boolean
+    error: string | null
+}
 
-    const [query, setQuery] = useState('')
-    const [data, setData] = useState<SpotifySearchResponse | null>(null)
+export const useUserSearch = ({
+    query,
+    enabled = true,
+    limit = 10,
+    debounceMs = 350,
+    minQueryLength = 2,
+}: UseUserSearchOptions): UseUserSearchResult => {
+    const [data, setData] = useState<UserSearchResult[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-
-    const abortRef = useRef<AbortController | null>(null)
     const timeoutRef = useRef<number | null>(null)
+    const abortRef = useRef<AbortController | null>(null)
 
     const runSearch = useCallback(async () => {
         const trimmed = query.trim()
         if (!enabled || trimmed.length < minQueryLength) {
-            abortRef.current?.abort()
-            setData(null)
+            setData([])
             setError(null)
             setIsLoading(false)
             return
@@ -45,25 +46,27 @@ export const useSpotifySearch = (
         setError(null)
 
         try {
-            const result = await searchSpotify(
-                {
-                    q: trimmed,
-                    type,
-                    limit,
-                    market,
-                },
-                controller.signal
-            )
-            setData(result)
+            const { data: profiles, error: supabaseError } = await supabase
+                .from('profiles')
+                .select('id, username, avatar_url, bio')
+                .ilike('username', `%${trimmed}%`)
+                .limit(limit)
+                .abortSignal(controller.signal)
+
+            if (supabaseError) {
+                throw new Error(supabaseError.message)
+            }
+
+            setData(profiles ?? [])
         } catch (err) {
             if (controller.signal.aborted) return
-            setError(err instanceof Error ? err.message : 'Search failed')
+            setError(err instanceof Error ? err.message : 'User search failed')
         } finally {
             if (!controller.signal.aborted) {
                 setIsLoading(false)
             }
         }
-    }, [enabled, limit, market, minQueryLength, query, type])
+    }, [query, enabled, limit, minQueryLength])
 
     useEffect(() => {
         if (timeoutRef.current) {
@@ -92,12 +95,5 @@ export const useSpotifySearch = (
         }
     }, [])
 
-    return {
-        query,
-        setQuery,
-        isLoading,
-        error,
-        data,
-        refetch: runSearch,
-    }
+    return { data, isLoading, error }
 }
