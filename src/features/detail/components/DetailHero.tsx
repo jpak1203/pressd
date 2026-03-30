@@ -9,15 +9,16 @@ import {
     VStack,
 } from '@chakra-ui/react'
 import { Link } from 'react-router'
-import { FaSpotify } from 'react-icons/fa'
+import { FaSpotify, FaStar } from 'react-icons/fa'
 import type { ItemDetail } from '@/features/detail/types/detail'
 import { formatDuration } from '@/lib/formatters'
 
 type DetailHeroProps = {
     item: ItemDetail
+    averageRating?: number | null
 }
 
-const DetailHero = ({ item }: DetailHeroProps) => {
+const DetailHero = ({ item, averageRating }: DetailHeroProps) => {
     const imgSrc = item.image ?? undefined
     const isArtist = item.type === 'artist'
 
@@ -267,6 +268,21 @@ const DetailHero = ({ item }: DetailHeroProps) => {
                             </VStack>
                         )}
 
+                        {/* Average rating */}
+                        {averageRating != null && (
+                            <HStack
+                                gap="1.5"
+                                color="var(--pressd-green)"
+                                fontSize="14px"
+                                mt="1"
+                            >
+                                <FaStar />
+                                <Text fontWeight="600">
+                                    {(averageRating / 2).toFixed(2)}
+                                </Text>
+                            </HStack>
+                        )}
+
                         {/* Spotify link */}
                         {item.external_url && (
                             <a
@@ -308,4 +324,4 @@ const DetailHero = ({ item }: DetailHeroProps) => {
     )
 }
 
-export default DetailHero
+export { DetailHero }

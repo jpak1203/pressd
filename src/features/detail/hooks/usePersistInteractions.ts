@@ -26,6 +26,7 @@ export const usePersistInteractions = (
 
     const setRating = useCallback(
         (rating: number | null) => {
+            const wasListened = detail.interactions.listened
             detail.setRating(rating)
             if (!profileId || !item) return
             const meta = getItemMeta(item)
@@ -52,9 +53,15 @@ export const usePersistInteractions = (
                     ...meta,
                     rating,
                 }).catch(console.error)
+                if (!wasListened) {
+                    insertDiaryEntry(profileId, {
+                        action: 'listened',
+                        ...meta,
+                    }).catch(console.error)
+                }
             }
         },
-        [detail.setRating, profileId, item]
+        [detail.setRating, detail.interactions.listened, profileId, item]
     )
 
     const toggleLike = useCallback(() => {
@@ -114,6 +121,5 @@ export const usePersistInteractions = (
         toggleWantToListen,
         addReview,
         removeReview: detail.removeReview,
-        addLogEntry: detail.addLogEntry,
     }
 }

@@ -4,10 +4,11 @@ import { Box, Container, VStack } from '@chakra-ui/react'
 import { useDetailItem } from '@/features/detail/hooks/useDetailItem'
 import { useAlbumTracks } from '@/features/detail/hooks/useAlbumTracks'
 import { usePersistInteractions } from '@/features/detail/hooks/usePersistInteractions'
+import { useItemAverageRating } from '@/features/detail/hooks/useItemAverageRating'
 import type { AlbumDetail } from '@/features/detail/types/detail'
 import { buildTrackDetail } from '@/features/detail/utils/buildTrackDetail'
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext'
-import DetailHero from '@/features/detail/components/DetailHero'
+import { DetailHero } from '@/features/detail/components/DetailHero'
 import { DetailPageGuard } from '@/features/detail/components/DetailPageGuard'
 import { ActivitySection } from '@/features/detail/components/ActivitySection'
 import { AlbumTracklist } from '@/features/detail/components/AlbumTracklist'
@@ -15,6 +16,7 @@ import { AlbumTracklist } from '@/features/detail/components/AlbumTracklist'
 export const AlbumDetailPage = () => {
     const { id, item, isLoading, fetchError } = useDetailItem<AlbumDetail>('album')
     const { user } = useUserAuth()
+    const avgRating = useItemAverageRating('album', id)
     const navigate = useNavigate()
 
     const singleTrackAlbum =
@@ -28,7 +30,7 @@ export const AlbumDetailPage = () => {
         navigate(`/track/${trackState.id}`, { replace: true, state: trackState })
     }, [singleTrackAlbum, isLoadingTracks, singleAlbumTracks, navigate])
 
-    const { interactions, setRating, toggleLike, toggleListened, toggleWantToListen, addReview, removeReview, addLogEntry } =
+    const { interactions, setRating, toggleLike, toggleListened, toggleWantToListen, addReview, removeReview } =
         usePersistInteractions(`album:${id ?? ''}`, item, user?.id ?? null)
 
     return (
@@ -41,7 +43,7 @@ export const AlbumDetailPage = () => {
         >
             {(album) => (
                 <Box minH="100%">
-                    <DetailHero item={album} />
+                    <DetailHero item={album} averageRating={avgRating} />
                     <Container maxW="1200px" px={{ base: '4', md: '7' }} py={{ base: '6', md: '8' }}>
                         <VStack align="stretch" gap="5">
                             <ActivitySection
@@ -53,7 +55,6 @@ export const AlbumDetailPage = () => {
                                 toggleWantToListen={toggleWantToListen}
                                 addReview={addReview}
                                 removeReview={removeReview}
-                                addLogEntry={addLogEntry}
                             />
                             <AlbumTracklist album={album} />
                         </VStack>

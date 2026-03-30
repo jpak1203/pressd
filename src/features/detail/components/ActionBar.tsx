@@ -5,7 +5,6 @@ import {
     FaHeadphones,
     FaBookmark,
     FaRegBookmark,
-    FaPlus,
 } from 'react-icons/fa'
 import type { ItemInteraction } from '@/features/detail/types/detail'
 
@@ -14,7 +13,6 @@ type ActionBarProps = {
     onToggleLike: () => void
     onToggleListened: () => void
     onToggleWantToListen: () => void
-    onAddLog: () => void
 }
 
 const ActionBar = ({
@@ -22,7 +20,6 @@ const ActionBar = ({
     onToggleLike,
     onToggleListened,
     onToggleWantToListen,
-    onAddLog,
 }: ActionBarProps) => {
     return (
         <HStack gap="2" flexWrap="wrap">
@@ -141,31 +138,6 @@ const ActionBar = ({
                 </HStack>
             </Button>
 
-            <Button
-                onClick={onAddLog}
-                size="sm"
-                borderRadius="999px"
-                border="1px solid var(--pressd-border)"
-                backgroundColor="transparent"
-                color="var(--pressd-text-sub)"
-                transition="all 0.15s ease"
-                _hover={{
-                    borderColor: 'var(--pressd-accent-dim)',
-                    color: 'var(--pressd-text)',
-                    backgroundColor: 'var(--pressd-accent-glow)',
-                }}
-                px="14px"
-                height="34px"
-                fontSize="12px"
-                className="pressd-mono"
-            >
-                <HStack gap="1.5">
-                    <Box fontSize="13px">
-                        <FaPlus />
-                    </Box>
-                    <Text>Log Listen</Text>
-                </HStack>
-            </Button>
         </HStack>
     )
 }

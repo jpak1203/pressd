@@ -46,7 +46,7 @@ const RatingBarGraph = ({ ratings }: RatingBarGraphProps) => {
                         lineHeight="1"
                         className="pressd-mono"
                     >
-                        {i + 1}
+                        {(i + 1) / 2}
                     </Text>
                 </Flex>
             ))}

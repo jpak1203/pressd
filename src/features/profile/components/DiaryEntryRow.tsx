@@ -97,7 +97,7 @@ const DiaryEntryRow = ({ entry }: DiaryEntryRowProps) => {
                     >
                         <FaStar />
                         <Text className="pressd-mono" fontWeight="600">
-                            {entry.rating}
+                            {entry.rating / 2}
                         </Text>
                     </Flex>
                 )}
