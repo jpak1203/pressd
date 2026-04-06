@@ -1,27 +1,46 @@
-import { Routes, Route } from 'react-router'
+import { lazy, Suspense } from 'react'
+import { Routes, Route, useLocation } from 'react-router'
+import { Center, Spinner } from '@chakra-ui/react'
 import ProtectedRoute from '@/components/protected-route/ProtectedRoute'
-import LandingPage from '@/app/routes/LandingPage'
-import CreateAccountPage from '@/app/routes/CreateAccountPage'
-import SignInPage from '@/app/routes/SignInPage'
-import HomePage from '@/app/routes/HomePage'
-import SearchResultsPage from '@/app/routes/SearchResultsPage'
-import { TrackDetailPage } from '@/app/routes/TrackDetailPage'
-import { AlbumDetailPage } from '@/app/routes/AlbumDetailPage'
-import { ArtistDetailPage } from '@/app/routes/ArtistDetailPage'
-import ProfilePage from '@/app/routes/ProfilePage'
-import { RatingsPage } from '@/app/routes/RatingsPage'
 import LayoutWrapper from '@/components/layout-wrapper/LayoutWrapper'
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary'
 import { RouteError } from '@/components/error-boundary/RouteError'
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext'
 
+const LandingPage = lazy(() => import('@/app/routes/LandingPage'))
+const CreateAccountPage = lazy(() => import('@/app/routes/CreateAccountPage'))
+const SignInPage = lazy(() => import('@/app/routes/SignInPage'))
+const HomePage = lazy(() => import('@/app/routes/HomePage'))
+const SearchResultsPage = lazy(() => import('@/app/routes/SearchResultsPage'))
+const ProfilePage = lazy(() => import('@/app/routes/ProfilePage'))
+const TrackDetailPage = lazy(() =>
+    import('@/app/routes/TrackDetailPage').then((m) => ({ default: m.TrackDetailPage }))
+)
+const AlbumDetailPage = lazy(() =>
+    import('@/app/routes/AlbumDetailPage').then((m) => ({ default: m.AlbumDetailPage }))
+)
+const ArtistDetailPage = lazy(() =>
+    import('@/app/routes/ArtistDetailPage').then((m) => ({ default: m.ArtistDetailPage }))
+)
+const RatingsPage = lazy(() =>
+    import('@/app/routes/RatingsPage').then((m) => ({ default: m.RatingsPage }))
+)
+
+const RouteFallback = () => (
+    <Center minH="60vh">
+        <Spinner size="md" color="var(--pressd-accent)" />
+    </Center>
+)
+
 function App() {
     const { isGuestUser, isLoggedIn, isLoading } = useUserAuth()
     const shouldShowHomepage = !isGuestUser && isLoggedIn
+    const location = useLocation()
 
     return (
         <LayoutWrapper>
-            <ErrorBoundary>
+            <ErrorBoundary key={location.pathname}>
+            <Suspense fallback={<RouteFallback />}>
             <Routes>
                 <Route
                     path="/"
@@ -46,6 +65,7 @@ function App() {
                 <Route path="/profile/:username/ratings" element={<RatingsPage />} errorElement={<RouteError />} />
                 <Route path="*" element={<RouteError />} />
             </Routes>
+            </Suspense>
             </ErrorBoundary>
         </LayoutWrapper>
     )

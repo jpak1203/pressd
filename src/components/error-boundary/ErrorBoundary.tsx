@@ -58,8 +58,23 @@ export class ErrorBoundary extends Component<
                         textAlign="center"
                         maxW="320px"
                     >
-                        An unexpected error occurred.
+                        An unexpected error occurred. You can try again or head
+                        back home.
                     </Text>
+                    <Button
+                        onClick={this.handleReset}
+                        size="sm"
+                        bg="var(--pressd-accent)"
+                        color="var(--pressd-bg)"
+                        borderRadius="999px"
+                        px="20px"
+                        _hover={{
+                            bg: 'var(--pressd-accent-dim)',
+                            color: 'var(--pressd-text)',
+                        }}
+                    >
+                        try again
+                    </Button>
                 </Center>
             )
         }
