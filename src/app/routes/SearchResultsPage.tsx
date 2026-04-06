@@ -67,13 +67,42 @@ const SearchResultsPage = () => {
     const showSpotifyLoading =
         spotify.isLoading || (spotify.data === null && hasQuery)
 
+    const ratableItems = useMemo<ItemDetail[]>(() => {
+        if (!spotify.data) return []
+        const tracks: ItemDetail[] = spotify.data.tracks.map((t) => ({
+            type: 'track' as const,
+            id: t.id,
+            name: t.name,
+            image: t.image_url ?? t.album.image,
+            artists: t.artists,
+            album: { id: t.album.id, name: t.album.name },
+            duration_ms: t.duration_ms,
+            release_date: t.release_date ?? null,
+            external_url: t.external_url,
+        }))
+        const albums: ItemDetail[] = spotify.data.albums.map((a) => ({
+            type: 'album' as const,
+            id: a.id,
+            name: a.name,
+            image: a.image,
+            artists: a.artists,
+            release_date: a.release_date,
+            total_tracks: a.total_tracks,
+            album_type: a.album_type,
+            external_url: a.external_url,
+        }))
+        return [...tracks, ...albums]
+    }, [spotify.data])
+
+    const { ratings: avgRatings } = useAverageRatings(ratableItems)
+
     const trackRows = spotify.data?.tracks.map((track) => (
         <SearchResultsRow
             key={track.id}
             id={track.id}
             title={track.name}
             image={track.album.image}
-            rating={undefined}
+            rating={avgRatings.get(`track:${track.id}`)}
             showRating
             itemType="track"
             stateData={{
@@ -96,7 +125,7 @@ const SearchResultsPage = () => {
             id={album.id}
             title={album.name}
             image={album.image}
-            rating={undefined}
+            rating={avgRatings.get(`album:${album.id}`)}
             showRating
             itemType="album"
             stateData={{
@@ -277,35 +306,6 @@ const SearchResultsPage = () => {
         }
         return null
     }
-
-    const ratableItems = useMemo<ItemDetail[]>(() => {
-        if (!spotify.data) return []
-        const tracks: ItemDetail[] = spotify.data.tracks.map((t) => ({
-            type: 'track' as const,
-            id: t.id,
-            name: t.name,
-            image: t.image_url ?? t.album.image,
-            artists: t.artists,
-            album: { id: t.album.id, name: t.album.name },
-            duration_ms: t.duration_ms,
-            release_date: t.release_date ?? null,
-            external_url: t.external_url,
-        }))
-        const albums: ItemDetail[] = spotify.data.albums.map((a) => ({
-            type: 'album' as const,
-            id: a.id,
-            name: a.name,
-            image: a.image,
-            artists: a.artists,
-            release_date: a.release_date,
-            total_tracks: a.total_tracks,
-            album_type: a.album_type,
-            external_url: a.external_url,
-        }))
-        return [...tracks, ...albums]
-    }, [spotify.data])
-
-    const avgRatings = useAverageRatings(ratableItems)
 
     return (
         <Box minH="100%" py={{ base: '5', md: '7' }}>

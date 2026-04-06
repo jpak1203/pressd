@@ -11,6 +11,8 @@ import { ArtistDetailPage } from '@/app/routes/ArtistDetailPage'
 import ProfilePage from '@/app/routes/ProfilePage'
 import { RatingsPage } from '@/app/routes/RatingsPage'
 import LayoutWrapper from '@/components/layout-wrapper/LayoutWrapper'
+import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary'
+import { RouteError } from '@/components/error-boundary/RouteError'
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext'
 
 function App() {
@@ -19,9 +21,11 @@ function App() {
 
     return (
         <LayoutWrapper>
+            <ErrorBoundary>
             <Routes>
                 <Route
                     path="/"
+                    errorElement={<RouteError />}
                     element={
                         isLoading ? null : shouldShowHomepage ? (
                             <ProtectedRoute>
@@ -32,15 +36,17 @@ function App() {
                         )
                     }
                 />
-                <Route path="/signup" element={<CreateAccountPage />} />
-                <Route path="/signin" element={<SignInPage />} />
-                <Route path="/search" element={<SearchResultsPage />} />
-                <Route path="/track/:id" element={<TrackDetailPage />} />
-                <Route path="/album/:id" element={<AlbumDetailPage />} />
-                <Route path="/artist/:id" element={<ArtistDetailPage />} />
-                <Route path="/profile/:username" element={<ProfilePage />} />
-                <Route path="/profile/:username/ratings" element={<RatingsPage />} />
+                <Route path="/signup" element={<CreateAccountPage />} errorElement={<RouteError />} />
+                <Route path="/signin" element={<SignInPage />} errorElement={<RouteError />} />
+                <Route path="/search" element={<SearchResultsPage />} errorElement={<RouteError />} />
+                <Route path="/track/:id" element={<TrackDetailPage />} errorElement={<RouteError />} />
+                <Route path="/album/:id" element={<AlbumDetailPage />} errorElement={<RouteError />} />
+                <Route path="/artist/:id" element={<ArtistDetailPage />} errorElement={<RouteError />} />
+                <Route path="/profile/:username" element={<ProfilePage />} errorElement={<RouteError />} />
+                <Route path="/profile/:username/ratings" element={<RatingsPage />} errorElement={<RouteError />} />
+                <Route path="*" element={<RouteError />} />
             </Routes>
+            </ErrorBoundary>
         </LayoutWrapper>
     )
 }

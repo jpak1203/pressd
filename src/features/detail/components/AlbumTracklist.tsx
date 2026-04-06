@@ -9,7 +9,17 @@ import type { AlbumDetail } from '@/features/detail/types/detail'
 type AlbumTracklistProps = { album: AlbumDetail }
 
 export const AlbumTracklist = ({ album }: AlbumTracklistProps) => {
-    const { tracks, isLoading } = useAlbumTracks(album)
+    const { tracks, isLoading, error } = useAlbumTracks(album)
+
+    if (error) {
+        return (
+            <SectionCard label={`tracks (${album.total_tracks})`}>
+                <Text fontSize="13px" color="var(--pressd-red, #e74c3c)">
+                    Failed to load tracks.
+                </Text>
+            </SectionCard>
+        )
+    }
 
     if (isLoading) {
         return (

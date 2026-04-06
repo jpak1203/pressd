@@ -13,7 +13,11 @@ const getStorageData = (): Record<string, ItemInteraction> => {
 }
 
 const setStorageData = (data: Record<string, ItemInteraction>): void => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    } catch {
+        console.warn('Failed to persist interactions to localStorage (storage may be full).')
+    }
 }
 
 const defaultInteraction: ItemInteraction = {

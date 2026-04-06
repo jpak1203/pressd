@@ -329,6 +329,75 @@ export const deleteReview = async (reviewId: string) => {
     if (error) throw error
 }
 
+export const fetchUserReviewsForItem = async (
+    profileId: string,
+    itemType: 'track' | 'album',
+    spotifyId: string
+): Promise<ReviewRow[]> => {
+    const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('profile_id', profileId)
+        .eq('item_type', itemType)
+        .eq('spotify_id', spotifyId)
+        .order('created_at', { ascending: false })
+    if (error) throw error
+    return data as ReviewRow[]
+}
+
+// ---------------------------------------------------------------------------
+// Item Interactions (liked / listened / want_to_listen state)
+// ---------------------------------------------------------------------------
+
+export const fetchItemInteraction = async (
+    profileId: string,
+    itemType: 'track' | 'album' | 'artist',
+    spotifyId: string
+): Promise<{ liked: boolean; listened: boolean; want_to_listen: boolean }> => {
+    const { data } = await supabase
+        .from('item_interactions')
+        .select('liked, listened, want_to_listen')
+        .eq('profile_id', profileId)
+        .eq('item_type', itemType)
+        .eq('spotify_id', spotifyId)
+        .maybeSingle()
+    return data ?? { liked: false, listened: false, want_to_listen: false }
+}
+
+export const upsertItemInteraction = async (
+    profileId: string,
+    itemType: 'track' | 'album' | 'artist',
+    spotifyId: string,
+    patch: { liked?: boolean; listened?: boolean; want_to_listen?: boolean }
+) => {
+    const { error } = await supabase.from('item_interactions').upsert(
+        {
+            profile_id: profileId,
+            item_type: itemType,
+            spotify_id: spotifyId,
+            ...patch,
+            updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'profile_id,item_type,spotify_id' }
+    )
+    if (error) throw error
+}
+
+export const fetchItemRating = async (
+    profileId: string,
+    itemType: 'track' | 'album',
+    spotifyId: string
+): Promise<number | null> => {
+    const { data } = await supabase
+        .from('ratings')
+        .select('rating')
+        .eq('profile_id', profileId)
+        .eq('item_type', itemType)
+        .eq('spotify_id', spotifyId)
+        .maybeSingle()
+    return data?.rating ?? null
+}
+
 // ---------------------------------------------------------------------------
 // Playlists
 // ---------------------------------------------------------------------------

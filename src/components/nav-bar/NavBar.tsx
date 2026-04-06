@@ -4,6 +4,7 @@ import { Link as RouterLink } from 'react-router'
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext'
 import PressdLogo from '@/components/pressd-logo/PressdLogo'
 import SearchBar from '@/components/search-bar/SearchBar'
+import { errorToast } from '@/lib/errorToast'
 
 const NavBar = () => {
     const { signOut, isGuestUser, user } = useUserAuth()
@@ -13,8 +14,8 @@ const NavBar = () => {
         try {
             await signOut()
             navigate('/')
-        } catch (error) {
-            console.error('Error signing out:', error)
+        } catch {
+            errorToast('Failed to sign out. Please try again.')
         }
     }
 

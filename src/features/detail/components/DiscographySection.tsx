@@ -23,7 +23,17 @@ const AlbumGrid = ({ items }: { items: AlbumDetail[] }) => (
 type DiscographySectionProps = { artistId: string }
 
 export const DiscographySection = ({ artistId }: DiscographySectionProps) => {
-    const { albums, singles, isLoading } = useArtistDiscography(artistId)
+    const { albums, singles, isLoading, error } = useArtistDiscography(artistId)
+
+    if (error) {
+        return (
+            <SectionCard label="discography">
+                <Text fontSize="13px" color="var(--pressd-red, #e74c3c)">
+                    Failed to load discography.
+                </Text>
+            </SectionCard>
+        )
+    }
 
     if (isLoading) {
         const skeletonGrid = (

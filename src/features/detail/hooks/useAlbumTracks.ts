@@ -6,6 +6,7 @@ import type { AlbumDetail, AlbumTrackItem } from '@/features/detail/types/detail
 type AlbumTracksState = {
     tracks: AlbumTrackItem[]
     isLoading: boolean
+    error: string | null
 }
 
 export const useAlbumTracks = (
@@ -14,20 +15,22 @@ export const useAlbumTracks = (
     const [state, setState] = useState<AlbumTracksState>({
         tracks: [],
         isLoading: album !== null,
+        error: null,
     })
 
     useEffect(() => {
         if (!album) return
 
-        setState({ tracks: [], isLoading: true })
+        setState({ tracks: [], isLoading: true, error: null })
         const controller = new AbortController()
         fetchAlbumTracks(album.id, (id) =>
             fetchAlbumTracksFromEdge(id, controller.signal)
         )
-            .then((tracks) => setState({ tracks, isLoading: false }))
+            .then((tracks) => setState({ tracks, isLoading: false, error: null }))
             .catch((err: unknown) => {
                 if (err instanceof Error && err.name === 'AbortError') return
-                setState({ tracks: [], isLoading: false })
+                const message = err instanceof Error ? err.message : 'Failed to load tracks'
+                setState({ tracks: [], isLoading: false, error: message })
             })
         return () => controller.abort()
     }, [album?.id])
