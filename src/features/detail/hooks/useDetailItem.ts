@@ -20,7 +20,11 @@ export const useDetailItem = <T extends ItemDetail>(type: ItemType) => {
 
     useEffect(() => {
         if (state && id) {
-            sessionStorage.setItem(`pressd_item_${id}`, JSON.stringify(state))
+            try {
+                sessionStorage.setItem(`pressd_item_${id}`, JSON.stringify(state))
+            } catch {
+                // sessionStorage quota exceeded — item will be re-fetched if needed
+            }
         }
     }, [state, id])
 

@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, Heading, Image, Link, Text } from '@chakra-ui/react'
+import { Box, Flex, Grid, Heading, Image, Link, Skeleton, Text } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router'
 import { FaStar } from 'react-icons/fa'
 import type { RowModuleData } from '@/features/home-page/types/home-page'
@@ -18,7 +18,7 @@ const itemHref = (item: ItemDetail): string => {
 }
 
 const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
-    const avgRatings = useAverageRatings(data.items)
+    const { ratings: avgRatings, isLoading: ratingsLoading } = useAverageRatings(data.items)
 
     return (
         <Box as="section" w="100%">
@@ -155,6 +155,15 @@ const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
                                             const avg = avgRatings.get(
                                                 `${item.type}:${item.id}`
                                             )
+                                            if (ratingsLoading) {
+                                                return (
+                                                    <Skeleton
+                                                        height="14px"
+                                                        width="36px"
+                                                        borderRadius="4px"
+                                                    />
+                                                )
+                                            }
                                             return avg !== undefined ? (
                                                 <Flex
                                                     alignItems="center"
@@ -165,7 +174,7 @@ const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
                                                 >
                                                     <FaStar />
                                                     <Text>
-                                                        {avg.toFixed(1)}
+                                                        {(avg / 2).toFixed(2)}
                                                     </Text>
                                                 </Flex>
                                             ) : (

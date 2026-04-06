@@ -1,5 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { ReactNode } from 'react'
 
 const {
     onAuthStateChangeMock,
@@ -37,7 +38,7 @@ import {
 } from '@/features/user-auth/context/UserAuthContext'
 
 const createWrapper = (providerProps = {}) =>
-    function Wrapper({ children }) {
+    function Wrapper({ children }: { children: ReactNode }) {
         return (
             <UserAuthProvider {...providerProps}>{children}</UserAuthProvider>
         )
@@ -111,7 +112,7 @@ describe('UserAuthContext', () => {
         expect(result.current.isLoggedIn).toBe(false)
 
         act(() => {
-            authStateCallback('SIGNED_IN', {
+            authStateCallback!('SIGNED_IN', {
                 access_token: 'token-123',
                 user: { id: 'user-1' },
             })
@@ -120,7 +121,7 @@ describe('UserAuthContext', () => {
         expect(result.current.isLoggedIn).toBe(true)
 
         act(() => {
-            authStateCallback('SIGNED_OUT', null)
+            authStateCallback!('SIGNED_OUT', null)
         })
 
         expect(result.current.isLoggedIn).toBe(false)

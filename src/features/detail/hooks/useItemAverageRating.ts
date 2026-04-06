@@ -11,7 +11,7 @@ export const useItemAverageRating = (
         if (!id) return
         fetchAverageRatings([{ type, id }])
             .then((map) => setAverageRating(map.get(`${type}:${id}`) ?? null))
-            .catch(() => {})
+            .catch((err: unknown) => console.warn('Failed to fetch average rating:', err))
     }, [type, id])
 
     return averageRating

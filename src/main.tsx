@@ -3,6 +3,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 import { UserAuthProvider } from '@/features/user-auth/context/UserAuthContext'
+import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary'
+import { CatastrophicFallback } from '@/components/error-boundary/CatastrophicFallback'
 import { supabase } from '@/lib/supabase/client'
 import type { Session } from '@supabase/supabase-js'
 import App from '@/app/App.tsx'
@@ -31,12 +33,14 @@ const renderApp = (
         <StrictMode>
             <BrowserRouter>
                 <Provider>
-                    <UserAuthProvider
-                        initialSession={initialSession}
-                        initialSessionResolved={initialSessionResolved}
-                    >
-                        <App />
-                    </UserAuthProvider>
+                    <ErrorBoundary fallback={<CatastrophicFallback />}>
+                        <UserAuthProvider
+                            initialSession={initialSession}
+                            initialSessionResolved={initialSessionResolved}
+                        >
+                            <App />
+                        </UserAuthProvider>
+                    </ErrorBoundary>
                 </Provider>
             </BrowserRouter>
         </StrictMode>
@@ -52,8 +56,13 @@ const startApp = async () => {
         return
     }
 
-    const { data } = await supabase.auth.getSession()
-    renderApp(data.session, true)
+    try {
+        const { data } = await supabase.auth.getSession()
+        renderApp(data.session, true)
+    } catch (error) {
+        console.error('Failed to fetch session:', error)
+        renderApp(null, false)
+    }
 }
 
 void startApp()
