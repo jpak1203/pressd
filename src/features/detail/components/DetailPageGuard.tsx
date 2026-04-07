@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
-import { Link } from 'react-router'
-import { Button, Center, Spinner, Text } from '@chakra-ui/react'
+import { Center, Spinner, Text } from '@chakra-ui/react'
 import type { ItemDetail, ItemType } from '@/features/detail/types/detail'
 
 type DetailPageGuardProps<T extends ItemDetail> = {
@@ -47,21 +46,6 @@ export const DetailPageGuard = <T extends ItemDetail>({
                     {fetchError ??
                         'Navigate here from search results to view this page.'}
                 </Text>
-                <Button
-                    asChild
-                    size="sm"
-                    bg="var(--pressd-accent)"
-                    color="var(--pressd-bg)"
-                    borderRadius="999px"
-                    fontWeight="600"
-                    px="18px"
-                    _hover={{
-                        bg: 'var(--pressd-accent-dim)',
-                        color: 'var(--pressd-text)',
-                    }}
-                >
-                    <Link to="/search">Go to search</Link>
-                </Button>
             </Center>
         )
     }
