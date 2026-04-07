@@ -31,7 +31,7 @@ export const useUnifiedSearch = (query: string, filter: SearchFilter) => {
 
     const users = useUserSearch({
         query,
-        enabled: filter === 'all' || filter === 'users',
+        enabled: filter === 'all' || filter === 'members',
         limit: supabaseLimit,
     })
 

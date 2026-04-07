@@ -13,32 +13,21 @@ import type {
 const supabaseFnUrl = import.meta.env.VITE_SUPABASE_FN_URL
 const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 
-let guestSignInPromise: Promise<string> | null = null
-
-const getAccessToken = async (): Promise<string> => {
+const buildHeaders = async (): Promise<Record<string, string>> => {
     const {
         data: { session },
     } = await supabase.auth.getSession()
 
-    if (session?.access_token) return session.access_token
-
-    if (!guestSignInPromise) {
-        guestSignInPromise = (async () => {
-            const { data, error } = await supabase.auth.signInAnonymously()
-            if (error || !data.session?.access_token) {
-                throw new Error(
-                    error?.message ??
-                        'Unable to create guest session. Enable anonymous auth in Supabase.'
-                )
-            }
-
-            return data.session.access_token
-        })().finally(() => {
-            guestSignInPromise = null
-        })
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        apikey: supabasePublishableKey,
     }
 
-    return guestSignInPromise
+    if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`
+    }
+
+    return headers
 }
 
 export const searchSpotify = async (
@@ -48,7 +37,6 @@ export const searchSpotify = async (
     if (!supabaseFnUrl || !supabasePublishableKey)
         throw new Error('Missing env vars')
 
-    const accessToken = await getAccessToken()
     const payload = {
         q: params.q,
         type: params.type ?? 'track,artist,album',
@@ -58,11 +46,7 @@ export const searchSpotify = async (
 
     const res = await fetch(`${supabaseFnUrl}/spotify-search`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-            apikey: supabasePublishableKey,
-        },
+        headers: await buildHeaders(),
         body: JSON.stringify(payload),
         signal,
     })
@@ -83,15 +67,9 @@ export const lookupSpotifyItem = async (
     if (!supabaseFnUrl || !supabasePublishableKey)
         throw new Error('Missing env vars')
 
-    const accessToken = await getAccessToken()
-
     const res = await fetch(`${supabaseFnUrl}/spotify-lookup`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-            apikey: supabasePublishableKey,
-        },
+        headers: await buildHeaders(),
         body: JSON.stringify({ type, id }),
         signal,
     })
@@ -111,14 +89,9 @@ export const fetchDiscographyFromEdge = async (
     if (!supabaseFnUrl || !supabasePublishableKey)
         throw new Error('Missing env vars')
 
-    const accessToken = await getAccessToken()
     const res = await fetch(`${supabaseFnUrl}/spotify-discography`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-            apikey: supabasePublishableKey,
-        },
+        headers: await buildHeaders(),
         body: JSON.stringify({ id: artistId }),
         signal,
     })
@@ -134,14 +107,9 @@ export const fetchAlbumTracksFromEdge = async (
     if (!supabaseFnUrl || !supabasePublishableKey)
         throw new Error('Missing env vars')
 
-    const accessToken = await getAccessToken()
     const res = await fetch(`${supabaseFnUrl}/spotify-album-tracks`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-            apikey: supabasePublishableKey,
-        },
+        headers: await buildHeaders(),
         body: JSON.stringify({ id: albumId }),
         signal,
     })
