@@ -1,4 +1,5 @@
-import { Box, Text, VStack } from '@chakra-ui/react'
+import { Box, Flex, Link, Text, VStack } from '@chakra-ui/react'
+import { Link as RouterLink } from 'react-router'
 import type { ResultsListType } from '@/features/search-results/types/search-results'
 
 const SearchResultsList = ({
@@ -6,6 +7,7 @@ const SearchResultsList = ({
     emptyText,
     children,
     isEmpty,
+    seeAllHref,
 }: ResultsListType) => (
     <Box
         p="16px"
@@ -13,15 +15,27 @@ const SearchResultsList = ({
         border="1px solid var(--pressd-border)"
         borderRadius="14px"
     >
-        <Text
-            className="pressd-mono"
-            fontSize="11px"
-            letterSpacing="0.08em"
-            color="var(--pressd-text-muted)"
-            mb="12px"
-        >
-            {title}
-        </Text>
+        <Flex align="center" justify="space-between" mb="12px">
+            <Text
+                className="pressd-mono"
+                fontSize="11px"
+                letterSpacing="0.08em"
+                color="var(--pressd-text-muted)"
+            >
+                {title}
+            </Text>
+            {seeAllHref && !isEmpty && (
+                <Link
+                    asChild
+                    fontSize="11px"
+                    className="pressd-mono"
+                    color="var(--pressd-accent)"
+                    _hover={{ color: 'var(--pressd-accent-dim)' }}
+                >
+                    <RouterLink to={seeAllHref}>see all</RouterLink>
+                </Link>
+            )}
+        </Flex>
         <VStack align="stretch" gap="2.5">
             {isEmpty ? (
                 <Text color="var(--pressd-text-sub)">{emptyText}</Text>

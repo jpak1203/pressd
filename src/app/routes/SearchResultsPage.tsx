@@ -30,7 +30,7 @@ const VALID_FILTERS = new Set<SearchFilter>([
     'albums',
     'artists',
     'playlists',
-    'users',
+    'members',
 ])
 
 const parseFilter = (value: string | null): SearchFilter => {
@@ -184,7 +184,7 @@ const SearchResultsPage = () => {
                         title="tracks"
                         emptyText="No tracks found."
                         isEmpty={(spotify.data?.tracks.length ?? 0) === 0}
-                        onSeeAll={() => setFilter('tracks')}
+                        seeAllHref={`/search?filter=tracks&query=${encodeURIComponent(queryFromUrl)}`}
                         showSeeAll={(spotify.data?.tracks.length ?? 0) > 0}
                     >
                         {trackRows}
@@ -193,7 +193,7 @@ const SearchResultsPage = () => {
                         title="albums"
                         emptyText="No albums found."
                         isEmpty={(spotify.data?.albums.length ?? 0) === 0}
-                        onSeeAll={() => setFilter('albums')}
+                        seeAllHref={`/search?filter=albums&query=${encodeURIComponent(queryFromUrl)}`}
                         showSeeAll={(spotify.data?.albums.length ?? 0) > 0}
                     >
                         {albumRows}
@@ -202,7 +202,7 @@ const SearchResultsPage = () => {
                         title="artists"
                         emptyText="No artists found."
                         isEmpty={(spotify.data?.artists.length ?? 0) === 0}
-                        onSeeAll={() => setFilter('artists')}
+                        seeAllHref={`/search?filter=artists&query=${encodeURIComponent(queryFromUrl)}`}
                         showSeeAll={(spotify.data?.artists.length ?? 0) > 0}
                     >
                         {artistRows}
@@ -210,13 +210,13 @@ const SearchResultsPage = () => {
                 </>
             )}
             {users.isLoading ? (
-                <SearchLoadingList title="users" />
+                <SearchLoadingList title="members" />
             ) : (
                 <SearchSection
-                    title="users"
-                    emptyText="No users found."
+                    title="members"
+                    emptyText="No members found."
                     isEmpty={users.data.length === 0}
-                    onSeeAll={() => setFilter('users')}
+                    seeAllHref={`/members/search?q=${encodeURIComponent(queryFromUrl)}`}
                     showSeeAll={users.data.length > 0}
                 >
                     {userRows}
@@ -229,7 +229,7 @@ const SearchResultsPage = () => {
                     title="playlists"
                     emptyText="No playlists found."
                     isEmpty={playlists.data.length === 0}
-                    onSeeAll={() => setFilter('playlists')}
+                    seeAllHref={`/search?filter=playlists&query=${encodeURIComponent(queryFromUrl)}`}
                     showSeeAll={playlists.data.length > 0}
                 >
                     {playlistRows}
@@ -278,14 +278,15 @@ const SearchResultsPage = () => {
                 </SearchResultsList>
             )
         }
-        if (filter === 'users') {
+        if (filter === 'members') {
             return users.isLoading ? (
-                <SearchLoadingList title="users" />
+                <SearchLoadingList title="members" />
             ) : (
                 <SearchResultsList
-                    title="users"
-                    emptyText="No users found."
+                    title="members"
+                    emptyText="No members found."
                     isEmpty={users.data.length === 0}
+                    seeAllHref={`/members/search?q=${encodeURIComponent(queryFromUrl)}`}
                 >
                     {userRows}
                 </SearchResultsList>

@@ -15,14 +15,20 @@ const parseFilter = (raw: string | null): MemberTimeFrame => {
 export const MemberSearchPage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
     const activeFilter = parseFilter(searchParams.get('filter'))
+    const query = searchParams.get('q') ?? ''
 
     const { data, isLoading, hasMore, loadMore } = useMembersList({
         timeFrame: activeFilter,
         pageSize: 20,
+        query,
     })
 
     const handleFilterChange = (filter: MemberTimeFrame) => {
-        setSearchParams({ filter })
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev)
+            next.set('filter', filter)
+            return next
+        })
     }
 
     return (
@@ -45,7 +51,7 @@ export const MemberSearchPage = () => {
                             color="var(--pressd-text)"
                             fontWeight="700"
                         >
-                            Browse Members
+                            {query ? `Results for "${query}"` : 'Browse Members'}
                         </Heading>
                     </Box>
 

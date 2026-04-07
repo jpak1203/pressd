@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react'
-import { Box, Button, Flex, Text, VStack } from '@chakra-ui/react'
+import { Box, Flex, Link, Text, VStack } from '@chakra-ui/react'
+import { Link as RouterLink } from 'react-router'
 
 type SearchSectionProps = {
     title: string
     emptyText: string
     isEmpty: boolean
-    onSeeAll: () => void
+    seeAllHref: string
     showSeeAll: boolean
     children: ReactNode
 }
@@ -14,7 +15,7 @@ export const SearchSection = ({
     title,
     emptyText,
     isEmpty,
-    onSeeAll,
+    seeAllHref,
     showSeeAll,
     children,
 }: SearchSectionProps) => (
@@ -34,16 +35,15 @@ export const SearchSection = ({
                 {title}
             </Text>
             {showSeeAll && !isEmpty && (
-                <Button
-                    variant="ghost"
-                    size="xs"
+                <Link
+                    asChild
+                    fontSize="11px"
                     className="pressd-mono"
                     color="var(--pressd-accent)"
-                    _hover={{ bg: 'var(--pressd-surface-2)' }}
-                    onClick={onSeeAll}
+                    _hover={{ color: 'var(--pressd-accent-dim)' }}
                 >
-                    see all
-                </Button>
+                    <RouterLink to={seeAllHref}>see all</RouterLink>
+                </Link>
             )}
         </Flex>
         <VStack align="stretch" gap="2.5">

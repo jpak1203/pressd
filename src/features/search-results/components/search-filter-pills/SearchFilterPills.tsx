@@ -6,7 +6,7 @@ const FILTERS: SearchFilter[] = [
     'tracks',
     'albums',
     'artists',
-    'users',
+    'members',
     'playlists',
 ]
 

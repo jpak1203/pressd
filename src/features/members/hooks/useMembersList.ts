@@ -6,6 +6,7 @@ import type { MemberRow, MemberTimeFrame } from '@/features/members/types/member
 type UseMembersListOptions = {
     timeFrame: MemberTimeFrame
     pageSize?: number
+    query?: string
 }
 
 type UseMembersListResult = {
@@ -18,6 +19,7 @@ type UseMembersListResult = {
 export const useMembersList = ({
     timeFrame,
     pageSize = 20,
+    query = '',
 }: UseMembersListOptions): UseMembersListResult => {
     const [data, setData] = useState<MemberRow[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -33,7 +35,7 @@ export const useMembersList = ({
         const since = timeFrameToSince(timeFrame)
         const sortBy = timeFrame === 'all' ? 'popularity' : 'timeframe'
 
-        fetchMembersList({ since, sortBy, limit: pageSize, offset: 0 })
+        fetchMembersList({ since, sortBy, limit: pageSize, offset: 0, query })
             .then((rows) => {
                 if (cancelled) return
                 if (rows.length === 0) {
@@ -55,14 +57,14 @@ export const useMembersList = ({
             })
 
         return () => { cancelled = true }
-    }, [timeFrame, pageSize])
+    }, [timeFrame, pageSize, query])
 
     const loadMore = useCallback(() => {
         const nextPage = page + 1
         const since = timeFrameToSince(timeFrame)
         const sortBy = timeFrame === 'all' ? 'popularity' : 'timeframe'
 
-        fetchMembersList({ since, sortBy, limit: pageSize, offset: nextPage * pageSize })
+        fetchMembersList({ since, sortBy, limit: pageSize, offset: nextPage * pageSize, query })
             .then((rows) => {
                 setData((prev) => [...prev, ...rows])
                 setPage(nextPage)

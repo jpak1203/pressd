@@ -36,12 +36,14 @@ export const fetchMembersList = async (options: {
     sortBy: 'popularity' | 'timeframe'
     limit: number
     offset: number
+    query: string
 }): Promise<MemberRow[]> => {
     const { data, error } = await supabase.rpc('get_members_list', {
         since: options.since,
         sort_by: options.sortBy,
         limit_count: options.limit,
         offset_count: options.offset,
+        query_filter: options.query,
     })
     if (error) throw new Error(error.message)
     return (data ?? []).map((row: {

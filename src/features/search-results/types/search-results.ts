@@ -7,7 +7,7 @@ export type SearchFilter =
     | 'albums'
     | 'artists'
     | 'playlists'
-    | 'users'
+    | 'members'
 
 export type UserSearchResult = {
     id: string
@@ -40,4 +40,5 @@ export type ResultsListType = {
     emptyText: string
     children: ReactNode
     isEmpty: boolean
+    seeAllHref?: string
 }
