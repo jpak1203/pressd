@@ -195,6 +195,7 @@ export const insertDiaryEntry = async (
         artist_name: string | null
         rating?: number | null
         review_text?: string | null
+        created_at?: string
     }
 ) => {
     const { error } = await supabase.from('diary').insert({
@@ -207,6 +208,7 @@ export const insertDiaryEntry = async (
         artist_name: entry.artist_name,
         rating: entry.rating ?? null,
         review_text: entry.review_text ?? null,
+        ...(entry.created_at ? { created_at: entry.created_at } : {}),
     })
 
     if (error) throw error

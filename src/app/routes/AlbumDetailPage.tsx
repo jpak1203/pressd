@@ -30,7 +30,7 @@ export const AlbumDetailPage = () => {
     }, [singleTrackAlbum, isLoadingTracks, singleAlbumTracks, navigate])
 
     const { averageRating: avgRating, refetch: refetchAvgRating } = useItemAverageRating('album', id)
-    const { interactions, setRating, toggleLike, toggleListened, toggleWantToListen, addReview, removeReview } =
+    const { interactions, setRating, toggleLike, toggleListened, toggleWantToListen, addReview, removeReview, logItem } =
         usePersistInteractions(`album:${id ?? ''}`, item, user?.id ?? null, refetchAvgRating)
 
     return (
@@ -48,6 +48,7 @@ export const AlbumDetailPage = () => {
                         <VStack align="stretch" gap="5">
                             <ActivitySection
                                 type="album"
+                                itemName={album.name}
                                 interactions={interactions}
                                 setRating={setRating}
                                 toggleLike={toggleLike}
@@ -55,6 +56,7 @@ export const AlbumDetailPage = () => {
                                 toggleWantToListen={toggleWantToListen}
                                 addReview={addReview}
                                 removeReview={removeReview}
+                                logItem={logItem}
                             />
                             <AlbumTracklist album={album} />
                         </VStack>
