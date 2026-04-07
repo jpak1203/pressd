@@ -133,11 +133,10 @@ const ActionBar = ({
                     <Text>
                         {interactions.wantToListen
                             ? 'Want to Listen'
-                            : 'Add to List'}
+                            : 'Listen Later'}
                     </Text>
                 </HStack>
             </Button>
-
         </HStack>
     )
 }

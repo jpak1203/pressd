@@ -383,6 +383,22 @@ export const upsertItemInteraction = async (
     if (error) throw error
 }
 
+export const deleteItemDiaryEntriesByAction = async (
+    profileId: string,
+    itemType: 'track' | 'album' | 'artist',
+    spotifyId: string,
+    action: 'rated' | 'liked' | 'listened' | 'want_to_listen' | 'reviewed'
+): Promise<void> => {
+    const { error } = await supabase
+        .from('diary')
+        .delete()
+        .eq('profile_id', profileId)
+        .eq('item_type', itemType)
+        .eq('spotify_id', spotifyId)
+        .eq('action', action)
+    if (error) throw error
+}
+
 export const fetchItemRating = async (
     profileId: string,
     itemType: 'track' | 'album',

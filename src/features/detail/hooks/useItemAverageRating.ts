@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { fetchAverageRatings } from '@/features/detail/api/detailApi'
 
 export const useItemAverageRating = (
@@ -7,12 +7,16 @@ export const useItemAverageRating = (
 ) => {
     const [averageRating, setAverageRating] = useState<number | null>(null)
 
-    useEffect(() => {
+    const refetch = useCallback(() => {
         if (!id) return
         fetchAverageRatings([{ type, id }])
             .then((map) => setAverageRating(map.get(`${type}:${id}`) ?? null))
             .catch((err: unknown) => console.warn('Failed to fetch average rating:', err))
     }, [type, id])
 
-    return averageRating
+    useEffect(() => {
+        refetch()
+    }, [refetch])
+
+    return { averageRating, refetch }
 }

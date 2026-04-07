@@ -16,7 +16,6 @@ import { AlbumTracklist } from '@/features/detail/components/AlbumTracklist'
 export const AlbumDetailPage = () => {
     const { id, item, isLoading, fetchError } = useDetailItem<AlbumDetail>('album')
     const { user } = useUserAuth()
-    const avgRating = useItemAverageRating('album', id)
     const navigate = useNavigate()
 
     const singleTrackAlbum =
@@ -30,8 +29,9 @@ export const AlbumDetailPage = () => {
         navigate(`/track/${trackState.id}`, { replace: true, state: trackState })
     }, [singleTrackAlbum, isLoadingTracks, singleAlbumTracks, navigate])
 
+    const { averageRating: avgRating, refetch: refetchAvgRating } = useItemAverageRating('album', id)
     const { interactions, setRating, toggleLike, toggleListened, toggleWantToListen, addReview, removeReview } =
-        usePersistInteractions(`album:${id ?? ''}`, item, user?.id ?? null)
+        usePersistInteractions(`album:${id ?? ''}`, item, user?.id ?? null, refetchAvgRating)
 
     return (
         <DetailPageGuard

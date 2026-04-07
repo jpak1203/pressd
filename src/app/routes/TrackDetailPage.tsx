@@ -11,9 +11,9 @@ import { ActivitySection } from '@/features/detail/components/ActivitySection'
 export const TrackDetailPage = () => {
     const { id, item, isLoading, fetchError } = useDetailItem<TrackDetail>('track')
     const { user } = useUserAuth()
-    const avgRating = useItemAverageRating('track', id)
+    const { averageRating: avgRating, refetch: refetchAvgRating } = useItemAverageRating('track', id)
     const { interactions, setRating, toggleLike, toggleListened, toggleWantToListen, addReview, removeReview } =
-        usePersistInteractions(`track:${id ?? ''}`, item, user?.id ?? null)
+        usePersistInteractions(`track:${id ?? ''}`, item, user?.id ?? null, refetchAvgRating)
 
     return (
         <DetailPageGuard

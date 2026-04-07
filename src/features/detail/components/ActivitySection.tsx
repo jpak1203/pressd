@@ -1,9 +1,11 @@
-import { Box, Flex, HStack, Text, VStack } from '@chakra-ui/react'
+import { Box, Flex, HStack, IconButton, Text, VStack } from '@chakra-ui/react'
+import { FaTimes } from 'react-icons/fa'
 import type { ItemType, ItemInteraction } from '@/features/detail/types/detail'
 import SectionCard from '@/features/detail/components/SectionCard'
 import { StarRating } from '@/features/detail/components/StarRating'
 import ActionBar from '@/features/detail/components/ActionBar'
 import ReviewSection from '@/features/detail/components/ReviewSection'
+
 type ActivitySectionProps = {
     type: ItemType
     interactions: ItemInteraction
@@ -42,32 +44,32 @@ export const ActivitySection = ({
                         >
                             Rate this {type}
                         </Text>
-                        <StarRating
-                            value={interactions.rating}
-                            onChange={setRating}
-                            size="26px"
-                        />
-                    </Box>
-                    {interactions.rating !== null && (
-                        <HStack
-                            gap="1"
-                            bg="var(--pressd-accent-glow)"
-                            border="1px solid var(--pressd-accent)"
-                            borderRadius="999px"
-                            px="14px"
-                            py="6px"
-                        >
-                            <Text
-                                fontSize="18px"
-                                fontWeight="700"
-                                color="var(--pressd-accent)"
-                                lineHeight="1"
-                                className="pressd-mono"
-                            >
-                                {interactions.rating / 2} / 5
-                            </Text>
+                        <HStack gap="1">
+                            <StarRating
+                                value={interactions.rating}
+                                onChange={setRating}
+                                size="26px"
+                            />
+                            {interactions.rating !== null && (
+                                <IconButton
+                                    aria-label="Remove rating"
+                                    size="xs"
+                                    variant="ghost"
+                                    borderRadius="999px"
+                                    color="var(--pressd-accent-glow )"
+                                    minW="20px"
+                                    h="20px"
+                                    _hover={{
+                                        color: 'var(--pressd-red)',
+                                        bg: 'rgba(255,143,166,0.12)',
+                                    }}
+                                    onClick={() => setRating(null)}
+                                >
+                                    <FaTimes />
+                                </IconButton>
+                            )}
                         </HStack>
-                    )}
+                    </Box>
                 </Flex>
 
                 <Box borderTop="1px solid var(--pressd-border)" pt="4">

@@ -69,8 +69,7 @@ const StarRating = ({
                     }
                     onClick={(e: React.MouseEvent) => {
                         if (readOnly || !onChange) return
-                        const newVal = getHalfValue(star, e)
-                        onChange(value === newVal ? null : newVal)
+                        onChange(getHalfValue(star, e))
                     }}
                     onMouseMove={(e: React.MouseEvent) => {
                         if (readOnly) return
