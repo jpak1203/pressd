@@ -25,6 +25,12 @@ const ArtistDetailPage = lazy(() =>
 const RatingsPage = lazy(() =>
     import('@/app/routes/RatingsPage').then((m) => ({ default: m.RatingsPage }))
 )
+const MembersPage = lazy(() =>
+    import('@/app/routes/MembersPage').then((m) => ({ default: m.MembersPage }))
+)
+const MemberSearchPage = lazy(() =>
+    import('@/app/routes/MemberSearchPage').then((m) => ({ default: m.MemberSearchPage }))
+)
 
 const RouteFallback = () => (
     <Center minH="60vh">
@@ -63,6 +69,8 @@ function App() {
                 <Route path="/artist/:id" element={<ArtistDetailPage />} errorElement={<RouteError />} />
                 <Route path="/profile/:username" element={<ProfilePage />} errorElement={<RouteError />} />
                 <Route path="/profile/:username/ratings" element={<RatingsPage />} errorElement={<RouteError />} />
+                <Route path="/members" element={<MembersPage />} errorElement={<RouteError />} />
+                <Route path="/members/search" element={<MemberSearchPage />} errorElement={<RouteError />} />
                 <Route path="*" element={<RouteError />} />
             </Routes>
             </Suspense>
