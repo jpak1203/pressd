@@ -15,6 +15,13 @@ import {
 } from '@/features/profile/api/profileApi'
 import { errorToast } from '@/lib/errorToast'
 
+export type LogItemOpts = {
+    listenedAt?: string
+    rating?: number | null
+    liked: boolean
+    reviewText?: string
+}
+
 const defaultInteraction: ItemInteraction = {
     rating: null,
     liked: false,
@@ -304,6 +311,105 @@ export const usePersistInteractions = (
         [profileId, item, localDetail]
     )
 
+    const logItem = useCallback(
+        (opts: LogItemOpts) => {
+            if (!profileId || !item) {
+                if (!localDetail.interactions.listened) localDetail.toggleListened()
+                if (opts.rating != null) localDetail.setRating(opts.rating)
+                if (opts.liked !== localDetail.interactions.liked) localDetail.toggleLike()
+                if (opts.reviewText) localDetail.addReview(opts.reviewText, opts.rating ?? null)
+                return
+            }
+
+            const meta = getItemMeta(item)
+            const createdAt = opts.listenedAt
+                ? new Date(opts.listenedAt).toISOString()
+                : new Date().toISOString()
+
+            setDbInteractions((prev) => ({
+                ...prev,
+                listened: true,
+                wantToListen: false,
+                liked: opts.liked,
+                ...(opts.rating != null ? { rating: opts.rating } : {}),
+            }))
+
+            upsertItemInteraction(profileId, meta.item_type, meta.spotify_id, {
+                listened: true,
+                want_to_listen: false,
+                liked: opts.liked,
+            }).catch(() => errorToast('Failed to save.'))
+
+            if (dbInteractions.wantToListen) {
+                deleteItemDiaryEntriesByAction(profileId, meta.item_type, meta.spotify_id, 'want_to_listen')
+                    .catch(() => {})
+            }
+
+            insertDiaryEntry(profileId, { action: 'listened', ...meta, created_at: createdAt })
+                .catch(() => errorToast('Failed to log diary entry.'))
+
+            if (opts.liked !== dbInteractions.liked) {
+                if (opts.liked) {
+                    insertDiaryEntry(profileId, { action: 'liked', ...meta, created_at: createdAt })
+                        .catch(() => errorToast('Failed to log diary entry.'))
+                } else {
+                    deleteItemDiaryEntriesByAction(profileId, meta.item_type, meta.spotify_id, 'liked')
+                        .catch(() => {})
+                }
+            }
+
+            if (opts.rating != null && meta.item_type !== 'artist') {
+                const rateableType = meta.item_type as 'track' | 'album'
+                upsertRating(profileId, {
+                    item_type: rateableType,
+                    spotify_id: meta.spotify_id,
+                    name: meta.name,
+                    image_url: meta.image_url,
+                    artist_name: meta.artist_name,
+                    release_date: meta.release_date,
+                }, opts.rating)
+                    .then(() => onRatingWritten?.())
+                    .catch(() => errorToast('Failed to save rating.'))
+                insertDiaryEntry(profileId, { action: 'rated', ...meta, rating: opts.rating, created_at: createdAt })
+                    .catch(() => errorToast('Failed to log diary entry.'))
+            }
+
+            if (opts.reviewText && meta.item_type !== 'artist') {
+                const rateableType = meta.item_type as 'track' | 'album'
+                insertReview(profileId, {
+                    item_type: rateableType,
+                    spotify_id: meta.spotify_id,
+                    name: meta.name,
+                    image_url: meta.image_url,
+                    artist_name: meta.artist_name,
+                    rating: opts.rating ?? null,
+                    body: opts.reviewText,
+                })
+                    .then(() => fetchUserReviewsForItem(profileId, rateableType, meta.spotify_id))
+                    .then((rows) =>
+                        setDbInteractions((prev) => ({
+                            ...prev,
+                            reviews: rows.map((r) => ({
+                                id: r.id,
+                                text: r.body,
+                                rating: r.rating,
+                                date: r.created_at,
+                            })),
+                        }))
+                    )
+                    .catch(() => errorToast('Failed to save review.'))
+                insertDiaryEntry(profileId, {
+                    action: 'reviewed',
+                    ...meta,
+                    rating: opts.rating ?? null,
+                    review_text: opts.reviewText,
+                    created_at: createdAt,
+                }).catch(() => errorToast('Failed to log diary entry.'))
+            }
+        },
+        [profileId, item, localDetail, dbInteractions.liked, dbInteractions.wantToListen, onRatingWritten]
+    )
+
     if (!profileId) {
         return {
             interactions: localDetail.interactions,
@@ -313,6 +419,7 @@ export const usePersistInteractions = (
             toggleWantToListen: localDetail.toggleWantToListen,
             addReview: localDetail.addReview,
             removeReview: localDetail.removeReview,
+            logItem,
         }
     }
 
@@ -324,5 +431,6 @@ export const usePersistInteractions = (
         toggleWantToListen,
         addReview,
         removeReview,
+        logItem,
     }
 }

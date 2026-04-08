@@ -12,7 +12,7 @@ export const TrackDetailPage = () => {
     const { id, item, isLoading, fetchError } = useDetailItem<TrackDetail>('track')
     const { user } = useUserAuth()
     const { averageRating: avgRating, refetch: refetchAvgRating } = useItemAverageRating('track', id)
-    const { interactions, setRating, toggleLike, toggleListened, toggleWantToListen, addReview, removeReview } =
+    const { interactions, setRating, toggleLike, toggleListened, toggleWantToListen, addReview, removeReview, logItem } =
         usePersistInteractions(`track:${id ?? ''}`, item, user?.id ?? null, refetchAvgRating)
 
     return (
@@ -30,6 +30,7 @@ export const TrackDetailPage = () => {
                         <VStack align="stretch" gap="5">
                             <ActivitySection
                                 type="track"
+                                itemName={track.name}
                                 interactions={interactions}
                                 setRating={setRating}
                                 toggleLike={toggleLike}
@@ -37,6 +38,7 @@ export const TrackDetailPage = () => {
                                 toggleWantToListen={toggleWantToListen}
                                 addReview={addReview}
                                 removeReview={removeReview}
+                                logItem={logItem}
                             />
                         </VStack>
                     </Container>
