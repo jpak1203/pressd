@@ -1,29 +1,38 @@
-import { Box, Button, Center, Container, Heading, Text, VStack } from '@chakra-ui/react'
+import {
+    Box,
+    Button,
+    Center,
+    Container,
+    Heading,
+    Input,
+    Text,
+    VStack,
+} from '@chakra-ui/react'
 import { useSearchParams } from 'react-router'
-import { MemberList } from '@/features/members/components/member-list/MemberList'
 import { MemberTimeFilterPills } from '@/features/members/components/member-time-filter-pills/MemberTimeFilterPills'
-import { useMembersList } from '@/features/members/hooks/useMembersList'
-import type { MemberTimeFrame } from '@/features/members/types/members'
+import { PlaylistList } from '@/features/playlists/components/playlist-list/PlaylistList'
+import { usePlaylistsList } from '@/features/playlists/hooks/usePlaylistsList'
+import type { PlaylistTimeFrame } from '@/features/playlists/types/playlists'
+import { useState } from 'react'
 
-const VALID_FILTERS: MemberTimeFrame[] = ['week', 'month', 'year', 'all']
+const VALID_FILTERS: PlaylistTimeFrame[] = ['week', 'month', 'year', 'all']
 
-const parseFilter = (raw: string | null): MemberTimeFrame => {
-    if (raw && (VALID_FILTERS as string[]).includes(raw)) return raw as MemberTimeFrame
+const parseFilter = (raw: string | null): PlaylistTimeFrame => {
+    if (raw && (VALID_FILTERS as string[]).includes(raw)) return raw as PlaylistTimeFrame
     return 'week'
 }
 
-export const MemberSearchPage = () => {
+export const PlaylistsSearchPage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
+    const [query, setQuery] = useState(searchParams.get('q') ?? '')
     const activeFilter = parseFilter(searchParams.get('filter'))
-    const query = searchParams.get('q') ?? ''
 
-    const { data, isLoading, hasMore, loadMore } = useMembersList({
+    const { data, isLoading, hasMore } = usePlaylistsList({
         timeFrame: activeFilter,
-        pageSize: 20,
         query,
     })
 
-    const handleFilterChange = (filter: MemberTimeFrame) => {
+    const handleFilterChange = (filter: PlaylistTimeFrame) => {
         setSearchParams((prev) => {
             const next = new URLSearchParams(prev)
             next.set('filter', filter)
@@ -44,41 +53,37 @@ export const MemberSearchPage = () => {
                             color="var(--pressd-text-muted)"
                             mb="1"
                         >
-                            members
+                            playlists
                         </Text>
-                        <Heading
-                            size="xl"
-                            color="var(--pressd-text)"
-                            fontWeight="700"
-                        >
-                            {query ? `Results for "${query}"` : 'Browse Members'}
+                        <Heading size="xl" color="var(--pressd-text)" fontWeight="700">
+                            {query ? `Results for "${query}"` : 'Browse Playlists'}
                         </Heading>
                     </Box>
 
-                    <Box>
-                        <MemberTimeFilterPills
-                            activeFilter={activeFilter}
-                            onChange={handleFilterChange}
-                        />
-                        <Text
-                            mt="2"
-                            fontSize="11px"
-                            color="var(--pressd-text-muted)"
-                            fontStyle="italic"
-                        >
-                            Sorted by popularity — members with the most liked reviews
-                        </Text>
-                    </Box>
-
-                    <MemberList
-                        members={data}
-                        isLoading={isLoading}
+                    <Input
+                        placeholder="Search playlists…"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        bg="var(--pressd-surface)"
+                        border="1px solid var(--pressd-border)"
+                        borderRadius="10px"
+                        color="var(--pressd-text)"
+                        _placeholder={{ color: 'var(--pressd-text-muted)' }}
+                        _focus={{ borderColor: 'var(--pressd-accent)', outline: 'none' }}
+                        px="4"
+                        h="44px"
                     />
+
+                    <MemberTimeFilterPills
+                        activeFilter={activeFilter}
+                        onChange={handleFilterChange}
+                    />
+
+                    <PlaylistList playlists={data} isLoading={isLoading} />
 
                     {hasMore && (
                         <Center>
                             <Button
-                                onClick={loadMore}
                                 size="md"
                                 className="pressd-mono"
                                 fontSize="11px"

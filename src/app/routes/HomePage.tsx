@@ -18,18 +18,18 @@ const HomePage = () => {
                 <Flex direction="column" gap={{ base: '10', md: '12' }}>
                     <RowModule
                         headerText="Featured Songs"
-                        linkText="More"
                         data={featuredSongsData}
+                        showMore={false}
                     />
                     <RowModule
                         headerText="Featured Artists"
-                        linkText="More"
                         data={featuredArtistsData}
+                        showMore={false}
                     />
                     <RowModule
                         headerText="Featured Albums"
-                        linkText="More"
                         data={featuredAlbumsData}
+                        showMore={false}
                     />
                     <RowModule
                         headerText="New From Friends"
@@ -48,8 +48,8 @@ const HomePage = () => {
                     />
                     <GridModule
                         headerText="Featured Reviews"
-                        linkText="More"
                         data={featuredReviewsData}
+                        showMore={false}
                     />
                 </Flex>
             </Container>

@@ -2,7 +2,7 @@ import type { ItemDetail } from '@/features/detail/types/detail'
 
 export type RowModuleData = {
     items: ItemDetail[]
-    moreHref: string
+    moreHref?: string
 }
 
 export type FeaturedReviewItem = {
@@ -29,5 +29,5 @@ export type FeaturedReviewItem = {
 
 export type GridModuleData = {
     items: FeaturedReviewItem[]
-    moreHref: string
+    moreHref?: string
 }

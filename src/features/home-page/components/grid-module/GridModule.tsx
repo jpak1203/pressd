@@ -14,11 +14,13 @@ import type { GridModuleData } from '@/features/home-page/types/home-page'
 
 type GridModuleProps = {
     data: GridModuleData
-    linkText: string
+    linkText?: string
     headerText: string
+    showMore?: boolean
 }
 
-const GridModule = ({ data, linkText, headerText }: GridModuleProps) => {
+const GridModule = ({ data, linkText, headerText, showMore = true }: GridModuleProps) => {
+    const displayItems = data.items.slice(0, 6)
     return (
         <Box as="section" w="100%">
             <Flex
@@ -38,22 +40,24 @@ const GridModule = ({ data, linkText, headerText }: GridModuleProps) => {
                 >
                     {headerText}
                 </Heading>
-                <Link
-                    asChild
-                    fontSize="11px"
-                    textTransform="uppercase"
-                    color="var(--pressd-text-muted)"
-                    _hover={{ color: 'var(--pressd-accent)' }}
-                >
-                    <RouterLink to={data.moreHref}>{linkText}</RouterLink>
-                </Link>
+                {showMore && data.moreHref && linkText && (
+                    <Link
+                        asChild
+                        fontSize="11px"
+                        textTransform="uppercase"
+                        color="var(--pressd-text-muted)"
+                        _hover={{ color: 'var(--pressd-accent)' }}
+                    >
+                        <RouterLink to={data.moreHref}>{linkText}</RouterLink>
+                    </Link>
+                )}
             </Flex>
 
             <Grid
                 templateColumns={{ base: '1fr', lg: 'repeat(2, 1fr)' }}
                 gap="6"
             >
-                {data.items.map((review) => (
+                {displayItems.map((review) => (
                     <Box
                         key={review.id}
                         bg="var(--pressd-surface)"

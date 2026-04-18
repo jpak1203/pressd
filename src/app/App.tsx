@@ -31,6 +31,24 @@ const MembersPage = lazy(() =>
 const MemberSearchPage = lazy(() =>
     import('@/app/routes/MemberSearchPage').then((m) => ({ default: m.MemberSearchPage }))
 )
+const TracksPage = lazy(() =>
+    import('@/app/routes/TracksPage').then((m) => ({ default: m.TracksPage }))
+)
+const TracksSearchPage = lazy(() =>
+    import('@/app/routes/TracksSearchPage').then((m) => ({ default: m.TracksSearchPage }))
+)
+const AlbumsPage = lazy(() =>
+    import('@/app/routes/AlbumsPage').then((m) => ({ default: m.AlbumsPage }))
+)
+const AlbumsSearchPage = lazy(() =>
+    import('@/app/routes/AlbumsSearchPage').then((m) => ({ default: m.AlbumsSearchPage }))
+)
+const PlaylistsPage = lazy(() =>
+    import('@/app/routes/PlaylistsPage').then((m) => ({ default: m.PlaylistsPage }))
+)
+const PlaylistsSearchPage = lazy(() =>
+    import('@/app/routes/PlaylistsSearchPage').then((m) => ({ default: m.PlaylistsSearchPage }))
+)
 
 const RouteFallback = () => (
     <Center minH="60vh">
@@ -71,6 +89,12 @@ function App() {
                 <Route path="/profile/:username/ratings" element={<RatingsPage />} errorElement={<RouteError />} />
                 <Route path="/members" element={<MembersPage />} errorElement={<RouteError />} />
                 <Route path="/members/search" element={<MemberSearchPage />} errorElement={<RouteError />} />
+                <Route path="/tracks" element={<TracksPage />} errorElement={<RouteError />} />
+                <Route path="/tracks/search" element={<TracksSearchPage />} errorElement={<RouteError />} />
+                <Route path="/albums" element={<AlbumsPage />} errorElement={<RouteError />} />
+                <Route path="/albums/search" element={<AlbumsSearchPage />} errorElement={<RouteError />} />
+                <Route path="/playlists" element={<PlaylistsPage />} errorElement={<RouteError />} />
+                <Route path="/playlists/search" element={<PlaylistsSearchPage />} errorElement={<RouteError />} />
                 <Route path="*" element={<RouteError />} />
             </Routes>
             </Suspense>

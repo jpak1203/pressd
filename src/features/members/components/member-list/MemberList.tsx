@@ -19,15 +19,30 @@ const SkeletonRow = () => (
         gap="4"
     >
         <HStack gap="3" flex="1">
-            <Skeleton width="44px" height="44px" borderRadius="9999px" flexShrink={0} />
+            <Skeleton
+                width="44px"
+                height="44px"
+                borderRadius="9999px"
+                flexShrink={0}
+            />
             <Box flex="1">
-                <Skeleton height="14px" width="120px" borderRadius="4px" mb="6px" />
+                <Skeleton
+                    height="14px"
+                    width="120px"
+                    borderRadius="4px"
+                    mb="6px"
+                />
                 <Skeleton height="12px" width="80px" borderRadius="4px" />
             </Box>
         </HStack>
         <HStack gap="5" flexShrink={0}>
             {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} height="32px" width="52px" borderRadius="4px" />
+                <Skeleton
+                    key={i}
+                    height="32px"
+                    width="52px"
+                    borderRadius="4px"
+                />
             ))}
         </HStack>
     </HStack>
@@ -35,24 +50,6 @@ const SkeletonRow = () => (
 
 export const MemberList = ({ members, isLoading }: MemberListProps) => (
     <Box as="section" w="100%">
-        <Flex
-            alignItems="center"
-            borderBottom="1px solid var(--pressd-border)"
-            pb="10px"
-            mb="12px"
-        >
-            <Text
-                textTransform="uppercase"
-                className="pressd-mono"
-                letterSpacing="0.08em"
-                fontSize="11px"
-                color="var(--pressd-text-muted)"
-                fontWeight="600"
-            >
-                Members
-            </Text>
-        </Flex>
-
         {isLoading ? (
             <VStack gap="2" align="stretch">
                 {Array.from({ length: 8 }).map((_, i) => (
@@ -67,7 +64,11 @@ export const MemberList = ({ members, isLoading }: MemberListProps) => (
                 borderRadius="10px"
                 border="1px solid var(--pressd-border)"
             >
-                <Text color="var(--pressd-text-muted)" className="pressd-mono" fontSize="sm">
+                <Text
+                    color="var(--pressd-text-muted)"
+                    className="pressd-mono"
+                    fontSize="sm"
+                >
                     No members found
                 </Text>
             </Box>
