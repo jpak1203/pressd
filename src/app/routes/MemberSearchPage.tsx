@@ -55,10 +55,20 @@ export const MemberSearchPage = () => {
                         </Heading>
                     </Box>
 
-                    <MemberTimeFilterPills
-                        activeFilter={activeFilter}
-                        onChange={handleFilterChange}
-                    />
+                    <Box>
+                        <MemberTimeFilterPills
+                            activeFilter={activeFilter}
+                            onChange={handleFilterChange}
+                        />
+                        <Text
+                            mt="2"
+                            fontSize="11px"
+                            color="var(--pressd-text-muted)"
+                            fontStyle="italic"
+                        >
+                            Sorted by popularity — members with the most liked reviews
+                        </Text>
+                    </Box>
 
                     <MemberList
                         members={data}

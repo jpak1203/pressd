@@ -1,4 +1,4 @@
-import { Box, Button, Center, Container, Link, VStack } from '@chakra-ui/react'
+import { Box, Button, Center, Container, Flex, Heading, Link, Text, VStack } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router'
 import { MemberGridModule } from '@/features/members/components/member-grid-module/MemberGridModule'
 import { MemberList } from '@/features/members/components/member-list/MemberList'
@@ -31,10 +31,38 @@ export const MembersPage = () => {
                         moreHref="/members/search?filter=week"
                         isLoading={weekLoading}
                     />
-                    <MemberList
-                        members={listData}
-                        isLoading={listLoading}
-                    />
+                    <Box as="section" w="100%">
+                        <Flex
+                            alignItems="baseline"
+                            justifyContent="space-between"
+                            borderBottom="1px solid var(--pressd-border)"
+                            pb="10px"
+                            mb="12px"
+                            gap="3"
+                        >
+                            <Heading
+                                size="md"
+                                textTransform="uppercase"
+                                className="pressd-mono"
+                                letterSpacing="0.08em"
+                                fontSize="11px"
+                                color="var(--pressd-text-muted)"
+                            >
+                                Popular Members
+                            </Heading>
+                            <Text
+                                fontSize="11px"
+                                color="var(--pressd-text-muted)"
+                                fontStyle="italic"
+                            >
+                                Ranked by most liked reviews this week
+                            </Text>
+                        </Flex>
+                        <MemberList
+                            members={listData}
+                            isLoading={listLoading}
+                        />
+                    </Box>
                     <Center>
                         <Link asChild _hover={{ textDecoration: 'none' }}>
                             <RouterLink to="/members/search">

@@ -46,7 +46,7 @@ const NavBar = () => {
                     justifyContent="flex-end"
                 >
                     <SearchBar />
-                    {['songs', 'albums', 'playlists', 'members'].map((item) => (
+                    {['tracks', 'albums', 'playlists', 'members'].map((item) => (
                         <ChakraLink
                             key={item}
                             asChild

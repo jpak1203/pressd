@@ -31,6 +31,18 @@ const MembersPage = lazy(() =>
 const MemberSearchPage = lazy(() =>
     import('@/app/routes/MemberSearchPage').then((m) => ({ default: m.MemberSearchPage }))
 )
+const ItemBrowsePage = lazy(() =>
+    import('@/features/items/pages/ItemBrowsePage').then((m) => ({ default: m.ItemBrowsePage }))
+)
+const ItemSearchPage = lazy(() =>
+    import('@/features/items/pages/ItemSearchPage').then((m) => ({ default: m.ItemSearchPage }))
+)
+const PlaylistsPage = lazy(() =>
+    import('@/app/routes/PlaylistsPage').then((m) => ({ default: m.PlaylistsPage }))
+)
+const PlaylistsSearchPage = lazy(() =>
+    import('@/app/routes/PlaylistsSearchPage').then((m) => ({ default: m.PlaylistsSearchPage }))
+)
 
 const RouteFallback = () => (
     <Center minH="60vh">
@@ -71,6 +83,12 @@ function App() {
                 <Route path="/profile/:username/ratings" element={<RatingsPage />} errorElement={<RouteError />} />
                 <Route path="/members" element={<MembersPage />} errorElement={<RouteError />} />
                 <Route path="/members/search" element={<MemberSearchPage />} errorElement={<RouteError />} />
+                <Route path="/tracks" element={<ItemBrowsePage kind="track" />} errorElement={<RouteError />} />
+                <Route path="/tracks/search" element={<ItemSearchPage kind="track" />} errorElement={<RouteError />} />
+                <Route path="/albums" element={<ItemBrowsePage kind="album" />} errorElement={<RouteError />} />
+                <Route path="/albums/search" element={<ItemSearchPage kind="album" />} errorElement={<RouteError />} />
+                <Route path="/playlists" element={<PlaylistsPage />} errorElement={<RouteError />} />
+                <Route path="/playlists/search" element={<PlaylistsSearchPage />} errorElement={<RouteError />} />
                 <Route path="*" element={<RouteError />} />
             </Routes>
             </Suspense>

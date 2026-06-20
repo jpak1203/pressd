@@ -225,7 +225,9 @@ export const fetchAlbumTracks = async (
 ): Promise<AlbumTrackItem[]> => {
     const { data } = await supabase
         .from('songs')
-        .select('spotify_id, name, track_number, duration_ms, artists, external_url')
+        .select(
+            'spotify_id, name, track_number, duration_ms, artists, external_url'
+        )
         .eq('album_spotify_id', albumId)
         .not('track_number', 'is', null)
         .order('track_number', { ascending: true })

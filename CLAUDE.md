@@ -15,15 +15,19 @@
 - Landing page (guest CTA) and authenticated home page (static placeholder data)
 - NavBar with search, Footer, layout wrapper, protected routes
 - Chakra UI 3 dark theme with custom design tokens
+- Browse pages for tracks, albums, playlists, members (`/tracks`, `/albums`, `/playlists`, `/members`) and matching search pages (`/{kind}/search`) — tracks/albums share a parameterized implementation in `src/features/items/`
+- Decade filter (functional) and gated rating/popularity filters (UI-only, marked "Coming Soon") on browse/search pages
 
 ### Not Yet Built
 
 - Diary page/feature (activity log UI, persisted to Supabase)
 - User profile page (with rating bar graph, stats, top 5, followers/following)
 - Follow system
-- Playlists with tagging/hashtag system
+- Playlists with tagging/hashtag system (data is currently seed-only)
 - Artist discography page
-- Paginated search results
+- Paginated search results / Load More wiring
+- Rating + popularity filters on tracks/albums (currently gated)
+- Time-frame filter on `/playlists/search` (currently gated)
 - Featured/curated content (weekly rotation)
 - Discovery/recommendation engine
 - Migration of interactions from localStorage to Supabase tables
@@ -48,10 +52,15 @@
 src/
   app/             # App shell: routing (App.tsx), theme (theme.ts), route pages
     routes/        # Page-level route components
-  components/      # Shared UI components (NavBar, SearchBar, Footer, etc.)
+  components/      # Shared UI components (NavBar, SearchBar, Footer, item-filter-bar, popular-items-module, etc.)
   features/        # Feature modules with components/, hooks/, types/, data/, api/
     detail/        # Track/album/artist detail pages and interactions
     home-page/     # Authenticated user dashboard
+    items/         # Shared browse/search experience for tracks + albums (parameterized on ItemKind)
+    tracks/        # Track-specific seed data (consumed by features/items)
+    albums/        # Album-specific seed data (consumed by features/items)
+    playlists/     # Playlist browse/search components, hooks, seed data
+    members/       # Members browse/search components, hooks
     landing-page/  # Guest landing page
     search-results/# Spotify search UI
     user-auth/     # Auth forms, context, validation
@@ -62,16 +71,49 @@ src/
 
 New features: `src/features/{feature-name}/` with subdirectories as needed.
 
+### Tracks + albums share a parameterized implementation
+
+`/tracks`, `/tracks/search`, `/albums`, `/albums/search` are all served by **two** components in `src/features/items/`, dispatched by a `kind: 'track' | 'album'` prop wired in `App.tsx`:
+
+- `ItemBrowsePage` — featured row + recently reviewed row + popular-this-week list + filter bar (filter selection navigates to `/{kind}/search?...`)
+- `ItemSearchPage` — search input + filter bar + `ItemList` (heading reflects query/filter state)
+
+Behind these:
+
+- `useItemList({ kind, filters, fallback })` — wraps `useSpotifySearch` with the right `type`, maps Spotify items to `TrackDetail | AlbumDetail`, applies the decade filter, falls back to seed data when query is empty
+- `ItemList` — single row component dispatched on `item.type` (uses `<AlbumLink>` for albums, `<Link>` for tracks)
+- Per-kind seed data lives in `src/features/{tracks,albums}/data/{tracks,albums}Data.ts`
+
+To support a new browse-able item kind, extend `ItemKind` and the lookup tables in `ItemBrowsePage`/`ItemSearchPage`/`useItemList`. **Do not duplicate pages.** Playlists is intentionally separate because its data shape (`PlaylistSearchResult`) and grid layout differ.
+
+### Filter bar
+
+`src/components/item-filter-bar/ItemFilterBar.tsx` is a shared three-group filter (Release / Rating / Popularity). Types and URL-param parsers live next to it in `types.ts`. Rating + popularity groups are currently rendered as **disabled "Coming Soon"** because the underlying data isn't wired yet — only `decade` actually filters. To enable them, wire support into `useItemList` and remove the `disabled` flag in `ItemFilterBar`.
+
+The playlists time-frame filter (`MemberTimeFilterPills` reused on `/playlists/search`) is similarly gated via a `disabled` prop until `usePlaylistsList` honors `timeFrame`.
+
 ### Key Hooks
 
 - `useUserAuth()` — Auth state, sign in/up/out, guest detection (`src/features/user-auth/context/UserAuthContext.tsx`)
 - `useSpotifySearch(options?)` — Debounced Spotify search with abort control (`src/features/search-results/hooks/useSpotifySearch.ts`)
 - `useDetailInteractions(itemKey)` — Per-item ratings, likes, reviews, log entries in localStorage (`src/features/detail/hooks/useDetailInteractions.ts`)
 - `useUserAuthForm(isCreateAccount)` — Auth form state via react-hook-form (`src/features/user-auth/hooks/useUserAuthForm.ts`)
+- `useItemList({ kind, filters, fallback })` — Shared browse/search hook for tracks + albums (`src/features/items/hooks/useItemList.ts`)
 
 ### Routing
 
-Defined in `src/app/App.tsx` using React Router 7. Current routes: `/`, `/signup`, `/signin`, `/search`, `/track/:id`, `/album/:id`, `/artist/:id`. Planned: `/profile/:username`, `/diary`, `/playlists`, `/playlist/:id`, `/discover`.
+Defined in `src/app/App.tsx` using React Router 7. Current routes:
+
+- `/`, `/signup`, `/signin`
+- `/search`
+- `/track/:id`, `/album/:id`, `/artist/:id`
+- `/profile/:username`, `/profile/:username/ratings`
+- `/members`, `/members/search`
+- `/tracks`, `/tracks/search` — `<ItemBrowsePage kind="track" />`, `<ItemSearchPage kind="track" />`
+- `/albums`, `/albums/search` — `<ItemBrowsePage kind="album" />`, `<ItemSearchPage kind="album" />`
+- `/playlists`, `/playlists/search`
+
+Planned: `/diary`, `/playlist/:id`, `/discover`.
 
 ---
 

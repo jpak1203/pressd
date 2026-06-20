@@ -7,8 +7,9 @@ import { useAverageRatings } from '@/features/home-page/hooks/useAverageRatings'
 
 type RowModuleProps = {
     data: RowModuleData
-    linkText: string
+    linkText?: string
     headerText: string
+    showMore?: boolean
 }
 
 const itemHref = (item: ItemDetail): string => {
@@ -17,8 +18,9 @@ const itemHref = (item: ItemDetail): string => {
     return `/artist/${item.id}`
 }
 
-const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
-    const { ratings: avgRatings, isLoading: ratingsLoading } = useAverageRatings(data.items)
+const RowModule = ({ data, linkText, headerText, showMore = true }: RowModuleProps) => {
+    const displayItems = data.items.slice(0, 6)
+    const { ratings: avgRatings, isLoading: ratingsLoading } = useAverageRatings(displayItems)
 
     return (
         <Box as="section" w="100%">
@@ -39,15 +41,17 @@ const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
                 >
                     {headerText}
                 </Heading>
-                <Link
-                    asChild
-                    fontSize="11px"
-                    textTransform="uppercase"
-                    color="var(--pressd-text-muted)"
-                    _hover={{ color: 'var(--pressd-accent)' }}
-                >
-                    <RouterLink to={data.moreHref}>{linkText}</RouterLink>
-                </Link>
+                {showMore && data.moreHref && linkText && (
+                    <Link
+                        asChild
+                        fontSize="11px"
+                        textTransform="uppercase"
+                        color="var(--pressd-text-muted)"
+                        _hover={{ color: 'var(--pressd-accent)' }}
+                    >
+                        <RouterLink to={data.moreHref}>{linkText}</RouterLink>
+                    </Link>
+                )}
             </Flex>
 
             <Grid
@@ -61,7 +65,7 @@ const RowModule = ({ data, linkText, headerText }: RowModuleProps) => {
                 pb="2"
                 w="100%"
             >
-                {data.items.map((item) => {
+                {displayItems.map((item) => {
                     const href = itemHref(item)
                     const isArtist = item.type === 'artist'
 
