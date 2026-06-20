@@ -1,5 +1,6 @@
 import type { RowModuleData } from '@/features/home-page/types/home-page'
 import type { TrackDetail } from '@/features/detail/types/detail'
+import { rotateBy } from '@/lib/array'
 
 const tracks: TrackDetail[] = [
     {
@@ -107,17 +108,14 @@ const tracks: TrackDetail[] = [
     },
 ]
 
-const shuffleLike = (offset: number): TrackDetail[] =>
-    tracks.map((_, i) => tracks[(i + offset) % tracks.length])
-
 export const featuredTracksData: RowModuleData = {
-    items: shuffleLike(0),
+    items: rotateBy(tracks, 0),
     moreHref: '/tracks/search',
 }
 
 export const recentlyReviewedTracksData: RowModuleData = {
-    items: shuffleLike(3),
+    items: rotateBy(tracks, 3),
     moreHref: '/tracks/search',
 }
 
-export const popularTracksThisWeek: TrackDetail[] = shuffleLike(1).slice(0, 10)
+export const popularTracksThisWeek: TrackDetail[] = rotateBy(tracks, 1).slice(0, 10)

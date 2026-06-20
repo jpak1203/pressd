@@ -27,5 +27,5 @@
         "noFallthroughCasesInSwitch": true,
         "noUncheckedSideEffectImports": true
     },
-    "include": ["src", "react-router-config.ts", "my-app/app/routes/home.tsx"]
+    "include": ["src"]
 }

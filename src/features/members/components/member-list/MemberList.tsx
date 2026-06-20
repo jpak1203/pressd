@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react'
+import { Box, HStack, Skeleton, Text, VStack } from '@chakra-ui/react'
 import { MemberListRow } from '@/features/members/components/member-list-row/MemberListRow'
 import type { MemberRow } from '@/features/members/types/members'
 

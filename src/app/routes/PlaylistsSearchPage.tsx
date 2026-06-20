@@ -1,19 +1,10 @@
-import {
-    Box,
-    Button,
-    Center,
-    Container,
-    Heading,
-    Input,
-    Text,
-    VStack,
-} from '@chakra-ui/react'
+import { Box, Container, Heading, Input, Text, VStack } from '@chakra-ui/react'
 import { useSearchParams } from 'react-router'
+import { useState } from 'react'
 import { MemberTimeFilterPills } from '@/features/members/components/member-time-filter-pills/MemberTimeFilterPills'
 import { PlaylistList } from '@/features/playlists/components/playlist-list/PlaylistList'
 import { usePlaylistsList } from '@/features/playlists/hooks/usePlaylistsList'
 import type { PlaylistTimeFrame } from '@/features/playlists/types/playlists'
-import { useState } from 'react'
 
 const VALID_FILTERS: PlaylistTimeFrame[] = ['week', 'month', 'year', 'all']
 
@@ -27,7 +18,7 @@ export const PlaylistsSearchPage = () => {
     const [query, setQuery] = useState(searchParams.get('q') ?? '')
     const activeFilter = parseFilter(searchParams.get('filter'))
 
-    const { data, isLoading, hasMore } = usePlaylistsList({
+    const { data, isLoading } = usePlaylistsList({
         timeFrame: activeFilter,
         query,
     })
@@ -39,6 +30,8 @@ export const PlaylistsSearchPage = () => {
             return next
         })
     }
+
+    const trimmed = query.trim()
 
     return (
         <Box minH="100%" py={{ base: '5', md: '7' }}>
@@ -56,7 +49,7 @@ export const PlaylistsSearchPage = () => {
                             playlists
                         </Text>
                         <Heading size="xl" color="var(--pressd-text)" fontWeight="700">
-                            {query ? `Results for "${query}"` : 'Browse Playlists'}
+                            {trimmed ? `Results for "${trimmed}"` : 'Browse Playlists'}
                         </Heading>
                     </Box>
 
@@ -77,34 +70,10 @@ export const PlaylistsSearchPage = () => {
                     <MemberTimeFilterPills
                         activeFilter={activeFilter}
                         onChange={handleFilterChange}
+                        disabled
                     />
 
                     <PlaylistList playlists={data} isLoading={isLoading} />
-
-                    {hasMore && (
-                        <Center>
-                            <Button
-                                size="md"
-                                className="pressd-mono"
-                                fontSize="11px"
-                                textTransform="uppercase"
-                                letterSpacing="0.1em"
-                                bg="var(--pressd-surface)"
-                                color="var(--pressd-text-muted)"
-                                border="1px solid var(--pressd-border)"
-                                borderRadius="9999px"
-                                px="8"
-                                _hover={{
-                                    bg: 'var(--pressd-surface-2)',
-                                    borderColor: 'var(--pressd-accent-dim)',
-                                    color: 'var(--pressd-text)',
-                                }}
-                                transition="all 0.15s ease"
-                            >
-                                Load More
-                            </Button>
-                        </Center>
-                    )}
                 </VStack>
             </Container>
         </Box>

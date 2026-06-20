@@ -1,5 +1,6 @@
 import type { RowModuleData } from '@/features/home-page/types/home-page'
 import type { AlbumDetail } from '@/features/detail/types/detail'
+import { rotateBy } from '@/lib/array'
 
 const albums: AlbumDetail[] = [
     {
@@ -107,17 +108,14 @@ const albums: AlbumDetail[] = [
     },
 ]
 
-const shuffleLike = (offset: number): AlbumDetail[] =>
-    albums.map((_, i) => albums[(i + offset) % albums.length])
-
 export const featuredAlbumsData: RowModuleData = {
-    items: shuffleLike(0),
+    items: rotateBy(albums, 0),
     moreHref: '/albums/search',
 }
 
 export const recentlyReviewedAlbumsData: RowModuleData = {
-    items: shuffleLike(2),
+    items: rotateBy(albums, 2),
     moreHref: '/albums/search',
 }
 
-export const popularAlbumsThisWeek: AlbumDetail[] = shuffleLike(4).slice(0, 10)
+export const popularAlbumsThisWeek: AlbumDetail[] = rotateBy(albums, 4).slice(0, 10)
