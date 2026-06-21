@@ -161,6 +161,49 @@ export const fetchAverageRatings = async (
     return result
 }
 
+export type ItemStats = {
+    average: number | null
+    ratingCount: number
+    likeCount: number
+}
+
+// Aggregate, guest-visible stats for a single item: how many users have rated
+// it (plus the average) and how many have liked it. Reads from `ratings` and
+// `item_interactions` — no auth required, so guests see the same numbers.
+export const fetchItemStats = async (
+    type: 'track' | 'album',
+    id: string
+): Promise<ItemStats> => {
+    const [ratingsRes, likesRes] = await Promise.all([
+        supabase
+            .from('ratings')
+            .select('rating')
+            .eq('item_type', type)
+            .eq('spotify_id', id),
+        supabase
+            .from('item_interactions')
+            .select('*', { count: 'exact', head: true })
+            .eq('item_type', type)
+            .eq('spotify_id', id)
+            .eq('liked', true),
+    ])
+
+    let average: number | null = null
+    let ratingCount = 0
+    if (!ratingsRes.error && ratingsRes.data && ratingsRes.data.length > 0) {
+        ratingCount = ratingsRes.data.length
+        const sum = ratingsRes.data.reduce(
+            (acc, row) => acc + (row.rating as number),
+            0
+        )
+        average = sum / ratingCount
+    }
+
+    const likeCount = likesRes.error ? 0 : (likesRes.count ?? 0)
+
+    return { average, ratingCount, likeCount }
+}
+
 export const fetchItemFromCatalog = async (
     type: ItemType,
     id: string

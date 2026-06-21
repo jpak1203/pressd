@@ -4,18 +4,21 @@ import { Box, Container, VStack } from '@chakra-ui/react'
 import { useDetailItem } from '@/features/detail/hooks/useDetailItem'
 import { useAlbumTracks } from '@/features/detail/hooks/useAlbumTracks'
 import { usePersistInteractions } from '@/features/detail/hooks/usePersistInteractions'
-import { useItemAverageRating } from '@/features/detail/hooks/useItemAverageRating'
+import { useItemStats } from '@/features/detail/hooks/useItemStats'
 import type { AlbumDetail } from '@/features/detail/types/detail'
 import { buildTrackDetail } from '@/features/detail/utils/buildTrackDetail'
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext'
 import { DetailHero } from '@/features/detail/components/DetailHero'
 import { DetailPageGuard } from '@/features/detail/components/DetailPageGuard'
 import { ActivitySection } from '@/features/detail/components/ActivitySection'
+import { GuestActivityCard } from '@/features/detail/components/GuestActivityCard'
+import { GuestReviewsCard } from '@/features/detail/components/GuestReviewsCard'
 import { AlbumTracklist } from '@/features/detail/components/AlbumTracklist'
 
 export const AlbumDetailPage = () => {
     const { id, item, isLoading, fetchError } = useDetailItem<AlbumDetail>('album')
-    const { user } = useUserAuth()
+    const { user, isLoggedIn, isGuestUser } = useUserAuth()
+    const profileId = isLoggedIn && !isGuestUser ? (user?.id ?? null) : null
     const navigate = useNavigate()
 
     const singleTrackAlbum =
@@ -29,9 +32,9 @@ export const AlbumDetailPage = () => {
         navigate(`/track/${trackState.id}`, { replace: true, state: trackState })
     }, [singleTrackAlbum, isLoadingTracks, singleAlbumTracks, navigate])
 
-    const { averageRating: avgRating, refetch: refetchAvgRating } = useItemAverageRating('album', id)
+    const { stats, refetch: refetchStats } = useItemStats('album', id)
     const { interactions, setRating, toggleLike, toggleListened, toggleWantToListen, addReview, removeReview, logItem } =
-        usePersistInteractions(`album:${id ?? ''}`, item, user?.id ?? null, refetchAvgRating)
+        usePersistInteractions(item, profileId, refetchStats)
 
     return (
         <DetailPageGuard
@@ -43,21 +46,36 @@ export const AlbumDetailPage = () => {
         >
             {(album) => (
                 <Box minH="100%">
-                    <DetailHero item={album} averageRating={avgRating} />
+                    <DetailHero
+                        item={album}
+                        averageRating={stats.average}
+                        ratingCount={stats.ratingCount}
+                        likeCount={stats.likeCount}
+                    />
                     <Container maxW="1200px" px={{ base: '4', md: '7' }} py={{ base: '6', md: '8' }}>
                         <VStack align="stretch" gap="5">
-                            <ActivitySection
-                                type="album"
-                                itemName={album.name}
-                                interactions={interactions}
-                                setRating={setRating}
-                                toggleLike={toggleLike}
-                                toggleListened={toggleListened}
-                                toggleWantToListen={toggleWantToListen}
-                                addReview={addReview}
-                                removeReview={removeReview}
-                                logItem={logItem}
-                            />
+                            {profileId ? (
+                                <ActivitySection
+                                    type="album"
+                                    itemName={album.name}
+                                    interactions={interactions}
+                                    setRating={setRating}
+                                    toggleLike={toggleLike}
+                                    toggleListened={toggleListened}
+                                    toggleWantToListen={toggleWantToListen}
+                                    addReview={addReview}
+                                    removeReview={removeReview}
+                                    logItem={logItem}
+                                />
+                            ) : (
+                                <>
+                                    <GuestActivityCard type="album" />
+                                    <GuestReviewsCard
+                                        type="album"
+                                        itemId={album.id}
+                                    />
+                                </>
+                            )}
                             <AlbumTracklist album={album} />
                         </VStack>
                     </Container>

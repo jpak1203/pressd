@@ -9,16 +9,23 @@ import {
     VStack,
 } from '@chakra-ui/react'
 import { Link } from 'react-router'
-import { FaSpotify, FaStar } from 'react-icons/fa'
+import { FaHeart, FaSpotify, FaStar } from 'react-icons/fa'
 import type { ItemDetail } from '@/features/detail/types/detail'
 import { formatDuration } from '@/lib/formatters'
 
 type DetailHeroProps = {
     item: ItemDetail
     averageRating?: number | null
+    ratingCount?: number
+    likeCount?: number
 }
 
-const DetailHero = ({ item, averageRating }: DetailHeroProps) => {
+const DetailHero = ({
+    item,
+    averageRating,
+    ratingCount = 0,
+    likeCount = 0,
+}: DetailHeroProps) => {
     const imgSrc = item.image ?? undefined
     const isArtist = item.type === 'artist'
 
@@ -268,18 +275,56 @@ const DetailHero = ({ item, averageRating }: DetailHeroProps) => {
                             </VStack>
                         )}
 
-                        {/* Average rating */}
-                        {averageRating != null && (
+                        {/* Aggregate stats — average rating, # of ratings, # of
+                            likes. Always rendered (guests included) so anyone can
+                            see how the community has engaged with the item. */}
+                        {(averageRating != null ||
+                            ratingCount > 0 ||
+                            likeCount > 0) && (
                             <HStack
-                                gap="1.5"
-                                color="var(--pressd-green)"
+                                gap="3"
                                 fontSize="14px"
                                 mt="1"
+                                flexWrap="wrap"
+                                justify={{ base: 'center', md: 'flex-start' }}
                             >
-                                <FaStar />
-                                <Text fontWeight="600">
-                                    {(averageRating / 2).toFixed(2)}
-                                </Text>
+                                {averageRating != null && (
+                                    <HStack
+                                        gap="1.5"
+                                        color="var(--pressd-green)"
+                                    >
+                                        <FaStar />
+                                        <Text fontWeight="600">
+                                            {(averageRating / 2).toFixed(2)}
+                                        </Text>
+                                    </HStack>
+                                )}
+                                {ratingCount > 0 && (
+                                    <Text
+                                        color="var(--pressd-text-muted)"
+                                        fontSize="13px"
+                                    >
+                                        {ratingCount}{' '}
+                                        {ratingCount === 1
+                                            ? 'rating'
+                                            : 'ratings'}
+                                    </Text>
+                                )}
+                                {likeCount > 0 && (
+                                    <HStack gap="1.5" color="var(--pressd-red)">
+                                        <FaHeart />
+                                        <Text fontWeight="600">
+                                            {likeCount}
+                                        </Text>
+                                        <Text
+                                            color="var(--pressd-text-muted)"
+                                            fontSize="13px"
+                                            fontWeight="400"
+                                        >
+                                            {likeCount === 1 ? 'like' : 'likes'}
+                                        </Text>
+                                    </HStack>
+                                )}
                             </HStack>
                         )}
 

@@ -14,9 +14,10 @@ import { StarRating } from './StarRating'
 
 type ReviewSectionProps = {
     reviews: Review[]
-    onAddReview: (text: string, rating: number | null) => void
-    onRemoveReview: (id: string) => void
-    currentRating: number | null
+    onAddReview?: (text: string, rating: number | null) => void
+    onRemoveReview?: (id: string) => void
+    currentRating?: number | null
+    readOnly?: boolean
 }
 
 const formatDate = (iso: string) =>
@@ -30,7 +31,8 @@ const ReviewSection = ({
     reviews,
     onAddReview,
     onRemoveReview,
-    currentRating,
+    currentRating = null,
+    readOnly = false,
 }: ReviewSectionProps) => {
     const [text, setText] = useState('')
     const [reviewRating, setReviewRating] = useState<number | null>(
@@ -40,7 +42,7 @@ const ReviewSection = ({
 
     const handleSubmit = () => {
         if (!text.trim()) return
-        onAddReview(text.trim(), reviewRating)
+        onAddReview?.(text.trim(), reviewRating)
         setText('')
         setIsOpen(false)
     }
@@ -52,7 +54,8 @@ const ReviewSection = ({
 
     return (
         <VStack align="stretch" gap="4">
-            {!isOpen ? (
+            {!readOnly &&
+                (!isOpen ? (
                 <Button
                     onClick={() => {
                         setReviewRating(currentRating)
@@ -154,7 +157,7 @@ const ReviewSection = ({
                         </HStack>
                     </VStack>
                 </Box>
-            )}
+                ))}
 
             {reviews.length > 0 ? (
                 <VStack align="stretch" gap="3">
@@ -187,21 +190,25 @@ const ReviewSection = ({
                                         {formatDate(review.date)}
                                     </Text>
                                 </VStack>
-                                <Button
-                                    size="xs"
-                                    onClick={() => onRemoveReview(review.id)}
-                                    backgroundColor="transparent"
-                                    color="var(--pressd-border)"
-                                    borderRadius="999px"
-                                    border="none"
-                                    height="28px"
-                                    width="28px"
-                                    p="0"
-                                    _hover={{ color: 'var(--pressd-red)' }}
-                                    transition="color 0.15s ease"
-                                >
-                                    <FaTrash />
-                                </Button>
+                                {!readOnly && (
+                                    <Button
+                                        size="xs"
+                                        onClick={() =>
+                                            onRemoveReview?.(review.id)
+                                        }
+                                        backgroundColor="transparent"
+                                        color="var(--pressd-border)"
+                                        borderRadius="999px"
+                                        border="none"
+                                        height="28px"
+                                        width="28px"
+                                        p="0"
+                                        _hover={{ color: 'var(--pressd-red)' }}
+                                        transition="color 0.15s ease"
+                                    >
+                                        <FaTrash />
+                                    </Button>
+                                )}
                             </Flex>
                             <Text
                                 fontSize="14px"
