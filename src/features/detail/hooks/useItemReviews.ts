@@ -3,12 +3,16 @@ import type { Review } from '@/features/detail/types/detail'
 import { fetchReviewsForItem } from '@/features/profile/api/profileApi'
 
 /**
- * Read-only access to all reviews for an item, available to anyone (including
+ * Read-only access to reviews for an item, available to anyone (including
  * logged-out guests). Returns reviews newest-first in the shared `Review` shape.
+ * Pass `excludeProfileId` to drop the viewer's own reviews — used on the detail
+ * page so a signed-in user's editable reviews (rendered separately) aren't
+ * duplicated in the community list.
  */
 export const useItemReviews = (
     type: 'track' | 'album',
-    spotifyId: string | undefined
+    spotifyId: string | undefined,
+    excludeProfileId?: string | null
 ) => {
     const [reviews, setReviews] = useState<Review[]>([])
     const [isLoading, setIsLoading] = useState(false)
@@ -21,12 +25,18 @@ export const useItemReviews = (
             .then((rows) => {
                 if (!active) return
                 setReviews(
-                    rows.map((r) => ({
-                        id: r.id,
-                        text: r.body,
-                        rating: r.rating,
-                        date: r.created_at,
-                    }))
+                    rows
+                        .filter((r) =>
+                            excludeProfileId
+                                ? r.profile_id !== excludeProfileId
+                                : true
+                        )
+                        .map((r) => ({
+                            id: r.id,
+                            text: r.body,
+                            rating: r.rating,
+                            date: r.created_at,
+                        }))
                 )
             })
             .catch(() => {
@@ -38,7 +48,7 @@ export const useItemReviews = (
         return () => {
             active = false
         }
-    }, [type, spotifyId])
+    }, [type, spotifyId, excludeProfileId])
 
     return { reviews, isLoading }
 }

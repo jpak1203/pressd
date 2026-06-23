@@ -171,16 +171,19 @@ export const usePersistInteractions = (
         const liked = !dbInteractions.liked
         setDbInteractions((prev) => ({ ...prev, liked }))
         upsertItemInteraction(profileId, meta.item_type, meta.spotify_id, { liked })
-            .then(() => onStatsChanged?.())
             .catch(() => errorToast('Failed to save.'))
+        // Refresh stats once the diary 'liked' row (the source the like count is
+        // read from) has been written or removed.
         if (liked) {
             insertDiaryEntry(profileId, { action: 'liked', ...meta })
+                .then(() => onStatsChanged?.())
                 .catch(() => errorToast('Failed to log diary entry.'))
         } else {
             deleteItemDiaryEntriesByAction(profileId, meta.item_type, meta.spotify_id, 'liked')
+                .then(() => onStatsChanged?.())
                 .catch(() => {})
         }
-    }, [profileId, item, dbInteractions.liked])
+    }, [profileId, item, dbInteractions.liked, onStatsChanged])
 
     const toggleListened = useCallback(() => {
         if (!profileId || !item) return
@@ -327,9 +330,11 @@ export const usePersistInteractions = (
             if (opts.liked !== dbInteractions.liked) {
                 if (opts.liked) {
                     insertDiaryEntry(profileId, { action: 'liked', ...meta, created_at: createdAt })
+                        .then(() => onStatsChanged?.())
                         .catch(() => errorToast('Failed to log diary entry.'))
                 } else {
                     deleteItemDiaryEntriesByAction(profileId, meta.item_type, meta.spotify_id, 'liked')
+                        .then(() => onStatsChanged?.())
                         .catch(() => {})
                 }
             }

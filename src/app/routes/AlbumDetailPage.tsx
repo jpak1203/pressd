@@ -12,7 +12,7 @@ import { DetailHero } from '@/features/detail/components/DetailHero'
 import { DetailPageGuard } from '@/features/detail/components/DetailPageGuard'
 import { ActivitySection } from '@/features/detail/components/ActivitySection'
 import { GuestActivityCard } from '@/features/detail/components/GuestActivityCard'
-import { GuestReviewsCard } from '@/features/detail/components/GuestReviewsCard'
+import { ItemReviewsCard } from '@/features/detail/components/ItemReviewsCard'
 import { AlbumTracklist } from '@/features/detail/components/AlbumTracklist'
 
 export const AlbumDetailPage = () => {
@@ -68,14 +68,13 @@ export const AlbumDetailPage = () => {
                                     logItem={logItem}
                                 />
                             ) : (
-                                <>
-                                    <GuestActivityCard type="album" />
-                                    <GuestReviewsCard
-                                        type="album"
-                                        itemId={album.id}
-                                    />
-                                </>
+                                <GuestActivityCard type="album" />
                             )}
+                            <ItemReviewsCard
+                                type="album"
+                                itemId={album.id}
+                                excludeProfileId={profileId}
+                            />
                             <AlbumTracklist album={album} />
                         </VStack>
                     </Container>

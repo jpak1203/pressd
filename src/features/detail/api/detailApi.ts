@@ -169,7 +169,10 @@ export type ItemStats = {
 
 // Aggregate, guest-visible stats for a single item: how many users have rated
 // it (plus the average) and how many have liked it. Reads from `ratings` and
-// `item_interactions` — no auth required, so guests see the same numbers.
+// `diary` — both have public-select RLS policies, so guests see the same
+// numbers. Likes are counted from `diary` (action = 'liked') rather than the
+// private `item_interactions` table, which is only readable by its owner; this
+// matches how the members RPC tallies likes.
 export const fetchItemStats = async (
     type: 'track' | 'album',
     id: string
@@ -181,11 +184,11 @@ export const fetchItemStats = async (
             .eq('item_type', type)
             .eq('spotify_id', id),
         supabase
-            .from('item_interactions')
+            .from('diary')
             .select('*', { count: 'exact', head: true })
             .eq('item_type', type)
             .eq('spotify_id', id)
-            .eq('liked', true),
+            .eq('action', 'liked'),
     ])
 
     let average: number | null = null

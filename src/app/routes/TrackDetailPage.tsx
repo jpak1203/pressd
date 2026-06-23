@@ -8,7 +8,7 @@ import { DetailHero } from '@/features/detail/components/DetailHero'
 import { DetailPageGuard } from '@/features/detail/components/DetailPageGuard'
 import { ActivitySection } from '@/features/detail/components/ActivitySection'
 import { GuestActivityCard } from '@/features/detail/components/GuestActivityCard'
-import { GuestReviewsCard } from '@/features/detail/components/GuestReviewsCard'
+import { ItemReviewsCard } from '@/features/detail/components/ItemReviewsCard'
 
 export const TrackDetailPage = () => {
     const { id, item, isLoading, fetchError } = useDetailItem<TrackDetail>('track')
@@ -50,14 +50,13 @@ export const TrackDetailPage = () => {
                                     logItem={logItem}
                                 />
                             ) : (
-                                <>
-                                    <GuestActivityCard type="track" />
-                                    <GuestReviewsCard
-                                        type="track"
-                                        itemId={track.id}
-                                    />
-                                </>
+                                <GuestActivityCard type="track" />
                             )}
+                            <ItemReviewsCard
+                                type="track"
+                                itemId={track.id}
+                                excludeProfileId={profileId}
+                            />
                         </VStack>
                     </Container>
                 </Box>
