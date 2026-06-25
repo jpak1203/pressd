@@ -24,6 +24,9 @@ dist-ssr
 *.sw?
 
 # Claude
-.claude
+.claude/*
+!.claude/settings.json
+!.claude/agents/
+.claude/settings.local.json
 .mcp.*
 supabase/
