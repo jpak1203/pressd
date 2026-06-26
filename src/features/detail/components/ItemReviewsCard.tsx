@@ -1,5 +1,5 @@
-import SectionCard from '@/features/detail/components/SectionCard'
-import ReviewSection from '@/features/detail/components/ReviewSection'
+import { SectionCard } from '@/features/detail/components/SectionCard'
+import { ReviewSection } from '@/features/detail/components/ReviewSection'
 import { useItemReviews } from '@/features/detail/hooks/useItemReviews'
 
 type ItemReviewsCardProps = {

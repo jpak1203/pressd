@@ -3,10 +3,10 @@ import { Box, Button, Flex, HStack, IconButton, Text, VStack } from '@chakra-ui/
 import { FaBookOpen, FaTimes } from 'react-icons/fa'
 import type { ItemType, ItemInteraction } from '@/features/detail/types/detail'
 import type { LogItemOpts } from '@/features/detail/hooks/usePersistInteractions'
-import SectionCard from '@/features/detail/components/SectionCard'
+import { SectionCard } from '@/features/detail/components/SectionCard'
 import { StarRating } from '@/features/detail/components/StarRating'
-import ActionBar from '@/features/detail/components/ActionBar'
-import ReviewSection from '@/features/detail/components/ReviewSection'
+import { ActionBar } from '@/features/detail/components/ActionBar'
+import { ReviewSection } from '@/features/detail/components/ReviewSection'
 import { LogModal } from '@/features/detail/components/LogModal'
 
 type ActivitySectionProps = {

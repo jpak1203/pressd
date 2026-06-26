@@ -1,6 +1,6 @@
 import { Box, Text, VStack, HStack, Skeleton } from '@chakra-ui/react'
 
-const SearchLoadingList = ({ title }: { title: string }) => (
+export const SearchLoadingList = ({ title }: { title: string }) => (
     <Box
         p="16px"
         bg="var(--pressd-surface)"
@@ -53,4 +53,3 @@ const SearchLoadingList = ({ title }: { title: string }) => (
     </Box>
 )
 
-export default SearchLoadingList

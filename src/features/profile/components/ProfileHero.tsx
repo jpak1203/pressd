@@ -18,7 +18,7 @@ type ProfileHeroProps = {
     onEdit: () => void
 }
 
-const ProfileHero = ({ profile, isOwnProfile, onEdit }: ProfileHeroProps) => {
+export const ProfileHero = ({ profile, isOwnProfile, onEdit }: ProfileHeroProps) => {
     const avatarSrc = profile.avatar_url ?? undefined
 
     return (
@@ -159,4 +159,3 @@ const ProfileHero = ({ profile, isOwnProfile, onEdit }: ProfileHeroProps) => {
     )
 }
 
-export default ProfileHero

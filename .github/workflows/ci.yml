@@ -1,0 +1,59 @@
+name: CI
+
+on:
+    pull_request:
+        branches: [main, staging]
+
+# Cancel superseded runs on the same PR to save minutes
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'npm'
+            - run: npm ci
+            - run: npm run lint
+
+    typecheck:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'npm'
+            - run: npm ci
+            - run: npm run typecheck
+
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'npm'
+            - run: npm ci
+            - run: npm run test
+
+    build:
+        runs-on: ubuntu-latest
+        env:
+            VITE_SUPABASE_URL: https://example.supabase.co
+            VITE_SUPABASE_PUBLISHABLE_KEY: ci-dummy-key
+            VITE_SUPABASE_FN_URL: https://example.functions.supabase.co
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'npm'
+            - run: npm ci
+            - run: npm run build

@@ -1,6 +1,6 @@
 import { Center, Image } from '@chakra-ui/react'
 
-const SearchResultsImage = ({
+export const SearchResultsImage = ({
     image,
     title,
 }: {
@@ -37,4 +37,3 @@ const SearchResultsImage = ({
     )
 }
 
-export default SearchResultsImage

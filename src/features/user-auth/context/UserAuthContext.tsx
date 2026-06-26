@@ -87,8 +87,8 @@ const signIn = async ({
         const username =
             (data.user.user_metadata?.username as string) ??
             `user_${data.user.id.slice(0, 8)}`
-        await createProfile(data.user.id, username).catch(() => {
-            // Swallow — profile likely already exists
+        await createProfile(data.user.id, username).catch((err) => {
+            console.error('Failed to ensure profile on sign-in:', err)
         })
     }
 

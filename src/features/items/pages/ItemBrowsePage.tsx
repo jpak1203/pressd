@@ -2,7 +2,7 @@ import { Box, Container, VStack } from '@chakra-ui/react'
 import { useNavigate } from 'react-router'
 import { ItemFilterBar } from '@/components/item-filter-bar/ItemFilterBar'
 import { PopularItemsModule } from '@/components/popular-items-module/PopularItemsModule'
-import RowModule from '@/features/home-page/components/row-module/RowModule'
+import { RowModule } from '@/features/home-page/components/row-module/RowModule'
 import {
     EMPTY_ITEM_FILTERS,
     type ItemFilters,

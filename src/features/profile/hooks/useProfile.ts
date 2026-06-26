@@ -1,30 +1,46 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
     fetchProfileByUsername,
     fetchTop5,
     fetchRatings,
     fetchDiary,
 } from '@/features/profile/api/profileApi'
-import type { FullProfileData, Top5Category, Top5Item } from '@/features/profile/types/profile'
+import type {
+    FullProfileData,
+    Top5Category,
+    Top5Item,
+} from '@/features/profile/types/profile'
 
 export const useProfile = (username: string | undefined) => {
     const [data, setData] = useState<FullProfileData | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const requestIdRef = useRef(0)
 
     const refetch = useCallback(async () => {
         if (!username) return
+        const reqId = ++requestIdRef.current
+        const isCurrent = () => reqId === requestIdRef.current
+
         setIsLoading(true)
         setError(null)
 
         try {
             const profile = await fetchProfileByUsername(username)
+            if (!profile) {
+                if (isCurrent()) {
+                    setData(null)
+                    setError('This profile does not exist.')
+                    setIsLoading(false)
+                }
+                return
+            }
             const profileId = profile.id as string
 
             const [top5Raw, ratings, diary] = await Promise.all([
                 fetchTop5(profileId),
                 fetchRatings(profileId),
-                fetchDiary(profileId),
+                fetchDiary(profileId, 50),
             ])
 
             const grouped: Record<Top5Category, Top5Item[]> = {
@@ -51,6 +67,7 @@ export const useProfile = (username: string | undefined) => {
                 grouped[cat].sort((a, b) => a.position - b.position)
             }
 
+            if (!isCurrent()) return
             setData({
                 profile: {
                     id: profile.id as string,
@@ -67,11 +84,15 @@ export const useProfile = (username: string | undefined) => {
                 diary,
             })
         } catch (err) {
-            setError(
-                err instanceof Error ? err.message : 'Failed to load profile'
-            )
+            if (isCurrent()) {
+                setError(
+                    err instanceof Error
+                        ? err.message
+                        : 'Failed to load profile'
+                )
+            }
         } finally {
-            setIsLoading(false)
+            if (isCurrent()) setIsLoading(false)
         }
     }, [username])
 

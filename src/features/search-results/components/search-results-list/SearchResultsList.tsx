@@ -2,7 +2,7 @@ import { Box, Flex, Link, Text, VStack } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router'
 import type { ResultsListType } from '@/features/search-results/types/search-results'
 
-const SearchResultsList = ({
+export const SearchResultsList = ({
     title,
     emptyText,
     children,
@@ -46,4 +46,3 @@ const SearchResultsList = ({
     </Box>
 )
 
-export default SearchResultsList

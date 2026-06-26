@@ -9,7 +9,7 @@ type UserAuthFormFieldType = {
     error?: FieldError
 }
 
-const UserAuthFormField = ({
+export const UserAuthFormField = ({
     label,
     placeholder,
     registration,
@@ -41,4 +41,3 @@ const UserAuthFormField = ({
     )
 }
 
-export default UserAuthFormField

@@ -49,7 +49,7 @@ const PressdMark = ({ size }: { size: number }) => {
     )
 }
 
-const PressdLogo = ({
+export const PressdLogo = ({
     size = 'medium',
     showWordmark = true,
     to = '/',
@@ -74,4 +74,3 @@ const PressdLogo = ({
     )
 }
 
-export default PressdLogo

@@ -1,7 +1,6 @@
-import Hero from '@/features/landing-page/components/hero/Hero'
+import { Hero } from '@/features/landing-page/components/hero/Hero'
 
-const LandingPage = () => {
+export const LandingPage = () => {
     return <Hero />
 }
 
-export default LandingPage

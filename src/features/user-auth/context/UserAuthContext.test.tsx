@@ -29,6 +29,10 @@ vi.mock('@/lib/supabase/client', () => ({
             signUp: signUpMock,
             signOut: signOutMock,
         },
+        // signIn/createAccount call createProfile, which upserts into `profiles`.
+        from: () => ({
+            upsert: () => Promise.resolve({ error: null }),
+        }),
     },
 }))
 

@@ -1,5 +1,5 @@
 import { Button, Center, Flex, Text } from '@chakra-ui/react'
-import PressdLogo from '@/components/pressd-logo/PressdLogo'
+import { PressdLogo } from '@/components/pressd-logo/PressdLogo'
 
 export const CatastrophicFallback = () => (
     <Flex

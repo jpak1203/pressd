@@ -1,6 +1,6 @@
 import { Box, Container, Heading, Input, Text, VStack } from '@chakra-ui/react'
 import { useSearchParams } from 'react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MemberTimeFilterPills } from '@/features/members/components/member-time-filter-pills/MemberTimeFilterPills'
 import { PlaylistList } from '@/features/playlists/components/playlist-list/PlaylistList'
 import { usePlaylistsList } from '@/features/playlists/hooks/usePlaylistsList'
@@ -9,27 +9,25 @@ import type { PlaylistTimeFrame } from '@/features/playlists/types/playlists'
 const VALID_FILTERS: PlaylistTimeFrame[] = ['week', 'month', 'year', 'all']
 
 const parseFilter = (raw: string | null): PlaylistTimeFrame => {
-    if (raw && (VALID_FILTERS as string[]).includes(raw)) return raw as PlaylistTimeFrame
+    if (raw && (VALID_FILTERS as string[]).includes(raw))
+        return raw as PlaylistTimeFrame
     return 'week'
 }
 
 export const PlaylistsSearchPage = () => {
-    const [searchParams, setSearchParams] = useSearchParams()
-    const [query, setQuery] = useState(searchParams.get('q') ?? '')
+    const [searchParams] = useSearchParams()
+    const qParam = searchParams.get('q') ?? ''
+    const [query, setQuery] = useState(qParam)
     const activeFilter = parseFilter(searchParams.get('filter'))
+
+    useEffect(() => {
+        setQuery(qParam)
+    }, [qParam])
 
     const { data, isLoading } = usePlaylistsList({
         timeFrame: activeFilter,
         query,
     })
-
-    const handleFilterChange = (filter: PlaylistTimeFrame) => {
-        setSearchParams((prev) => {
-            const next = new URLSearchParams(prev)
-            next.set('filter', filter)
-            return next
-        })
-    }
 
     const trimmed = query.trim()
 
@@ -48,8 +46,14 @@ export const PlaylistsSearchPage = () => {
                         >
                             playlists
                         </Text>
-                        <Heading size="xl" color="var(--pressd-text)" fontWeight="700">
-                            {trimmed ? `Results for "${trimmed}"` : 'Browse Playlists'}
+                        <Heading
+                            size="xl"
+                            color="var(--pressd-text)"
+                            fontWeight="700"
+                        >
+                            {trimmed
+                                ? `Results for "${trimmed}"`
+                                : 'Browse Playlists'}
                         </Heading>
                     </Box>
 
@@ -62,14 +66,17 @@ export const PlaylistsSearchPage = () => {
                         borderRadius="10px"
                         color="var(--pressd-text)"
                         _placeholder={{ color: 'var(--pressd-text-muted)' }}
-                        _focus={{ borderColor: 'var(--pressd-accent)', outline: 'none' }}
+                        _focus={{
+                            borderColor: 'var(--pressd-accent)',
+                            outline: 'none',
+                        }}
                         px="4"
                         h="44px"
                     />
 
                     <MemberTimeFilterPills
                         activeFilter={activeFilter}
-                        onChange={handleFilterChange}
+                        onChange={() => {}}
                         disabled
                     />
 

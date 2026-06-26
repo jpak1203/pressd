@@ -20,7 +20,7 @@ type EditProfileModalProps = {
     onSaved: () => void
 }
 
-const EditProfileModal = ({
+export const EditProfileModal = ({
     profile,
     open,
     onClose,
@@ -176,4 +176,3 @@ const EditProfileModal = ({
     )
 }
 
-export default EditProfileModal

@@ -1,6 +1,9 @@
 import { useMemo } from 'react'
 import { useSpotifySearch } from '@/features/search-results/hooks/useSpotifySearch'
-import type { ItemFilters, ItemDecadeFilter } from '@/components/item-filter-bar/types'
+import type {
+    ItemFilters,
+    ItemDecadeFilter,
+} from '@/components/item-filter-bar/types'
 import type { TrackDetail, AlbumDetail } from '@/features/detail/types/detail'
 import type { SpotifySearchResponse } from '@/services/spotify/types'
 
@@ -11,10 +14,28 @@ export type ListItem = TrackDetail | AlbumDetail
 const decadeToYearRange = (
     decade: ItemDecadeFilter
 ): { start: number; end: number } | null => {
-    if (decade === 'upcoming') return { start: new Date().getFullYear() + 1, end: 9999 }
+    if (decade === 'upcoming') return null
     const start = parseInt(decade.replace('s', ''), 10)
     if (Number.isNaN(start)) return null
     return { start, end: start + 9 }
+}
+
+const decadeToSpotifyYearFilter = (decade: ItemDecadeFilter | null): string => {
+    if (!decade) return ''
+    if (decade === 'upcoming') {
+        const year = new Date().getFullYear()
+        return `year:${year}-3000`
+    }
+    const range = decadeToYearRange(decade)
+    return range ? `year:${range.start}-${range.end}` : ''
+}
+
+const localTodayString = (): string => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
 }
 
 const mapTrack = (t: SpotifySearchResponse['tracks'][number]): TrackDetail => ({
@@ -62,24 +83,37 @@ export const useItemList = ({
     fallback,
     limit = 20,
 }: UseItemListOptions): UseItemListResult => {
-    const spotify = useSpotifySearch({ type: kind, limit })
+    const extraQuery = decadeToSpotifyYearFilter(filters.decade)
+    const spotify = useSpotifySearch({ type: kind, limit, extraQuery })
 
     const items = useMemo((): ListItem[] => {
-        const hasQuery = spotify.query.trim().length >= 2
+        const hasInput =
+            spotify.query.trim().length >= 2 || filters.decade !== null
 
-        const raw: ListItem[] = hasQuery
+        const raw: ListItem[] = hasInput
             ? kind === 'track'
                 ? (spotify.data?.tracks ?? []).map(mapTrack)
                 : (spotify.data?.albums ?? []).map(mapAlbum)
             : fallback
 
         const range = filters.decade ? decadeToYearRange(filters.decade) : null
+        const upcomingFrom =
+            filters.decade === 'upcoming' ? localTodayString() : null
 
         return raw.filter((item) => {
             if (range) {
                 if (!item.release_date) return false
                 const year = parseInt(item.release_date.slice(0, 4), 10)
-                if (Number.isNaN(year) || year < range.start || year > range.end) return false
+                if (
+                    Number.isNaN(year) ||
+                    year < range.start ||
+                    year > range.end
+                )
+                    return false
+            }
+            if (upcomingFrom) {
+                if (!item.release_date || item.release_date <= upcomingFrom)
+                    return false
             }
             return true
         })

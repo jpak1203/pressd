@@ -11,7 +11,7 @@ type Top5CardProps = {
     category: Top5Category
 }
 
-const Top5Card = ({
+export const Top5Card = ({
     spotifyId,
     name,
     imageUrl,
@@ -105,4 +105,3 @@ const Top5Card = ({
     )
 }
 
-export default Top5Card

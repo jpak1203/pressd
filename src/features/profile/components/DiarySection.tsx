@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Box, Text } from '@chakra-ui/react'
-import SectionCard from '@/features/detail/components/SectionCard'
+import { SectionCard } from '@/features/detail/components/SectionCard'
 import { DiaryEntryRow } from './DiaryEntryRow'
 import type { DiaryEntry } from '@/features/profile/types/profile'
 

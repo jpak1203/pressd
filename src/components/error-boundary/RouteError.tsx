@@ -1,12 +1,16 @@
 import { useRouteError, isRouteErrorResponse, useNavigate } from 'react-router'
 import { Button, Center, Flex, Text } from '@chakra-ui/react'
 
-export const RouteError = () => {
+type RouteErrorProps = {
+    forceNotFound?: boolean
+}
+
+export const RouteError = ({ forceNotFound = false }: RouteErrorProps) => {
     const error = useRouteError()
     const navigate = useNavigate()
 
     const is404 =
-        isRouteErrorResponse(error) && error.status === 404
+        forceNotFound || (isRouteErrorResponse(error) && error.status === 404)
 
     const label = is404 ? 'page not found' : 'something went wrong'
     const message = is404

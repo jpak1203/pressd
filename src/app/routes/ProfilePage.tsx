@@ -3,15 +3,15 @@ import { useParams } from 'react-router'
 import { Box, Center, Container, Spinner, Text, VStack } from '@chakra-ui/react'
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext'
 import { useProfile } from '@/features/profile/hooks/useProfile'
-import ProfileHero from '@/features/profile/components/ProfileHero'
-import Top5Section from '@/features/profile/components/Top5Section'
-import EditProfileModal from '@/features/profile/components/EditProfileModal'
-import Top5EditModal from '@/features/profile/components/Top5EditModal'
+import { ProfileHero } from '@/features/profile/components/ProfileHero'
+import { Top5Section } from '@/features/profile/components/Top5Section'
+import { EditProfileModal } from '@/features/profile/components/EditProfileModal'
+import { Top5EditModal } from '@/features/profile/components/Top5EditModal'
 import { RatingsSection } from '@/features/profile/components/RatingsSection'
 import { DiarySection } from '@/features/profile/components/DiarySection'
 import type { Top5Category } from '@/features/profile/types/profile'
 
-const ProfilePage = () => {
+export const ProfilePage = () => {
     const { username } = useParams<{ username: string }>()
     const { user } = useUserAuth()
     const { data, isLoading, error, refetch } = useProfile(username)
@@ -113,4 +113,3 @@ const ProfilePage = () => {
     )
 }
 
-export default ProfilePage

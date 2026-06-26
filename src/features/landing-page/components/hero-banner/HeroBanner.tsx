@@ -2,7 +2,7 @@ import { Button, Flex, Grid, Image, Text } from '@chakra-ui/react'
 import { Link } from 'react-router'
 import blonde from '@/features/landing-page/assets/blonde.jpeg'
 
-const HeroBanner = () => {
+export const HeroBanner = () => {
     return (
         <Flex
             direction="column"
@@ -78,4 +78,3 @@ const HeroBanner = () => {
     )
 }
 
-export default HeroBanner

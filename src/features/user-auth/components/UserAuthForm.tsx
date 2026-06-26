@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react'
 import { Link } from 'react-router'
 import { useUserAuthForm } from '@/features/user-auth/hooks/useUserAuthForm'
-import UserAuthFormField from '@/features/user-auth/components/UserAuthFormField'
+import { UserAuthFormField } from '@/features/user-auth/components/UserAuthFormField'
 import {
     emailRules,
     usernameRules,
@@ -12,7 +12,7 @@ type UserAuthFormProps = {
     isCreateAccount: boolean
 }
 
-const UserAuthForm = ({ isCreateAccount }: UserAuthFormProps) => {
+export const UserAuthForm = ({ isCreateAccount }: UserAuthFormProps) => {
     const {
         register,
         handleSubmit,
@@ -115,4 +115,3 @@ const UserAuthForm = ({ isCreateAccount }: UserAuthFormProps) => {
         </form>
     )
 }
-export default UserAuthForm

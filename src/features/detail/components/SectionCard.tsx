@@ -6,7 +6,7 @@ type SectionCardProps = {
     children: ReactNode
 }
 
-const SectionCard = ({ label, children }: SectionCardProps) => (
+export const SectionCard = ({ label, children }: SectionCardProps) => (
     <Box
         bg="var(--pressd-surface)"
         border="1px solid var(--pressd-border)"
@@ -26,4 +26,3 @@ const SectionCard = ({ label, children }: SectionCardProps) => (
     </Box>
 )
 
-export default SectionCard
