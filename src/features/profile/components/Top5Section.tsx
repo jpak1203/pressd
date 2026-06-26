@@ -1,7 +1,7 @@
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react'
 import { FaEdit } from 'react-icons/fa'
-import SectionCard from '@/features/detail/components/SectionCard'
-import Top5Card from './Top5Card'
+import { SectionCard } from '@/features/detail/components/SectionCard'
+import { Top5Card } from './Top5Card'
 import type { Top5Category, Top5Item } from '@/features/profile/types/profile'
 
 type Top5SectionProps = {
@@ -17,7 +17,7 @@ const categoryLabels: Record<Top5Category, string> = {
     track: 'TOP 5 TRACKS',
 }
 
-const Top5Section = ({
+export const Top5Section = ({
     category,
     items,
     isOwnProfile,
@@ -87,4 +87,3 @@ const Top5Section = ({
     )
 }
 
-export default Top5Section

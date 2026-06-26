@@ -17,9 +17,9 @@ import {
 import { useUnifiedSearch } from '@/features/search-results/hooks/useUnifiedSearch'
 import { SearchFilterPills } from '@/features/search-results/components/search-filter-pills/SearchFilterPills'
 import { SearchSection } from '@/features/search-results/components/search-section/SearchSection'
-import SearchLoadingList from '@/features/search-results/components/search-loading-list/SearchLoadingList'
-import SearchResultsRow from '@/features/search-results/components/search-results-row/SearchResultsRow'
-import SearchResultsList from '@/features/search-results/components/search-results-list/SearchResultsList'
+import { SearchLoadingList } from '@/features/search-results/components/search-loading-list/SearchLoadingList'
+import { SearchResultsRow } from '@/features/search-results/components/search-results-row/SearchResultsRow'
+import { SearchResultsList } from '@/features/search-results/components/search-results-list/SearchResultsList'
 import { UserSearchRow } from '@/features/search-results/components/user-search-row/UserSearchRow'
 import { PlaylistSearchRow } from '@/features/search-results/components/playlist-search-row/PlaylistSearchRow'
 import type { SearchFilter } from '@/features/search-results/types/search-results'
@@ -40,7 +40,7 @@ const parseFilter = (value: string | null): SearchFilter => {
     return 'all'
 }
 
-const SearchResultsPage = () => {
+export const SearchResultsPage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
     const queryFromUrl = searchParams.get('query') ?? ''
     const filter = parseFilter(searchParams.get('filter'))
@@ -63,9 +63,11 @@ const SearchResultsPage = () => {
     }
 
     const isAll = filter === 'all'
-    const hasQuery = queryFromUrl.length >= 2
+    const hasQuery = queryFromUrl.trim().length >= 2
+    const spotifyFailed = !!spotify.error && !spotify.isLoading
     const showSpotifyLoading =
-        spotify.isLoading || (spotify.data === null && hasQuery)
+        spotify.isLoading ||
+        (spotify.data === null && hasQuery && !spotifyFailed)
 
     const ratableItems = useMemo<ItemDetail[]>(() => {
         if (!spotify.data) return []
@@ -170,9 +172,52 @@ const SearchResultsPage = () => {
         <PlaylistSearchRow key={playlist.id} playlist={playlist} />
     ))
 
+    const spotifyErrorCard = (
+        <Center
+            minH="200px"
+            p="8"
+            bg="var(--pressd-surface)"
+            border="1px solid var(--pressd-border)"
+            borderRadius="16px"
+            flexDirection="column"
+            textAlign="center"
+        >
+            <Text
+                className="pressd-mono"
+                fontSize="10px"
+                color="var(--pressd-red)"
+                mb="2"
+            >
+                spotify error
+            </Text>
+            <Heading size="md" mb="2">
+                We couldn&apos;t load tracks, albums or artists.
+            </Heading>
+            <Text color="var(--pressd-text-sub)" maxW="560px" mb="5">
+                {spotify.error}
+            </Text>
+            <Button
+                onClick={() => {
+                    void spotify.refetch()
+                }}
+                bg="var(--pressd-accent)"
+                color="var(--pressd-bg)"
+                borderRadius="999px"
+                _hover={{
+                    bg: 'var(--pressd-accent-dim)',
+                    color: 'var(--pressd-text)',
+                }}
+            >
+                Try again
+            </Button>
+        </Center>
+    )
+
     const renderAllView = () => (
         <VStack align="stretch" gap="4">
-            {showSpotifyLoading ? (
+            {spotifyFailed ? (
+                spotifyErrorCard
+            ) : showSpotifyLoading ? (
                 <>
                     <SearchLoadingList title="tracks" />
                     <SearchLoadingList title="albums" />
@@ -240,7 +285,9 @@ const SearchResultsPage = () => {
 
     const renderSingleCategory = () => {
         if (filter === 'tracks') {
-            return showSpotifyLoading ? (
+            return spotifyFailed ? (
+                spotifyErrorCard
+            ) : showSpotifyLoading ? (
                 <SearchLoadingList title="tracks" />
             ) : (
                 <SearchResultsList
@@ -253,7 +300,9 @@ const SearchResultsPage = () => {
             )
         }
         if (filter === 'albums') {
-            return showSpotifyLoading ? (
+            return spotifyFailed ? (
+                spotifyErrorCard
+            ) : showSpotifyLoading ? (
                 <SearchLoadingList title="albums" />
             ) : (
                 <SearchResultsList
@@ -266,7 +315,9 @@ const SearchResultsPage = () => {
             )
         }
         if (filter === 'artists') {
-            return showSpotifyLoading ? (
+            return spotifyFailed ? (
+                spotifyErrorCard
+            ) : showSpotifyLoading ? (
                 <SearchLoadingList title="artists" />
             ) : (
                 <SearchResultsList
@@ -350,58 +401,9 @@ const SearchResultsPage = () => {
                         onFilterChange={setFilter}
                     />
 
-                    {spotify.error && !spotify.isLoading ? (
-                        <Center
-                            minH="360px"
-                            p="8"
-                            bg="var(--pressd-surface)"
-                            border="1px solid var(--pressd-border)"
-                            borderRadius="16px"
-                            flexDirection="column"
-                            textAlign="center"
-                        >
-                            <Text
-                                className="pressd-mono"
-                                fontSize="10px"
-                                color="var(--pressd-red)"
-                                mb="2"
-                            >
-                                spotify error
-                            </Text>
-                            <Heading size="md" mb="2">
-                                We couldn&apos;t load search results.
-                            </Heading>
-                            <Text
-                                color="var(--pressd-text-sub)"
-                                maxW="560px"
-                                mb="5"
-                            >
-                                {spotify.error}
-                            </Text>
-                            <Button
-                                onClick={() => {
-                                    void spotify.refetch()
-                                }}
-                                bg="var(--pressd-accent)"
-                                color="var(--pressd-bg)"
-                                borderRadius="999px"
-                                _hover={{
-                                    bg: 'var(--pressd-accent-dim)',
-                                    color: 'var(--pressd-text)',
-                                }}
-                            >
-                                Try again
-                            </Button>
-                        </Center>
-                    ) : isAll ? (
-                        renderAllView()
-                    ) : (
-                        renderSingleCategory()
-                    )}
+                    {isAll ? renderAllView() : renderSingleCategory()}
                 </VStack>
             </Container>
         </Box>
     )
 }
-
-export default SearchResultsPage

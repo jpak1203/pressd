@@ -1,5 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
-import type { ItemDetail, ItemInteraction } from '@/features/detail/types/detail'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import type {
+    ItemDetail,
+    ItemInteraction,
+} from '@/features/detail/types/detail'
 import {
     upsertRating,
     deleteRating,
@@ -53,16 +56,27 @@ export const usePersistInteractions = (
     const [dbInteractions, setDbInteractions] =
         useState<ItemInteraction>(defaultInteraction)
 
+    // Synchronous mirror of state so rapid clicks derive from the freshest value.
+    const stateRef = useRef(dbInteractions)
+    useEffect(() => {
+        stateRef.current = dbInteractions
+    }, [dbInteractions])
+
     useEffect(() => {
         if (!profileId || !item) return
 
         const itemType = item.type
         const spotifyId = item.id
         const isRatable = itemType !== 'artist'
+        let cancelled = false
 
         Promise.all([
             isRatable
-                ? fetchItemRating(profileId, itemType as 'track' | 'album', spotifyId)
+                ? fetchItemRating(
+                      profileId,
+                      itemType as 'track' | 'album',
+                      spotifyId
+                  )
                 : Promise.resolve(null),
             fetchItemInteraction(profileId, itemType, spotifyId),
             isRatable
@@ -74,6 +88,7 @@ export const usePersistInteractions = (
                 : Promise.resolve([]),
         ])
             .then(([rating, flags, reviewRows]) => {
+                if (cancelled) return
                 setDbInteractions({
                     rating,
                     liked: flags.liked,
@@ -89,8 +104,13 @@ export const usePersistInteractions = (
                 })
             })
             .catch((err: unknown) => {
+                if (cancelled) return
                 console.warn('Failed to load interactions from Supabase:', err)
             })
+
+        return () => {
+            cancelled = true
+        }
     }, [profileId, item?.id, item?.type])
 
     // -------------------------------------------------------------------------
@@ -110,13 +130,19 @@ export const usePersistInteractions = (
                     ? { listened: true, wantToListen: false }
                     : {}),
             }))
+            const wasListened = stateRef.current.listened
+            stateRef.current = {
+                ...stateRef.current,
+                rating,
+                ...(rating !== null
+                    ? { listened: true, wantToListen: false }
+                    : {}),
+            }
 
             if (rating === null) {
-                deleteRating(
-                    profileId,
-                    meta.item_type,
-                    meta.spotify_id
-                ).then(() => onStatsChanged?.()).catch(() => errorToast('Failed to remove rating.'))
+                deleteRating(profileId, meta.item_type, meta.spotify_id)
+                    .then(() => onStatsChanged?.())
+                    .catch(() => errorToast('Failed to remove rating.'))
                 deleteItemDiaryEntriesByAction(
                     profileId,
                     meta.item_type,
@@ -130,7 +156,6 @@ export const usePersistInteractions = (
                     {}
                 ).catch(() => {})
             } else {
-                const wasListened = dbInteractions.listened
                 upsertRating(
                     profileId,
                     {
@@ -142,7 +167,9 @@ export const usePersistInteractions = (
                         release_date: meta.release_date,
                     },
                     rating
-                ).then(() => onStatsChanged?.()).catch(() => errorToast('Failed to save rating.'))
+                )
+                    .then(() => onStatsChanged?.())
+                    .catch(() => errorToast('Failed to save rating.'))
                 insertDiaryEntry(profileId, {
                     action: 'rated',
                     ...meta,
@@ -162,16 +189,18 @@ export const usePersistInteractions = (
                 }
             }
         },
-        [profileId, item, dbInteractions.listened]
+        [profileId, item, onStatsChanged]
     )
 
     const toggleLike = useCallback(() => {
         if (!profileId || !item) return
         const meta = getItemMeta(item)
-        const liked = !dbInteractions.liked
+        const liked = !stateRef.current.liked
+        stateRef.current = { ...stateRef.current, liked }
         setDbInteractions((prev) => ({ ...prev, liked }))
-        upsertItemInteraction(profileId, meta.item_type, meta.spotify_id, { liked })
-            .catch(() => errorToast('Failed to save.'))
+        upsertItemInteraction(profileId, meta.item_type, meta.spotify_id, {
+            liked,
+        }).catch(() => errorToast('Failed to save.'))
         // Refresh stats once the diary 'liked' row (the source the like count is
         // read from) has been written or removed.
         if (liked) {
@@ -179,53 +208,85 @@ export const usePersistInteractions = (
                 .then(() => onStatsChanged?.())
                 .catch(() => errorToast('Failed to log diary entry.'))
         } else {
-            deleteItemDiaryEntriesByAction(profileId, meta.item_type, meta.spotify_id, 'liked')
+            deleteItemDiaryEntriesByAction(
+                profileId,
+                meta.item_type,
+                meta.spotify_id,
+                'liked'
+            )
                 .then(() => onStatsChanged?.())
                 .catch(() => {})
         }
-    }, [profileId, item, dbInteractions.liked, onStatsChanged])
+    }, [profileId, item, onStatsChanged])
 
     const toggleListened = useCallback(() => {
         if (!profileId || !item) return
         const meta = getItemMeta(item)
-        const listened = !dbInteractions.listened
-        const wantToListen = listened ? false : dbInteractions.wantToListen
+        const listened = !stateRef.current.listened
+        const wantToListen = listened ? false : stateRef.current.wantToListen
+        const hadWantToListen = stateRef.current.wantToListen
+        stateRef.current = { ...stateRef.current, listened, wantToListen }
         setDbInteractions((prev) => ({ ...prev, listened, wantToListen }))
-        upsertItemInteraction(profileId, meta.item_type, meta.spotify_id, { listened, want_to_listen: wantToListen })
-            .catch(() => errorToast('Failed to save.'))
+        upsertItemInteraction(profileId, meta.item_type, meta.spotify_id, {
+            listened,
+            want_to_listen: wantToListen,
+        }).catch(() => errorToast('Failed to save.'))
         if (listened) {
-            insertDiaryEntry(profileId, { action: 'listened', ...meta })
-                .catch(() => errorToast('Failed to log diary entry.'))
-            if (dbInteractions.wantToListen) {
-                deleteItemDiaryEntriesByAction(profileId, meta.item_type, meta.spotify_id, 'want_to_listen')
-                    .catch(() => {})
+            insertDiaryEntry(profileId, { action: 'listened', ...meta }).catch(
+                () => errorToast('Failed to log diary entry.')
+            )
+            if (hadWantToListen) {
+                deleteItemDiaryEntriesByAction(
+                    profileId,
+                    meta.item_type,
+                    meta.spotify_id,
+                    'want_to_listen'
+                ).catch(() => {})
             }
         } else {
-            deleteItemDiaryEntriesByAction(profileId, meta.item_type, meta.spotify_id, 'listened')
-                .catch(() => {})
+            deleteItemDiaryEntriesByAction(
+                profileId,
+                meta.item_type,
+                meta.spotify_id,
+                'listened'
+            ).catch(() => {})
         }
-    }, [profileId, item, dbInteractions.listened, dbInteractions.wantToListen])
+    }, [profileId, item])
 
     const toggleWantToListen = useCallback(() => {
         if (!profileId || !item) return
         const meta = getItemMeta(item)
-        const wantToListen = !dbInteractions.wantToListen
-        const listened = wantToListen ? false : dbInteractions.listened
+        const wantToListen = !stateRef.current.wantToListen
+        const listened = wantToListen ? false : stateRef.current.listened
+        const hadListened = stateRef.current.listened
+        stateRef.current = { ...stateRef.current, wantToListen, listened }
         setDbInteractions((prev) => ({ ...prev, wantToListen, listened }))
-        upsertItemInteraction(profileId, meta.item_type, meta.spotify_id, { want_to_listen: wantToListen, listened })
-            .catch(() => errorToast('Failed to save.'))
+        upsertItemInteraction(profileId, meta.item_type, meta.spotify_id, {
+            want_to_listen: wantToListen,
+            listened,
+        }).catch(() => errorToast('Failed to save.'))
         if (wantToListen) {
-            insertDiaryEntry(profileId, { action: 'want_to_listen', ...meta })
-                .catch(() => errorToast('Failed to log diary entry.'))
-            if (dbInteractions.listened) {
-                deleteItemDiaryEntriesByAction(profileId, meta.item_type, meta.spotify_id, 'listened')
-                    .catch(() => {})
+            insertDiaryEntry(profileId, {
+                action: 'want_to_listen',
+                ...meta,
+            }).catch(() => errorToast('Failed to log diary entry.'))
+            if (hadListened) {
+                deleteItemDiaryEntriesByAction(
+                    profileId,
+                    meta.item_type,
+                    meta.spotify_id,
+                    'listened'
+                ).catch(() => {})
             }
         } else {
-            deleteItemDiaryEntriesByAction(profileId, meta.item_type, meta.spotify_id, 'want_to_listen')
-                .catch(() => {})
+            deleteItemDiaryEntriesByAction(
+                profileId,
+                meta.item_type,
+                meta.spotify_id,
+                'want_to_listen'
+            ).catch(() => {})
         }
-    }, [profileId, item, dbInteractions.wantToListen, dbInteractions.listened])
+    }, [profileId, item])
 
     const addReview = useCallback(
         (text: string, rating: number | null) => {
@@ -302,16 +363,25 @@ export const usePersistInteractions = (
 
             const meta = getItemMeta(item)
             const createdAt = opts.listenedAt
-                ? new Date(opts.listenedAt).toISOString()
+                ? new Date(`${opts.listenedAt}T00:00:00`).toISOString()
                 : new Date().toISOString()
+            const prevState = stateRef.current
+            const nextRating = opts.rating ?? null
 
             setDbInteractions((prev) => ({
                 ...prev,
                 listened: true,
                 wantToListen: false,
                 liked: opts.liked,
-                ...(opts.rating != null ? { rating: opts.rating } : {}),
+                rating: nextRating,
             }))
+            stateRef.current = {
+                ...prevState,
+                listened: true,
+                wantToListen: false,
+                liked: opts.liked,
+                rating: nextRating,
+            }
 
             upsertItemInteraction(profileId, meta.item_type, meta.spotify_id, {
                 listened: true,
@@ -319,40 +389,78 @@ export const usePersistInteractions = (
                 liked: opts.liked,
             }).catch(() => errorToast('Failed to save.'))
 
-            if (dbInteractions.wantToListen) {
-                deleteItemDiaryEntriesByAction(profileId, meta.item_type, meta.spotify_id, 'want_to_listen')
-                    .catch(() => {})
+            if (prevState.wantToListen) {
+                deleteItemDiaryEntriesByAction(
+                    profileId,
+                    meta.item_type,
+                    meta.spotify_id,
+                    'want_to_listen'
+                ).catch(() => {})
             }
 
-            insertDiaryEntry(profileId, { action: 'listened', ...meta, created_at: createdAt })
-                .catch(() => errorToast('Failed to log diary entry.'))
+            insertDiaryEntry(profileId, {
+                action: 'listened',
+                ...meta,
+                created_at: createdAt,
+            }).catch(() => errorToast('Failed to log diary entry.'))
 
-            if (opts.liked !== dbInteractions.liked) {
+            if (opts.liked !== prevState.liked) {
                 if (opts.liked) {
-                    insertDiaryEntry(profileId, { action: 'liked', ...meta, created_at: createdAt })
+                    insertDiaryEntry(profileId, {
+                        action: 'liked',
+                        ...meta,
+                        created_at: createdAt,
+                    })
                         .then(() => onStatsChanged?.())
                         .catch(() => errorToast('Failed to log diary entry.'))
                 } else {
-                    deleteItemDiaryEntriesByAction(profileId, meta.item_type, meta.spotify_id, 'liked')
+                    deleteItemDiaryEntriesByAction(
+                        profileId,
+                        meta.item_type,
+                        meta.spotify_id,
+                        'liked'
+                    )
                         .then(() => onStatsChanged?.())
                         .catch(() => {})
                 }
             }
 
-            if (opts.rating != null && meta.item_type !== 'artist') {
+            if (nextRating != null && meta.item_type !== 'artist') {
                 const rateableType = meta.item_type as 'track' | 'album'
-                upsertRating(profileId, {
-                    item_type: rateableType,
-                    spotify_id: meta.spotify_id,
-                    name: meta.name,
-                    image_url: meta.image_url,
-                    artist_name: meta.artist_name,
-                    release_date: meta.release_date,
-                }, opts.rating)
+                upsertRating(
+                    profileId,
+                    {
+                        item_type: rateableType,
+                        spotify_id: meta.spotify_id,
+                        name: meta.name,
+                        image_url: meta.image_url,
+                        artist_name: meta.artist_name,
+                        release_date: meta.release_date,
+                    },
+                    nextRating
+                )
                     .then(() => onStatsChanged?.())
                     .catch(() => errorToast('Failed to save rating.'))
-                insertDiaryEntry(profileId, { action: 'rated', ...meta, rating: opts.rating, created_at: createdAt })
-                    .catch(() => errorToast('Failed to log diary entry.'))
+                insertDiaryEntry(profileId, {
+                    action: 'rated',
+                    ...meta,
+                    rating: nextRating,
+                    created_at: createdAt,
+                }).catch(() => errorToast('Failed to log diary entry.'))
+            } else if (
+                nextRating == null &&
+                prevState.rating != null &&
+                meta.item_type !== 'artist'
+            ) {
+                deleteRating(profileId, meta.item_type, meta.spotify_id)
+                    .then(() => onStatsChanged?.())
+                    .catch(() => errorToast('Failed to remove rating.'))
+                deleteItemDiaryEntriesByAction(
+                    profileId,
+                    meta.item_type,
+                    meta.spotify_id,
+                    'rated'
+                ).catch(() => {})
             }
 
             if (opts.reviewText && meta.item_type !== 'artist') {
@@ -366,7 +474,13 @@ export const usePersistInteractions = (
                     rating: opts.rating ?? null,
                     body: opts.reviewText,
                 })
-                    .then(() => fetchUserReviewsForItem(profileId, rateableType, meta.spotify_id))
+                    .then(() =>
+                        fetchUserReviewsForItem(
+                            profileId,
+                            rateableType,
+                            meta.spotify_id
+                        )
+                    )
                     .then((rows) =>
                         setDbInteractions((prev) => ({
                             ...prev,
@@ -388,7 +502,7 @@ export const usePersistInteractions = (
                 }).catch(() => errorToast('Failed to log diary entry.'))
             }
         },
-        [profileId, item, dbInteractions.liked, dbInteractions.wantToListen, onStatsChanged]
+        [profileId, item, onStatsChanged]
     )
 
     return {

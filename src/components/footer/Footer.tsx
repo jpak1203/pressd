@@ -4,7 +4,7 @@ import { FaInstagram } from 'react-icons/fa'
 import { MdOutlineEmail } from 'react-icons/md'
 import { Link as RouterLink } from 'react-router'
 
-const Footer = () => {
+export const Footer = () => {
     return (
         <Box borderTop="1px solid var(--pressd-border)" mt="24px">
             <Flex
@@ -97,4 +97,3 @@ const Footer = () => {
     )
 }
 
-export default Footer

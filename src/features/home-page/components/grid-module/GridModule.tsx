@@ -19,7 +19,7 @@ type GridModuleProps = {
     showMore?: boolean
 }
 
-const GridModule = ({ data, linkText, headerText, showMore = true }: GridModuleProps) => {
+export const GridModule = ({ data, linkText, headerText, showMore = true }: GridModuleProps) => {
     const displayItems = data.items.slice(0, 6)
     return (
         <Box as="section" w="100%">
@@ -192,4 +192,3 @@ const GridModule = ({ data, linkText, headerText, showMore = true }: GridModuleP
     )
 }
 
-export default GridModule

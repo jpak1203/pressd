@@ -75,7 +75,7 @@ const extractResults = (
     }))
 }
 
-const Top5EditModal = ({
+export const Top5EditModal = ({
     profileId,
     category,
     currentItems,
@@ -404,4 +404,3 @@ const Top5EditModal = ({
     )
 }
 
-export default Top5EditModal

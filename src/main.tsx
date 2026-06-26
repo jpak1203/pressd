@@ -1,13 +1,14 @@
-import Provider from '@/app/provider.tsx'
+import { Provider } from '@/app/provider.tsx'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 import { UserAuthProvider } from '@/features/user-auth/context/UserAuthContext'
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary'
 import { CatastrophicFallback } from '@/components/error-boundary/CatastrophicFallback'
+import { Toaster } from '@/components/toaster'
 import { supabase } from '@/lib/supabase/client'
 import type { Session } from '@supabase/supabase-js'
-import App from '@/app/App.tsx'
+import { App } from '@/app/App.tsx'
 import './index.less'
 
 type SessionBootstrapWindow = Window & {
@@ -41,6 +42,7 @@ const renderApp = (
                             <App />
                         </UserAuthProvider>
                     </ErrorBoundary>
+                    <Toaster />
                 </Provider>
             </BrowserRouter>
         </StrictMode>

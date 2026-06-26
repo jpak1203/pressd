@@ -15,7 +15,7 @@ type ActionBarProps = {
     onToggleWantToListen: () => void
 }
 
-const ActionBar = ({
+export const ActionBar = ({
     interactions,
     onToggleLike,
     onToggleListened,
@@ -141,4 +141,3 @@ const ActionBar = ({
     )
 }
 
-export default ActionBar

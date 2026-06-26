@@ -1,7 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
-import { fetchMembersList, timeFrameToSince } from '@/features/members/api/membersApi'
+import {
+    fetchMembersList,
+    timeFrameToSince,
+} from '@/features/members/api/membersApi'
 import { popularMembersListData } from '@/features/members/data/membersData'
-import type { MemberRow, MemberTimeFrame } from '@/features/members/types/members'
+import type {
+    MemberRow,
+    MemberTimeFrame,
+} from '@/features/members/types/members'
 
 type UseMembersListOptions = {
     timeFrame: MemberTimeFrame
@@ -56,7 +62,9 @@ export const useMembersList = ({
                 if (!cancelled) setIsLoading(false)
             })
 
-        return () => { cancelled = true }
+        return () => {
+            cancelled = true
+        }
     }, [timeFrame, pageSize, query])
 
     const loadMore = useCallback(() => {
@@ -64,7 +72,13 @@ export const useMembersList = ({
         const since = timeFrameToSince(timeFrame)
         const sortBy = timeFrame === 'all' ? 'popularity' : 'timeframe'
 
-        fetchMembersList({ since, sortBy, limit: pageSize, offset: nextPage * pageSize, query })
+        fetchMembersList({
+            since,
+            sortBy,
+            limit: pageSize,
+            offset: nextPage * pageSize,
+            query,
+        })
             .then((rows) => {
                 setData((prev) => [...prev, ...rows])
                 setPage(nextPage)
@@ -73,7 +87,7 @@ export const useMembersList = ({
             .catch(() => {
                 setHasMore(false)
             })
-    }, [page, timeFrame, pageSize])
+    }, [page, timeFrame, pageSize, query])
 
     return { data, isLoading, hasMore, loadMore }
 }

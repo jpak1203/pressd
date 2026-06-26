@@ -1,7 +1,6 @@
-import UserAuthForm from '@/features/user-auth/components/UserAuthForm'
+import { UserAuthForm } from '@/features/user-auth/components/UserAuthForm'
 
-const SignInPage = () => {
+export const SignInPage = () => {
     return <UserAuthForm isCreateAccount={false} />
 }
 
-export default SignInPage

@@ -2,7 +2,7 @@ import { HStack, Flex, Text } from '@chakra-ui/react'
 import { Link } from 'react-router'
 import type { SearchItemRowType } from '@/features/search-results/types/search-results'
 import { formatRating } from '@/features/search-results/utils/searchResultsUtils'
-import SearchResultsImage from '@/features/search-results/components/search-results-image/SearchResultsImage'
+import { SearchResultsImage } from '@/features/search-results/components/search-results-image/SearchResultsImage'
 import { AlbumLink } from '@/components/album-link/AlbumLink'
 import { FaStar } from 'react-icons/fa'
 
@@ -14,7 +14,7 @@ const getDetailPath = (itemType: SearchItemRowType['itemType'], id: string) => {
 
 const linkStyle = { width: '100%', display: 'block' } as const
 
-const SearchResultsRow = ({
+export const SearchResultsRow = ({
     id,
     title,
     image,
@@ -79,4 +79,3 @@ const SearchResultsRow = ({
     )
 }
 
-export default SearchResultsRow

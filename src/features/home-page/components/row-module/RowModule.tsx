@@ -18,7 +18,7 @@ const itemHref = (item: ItemDetail): string => {
     return `/artist/${item.id}`
 }
 
-const RowModule = ({ data, linkText, headerText, showMore = true }: RowModuleProps) => {
+export const RowModule = ({ data, linkText, headerText, showMore = true }: RowModuleProps) => {
     const displayItems = data.items.slice(0, 6)
     const { ratings: avgRatings, isLoading: ratingsLoading } = useAverageRatings(displayItems)
 
@@ -209,4 +209,3 @@ const RowModule = ({ data, linkText, headerText, showMore = true }: RowModulePro
     )
 }
 
-export default RowModule

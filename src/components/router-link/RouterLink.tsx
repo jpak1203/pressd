@@ -9,7 +9,7 @@ type RouterLinkType = {
     children: ReactNode
 }
 
-const RouterLink = ({ variant, color, slug, children }: RouterLinkType) => {
+export const RouterLink = ({ variant, color, slug, children }: RouterLinkType) => {
     return (
         <ChakraLink variant={variant} colorPalette={color} asChild>
             <Link to={slug}>{children}</Link>
@@ -17,4 +17,3 @@ const RouterLink = ({ variant, color, slug, children }: RouterLinkType) => {
     )
 }
 
-export default RouterLink

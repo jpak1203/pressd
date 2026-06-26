@@ -1,6 +1,6 @@
 import { Box, Container, Flex } from '@chakra-ui/react'
-import RowModule from '@/features/home-page/components/row-module/RowModule'
-import GridModule from '@/features/home-page/components/grid-module/GridModule'
+import { RowModule } from '@/features/home-page/components/row-module/RowModule'
+import { GridModule } from '@/features/home-page/components/grid-module/GridModule'
 import {
     featuredReviewsData,
     featuredSongsData,
@@ -11,7 +11,7 @@ import {
     popularWithFriendsData,
 } from '@/features/home-page/data/homePageData'
 
-const HomePage = () => {
+export const HomePage = () => {
     return (
         <Box minH="100%" py={{ base: '5', md: '7' }}>
             <Container maxW="1200px" px={{ base: '4', md: '7' }}>
@@ -57,4 +57,3 @@ const HomePage = () => {
     )
 }
 
-export default HomePage

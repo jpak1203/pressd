@@ -25,7 +25,7 @@ const getIconForCard = (icon: string) => {
     }
 }
 
-const FeatureCard = ({ title, description, icon }: FeatureCardType) => {
+export const FeatureCard = ({ title, description, icon }: FeatureCardType) => {
     return (
         <Card.Root
             bg="var(--pressd-surface)"
@@ -58,4 +58,3 @@ const FeatureCard = ({ title, description, icon }: FeatureCardType) => {
     )
 }
 
-export default FeatureCard

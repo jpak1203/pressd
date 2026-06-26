@@ -2,11 +2,11 @@ import { useNavigate } from 'react-router'
 import { Box, Button, Flex, Link as ChakraLink } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router'
 import { useUserAuth } from '@/features/user-auth/context/UserAuthContext'
-import PressdLogo from '@/components/pressd-logo/PressdLogo'
-import SearchBar from '@/components/search-bar/SearchBar'
+import { PressdLogo } from '@/components/pressd-logo/PressdLogo'
+import { SearchBar } from '@/components/search-bar/SearchBar'
 import { errorToast } from '@/lib/errorToast'
 
-const NavBar = () => {
+export const NavBar = () => {
     const { signOut, isGuestUser, user } = useUserAuth()
     const navigate = useNavigate()
 
@@ -128,4 +128,3 @@ const NavBar = () => {
     )
 }
 
-export default NavBar

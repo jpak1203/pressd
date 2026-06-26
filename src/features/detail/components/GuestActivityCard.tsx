@@ -1,7 +1,7 @@
 import { Button, HStack, Text, VStack } from '@chakra-ui/react'
 import { Link } from 'react-router'
 import type { ItemType } from '@/features/detail/types/detail'
-import SectionCard from '@/features/detail/components/SectionCard'
+import { SectionCard } from '@/features/detail/components/SectionCard'
 
 type GuestActivityCardProps = {
     type: ItemType

@@ -5,6 +5,8 @@ export type UseSpotifySearchOptions = {
     minQueryLength?: number
     debounceMs?: number
     enabled?: boolean
+    // Extra Spotify query operators (e.g. "year:1990-1999"); runs even if the typed query is empty.
+    extraQuery?: string
 }
 
 export type UseSpotifySearchResult = {

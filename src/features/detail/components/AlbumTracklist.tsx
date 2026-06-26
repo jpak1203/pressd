@@ -1,6 +1,6 @@
 import { Box, Flex, Skeleton, Text, VStack } from '@chakra-ui/react'
 import { Link } from 'react-router'
-import SectionCard from '@/features/detail/components/SectionCard'
+import { SectionCard } from '@/features/detail/components/SectionCard'
 import { useAlbumTracks } from '@/features/detail/hooks/useAlbumTracks'
 import { buildTrackDetail } from '@/features/detail/utils/buildTrackDetail'
 import { formatDuration } from '@/lib/formatters'

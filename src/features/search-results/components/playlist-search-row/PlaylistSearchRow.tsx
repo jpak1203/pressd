@@ -1,5 +1,5 @@
 import { Box, HStack, Text } from '@chakra-ui/react'
-import SearchResultsImage from '@/features/search-results/components/search-results-image/SearchResultsImage'
+import { SearchResultsImage } from '@/features/search-results/components/search-results-image/SearchResultsImage'
 import type { PlaylistSearchResult } from '@/features/search-results/types/search-results'
 
 type PlaylistSearchRowProps = {

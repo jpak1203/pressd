@@ -6,8 +6,7 @@ type ProviderProps = {
     children: ReactNode
 }
 
-const Provider = ({ children }: ProviderProps) => {
+export const Provider = ({ children }: ProviderProps) => {
     return <ChakraProvider value={pressdSystem}>{children}</ChakraProvider>
 }
 
-export default Provider

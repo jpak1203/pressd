@@ -24,16 +24,22 @@ export const useAverageRatings = (items: ItemDetail[]) => {
             return
         }
 
+        let cancelled = false
         setIsLoading(true)
         fetchAverageRatings(ratable)
             .then((map) => {
+                if (cancelled) return
                 setRatings(map)
                 setIsLoading(false)
             })
             .catch((err: unknown) => {
+                if (cancelled) return
                 console.warn('Failed to fetch average ratings:', err)
                 setIsLoading(false)
             })
+        return () => {
+            cancelled = true
+        }
     }, [ratable])
 
     return { ratings, isLoading }

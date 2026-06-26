@@ -1,5 +1,5 @@
 import { Box, Grid, Skeleton, Text, VStack } from '@chakra-ui/react'
-import SectionCard from '@/features/detail/components/SectionCard'
+import { SectionCard } from '@/features/detail/components/SectionCard'
 import { useArtistDiscography } from '@/features/detail/hooks/useArtistDiscography'
 import type { AlbumDetail } from '@/features/detail/types/detail'
 import { AlbumCard } from './AlbumCard'

@@ -27,7 +27,7 @@ const formatDate = (iso: string) =>
         day: 'numeric',
     })
 
-const ReviewSection = ({
+export const ReviewSection = ({
     reviews,
     onAddReview,
     onRemoveReview,
@@ -235,4 +235,3 @@ const ReviewSection = ({
     )
 }
 
-export default ReviewSection

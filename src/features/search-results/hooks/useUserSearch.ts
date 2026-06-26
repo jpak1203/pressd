@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
+import { escapeLike } from '@/lib/likePattern'
 import type { UserSearchResult } from '@/features/search-results/types/search-results'
 
 type UseUserSearchOptions = {
@@ -32,6 +33,7 @@ export const useUserSearch = ({
     const runSearch = useCallback(async () => {
         const trimmed = query.trim()
         if (!enabled || trimmed.length < minQueryLength) {
+            abortRef.current?.abort()
             setData([])
             setError(null)
             setIsLoading(false)
@@ -49,7 +51,7 @@ export const useUserSearch = ({
             const { data: profiles, error: supabaseError } = await supabase
                 .from('profiles')
                 .select('id, username, avatar_url, bio')
-                .ilike('username', `%${trimmed}%`)
+                .ilike('username', `%${escapeLike(trimmed)}%`)
                 .limit(limit)
                 .abortSignal(controller.signal)
 

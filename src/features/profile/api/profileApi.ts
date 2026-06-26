@@ -34,7 +34,7 @@ export const fetchProfileByUsername = async (username: string) => {
         .from('profiles')
         .select('*')
         .eq('username', username)
-        .single()
+        .maybeSingle()
 
     if (error) throw error
     return data
@@ -81,6 +81,15 @@ export const upsertTop5 = async (
     category: Top5Category,
     items: Omit<Top5Item, 'id'>[]
 ) => {
+    // Snapshot existing rows so we can restore them if the insert fails.
+    const { data: existing, error: snapshotError } = await supabase
+        .from('top5')
+        .select('*')
+        .eq('profile_id', profileId)
+        .eq('category', category)
+
+    if (snapshotError) throw snapshotError
+
     const { error: deleteError } = await supabase
         .from('top5')
         .delete()
@@ -103,7 +112,12 @@ export const upsertTop5 = async (
 
     const { error: insertError } = await supabase.from('top5').insert(rows)
 
-    if (insertError) throw insertError
+    if (insertError) {
+        if (existing && existing.length > 0) {
+            await supabase.from('top5').insert(existing)
+        }
+        throw insertError
+    }
 }
 
 export const fetchRatings = async (

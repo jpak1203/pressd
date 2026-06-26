@@ -17,6 +17,7 @@ export const useSpotifySearch = (
         minQueryLength = 2,
         debounceMs = 350,
         enabled = true,
+        extraQuery = '',
     } = options
 
     const [query, setQuery] = useState('')
@@ -29,7 +30,12 @@ export const useSpotifySearch = (
 
     const runSearch = useCallback(async () => {
         const trimmed = query.trim()
-        if (!enabled || trimmed.length < minQueryLength) {
+        const extra = extraQuery.trim()
+        const effectiveQuery = [extra, trimmed].filter(Boolean).join(' ')
+        const shouldSearch =
+            enabled && (trimmed.length >= minQueryLength || extra.length > 0)
+
+        if (!shouldSearch || !effectiveQuery) {
             abortRef.current?.abort()
             setData(null)
             setError(null)
@@ -47,7 +53,7 @@ export const useSpotifySearch = (
         try {
             const result = await searchSpotify(
                 {
-                    q: trimmed,
+                    q: effectiveQuery,
                     type,
                     limit,
                     market,
@@ -63,7 +69,7 @@ export const useSpotifySearch = (
                 setIsLoading(false)
             }
         }
-    }, [enabled, limit, market, minQueryLength, query, type])
+    }, [enabled, limit, market, minQueryLength, query, type, extraQuery])
 
     useEffect(() => {
         if (timeoutRef.current) {
@@ -71,7 +77,10 @@ export const useSpotifySearch = (
         }
 
         const trimmed = query.trim()
-        if (enabled && trimmed.length >= minQueryLength) {
+        if (
+            enabled &&
+            (trimmed.length >= minQueryLength || extraQuery.trim().length > 0)
+        ) {
             setIsLoading(true)
         }
 
@@ -84,7 +93,7 @@ export const useSpotifySearch = (
                 window.clearTimeout(timeoutRef.current)
             }
         }
-    }, [debounceMs, runSearch, query, enabled, minQueryLength])
+    }, [debounceMs, runSearch, query, enabled, minQueryLength, extraQuery])
 
     useEffect(() => {
         return () => {

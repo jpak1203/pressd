@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
+import { escapeLike } from '@/lib/likePattern'
 import type { PlaylistSearchResult } from '@/features/search-results/types/search-results'
 
 type UsePlaylistSearchOptions = {
@@ -32,6 +33,7 @@ export const usePlaylistSearch = ({
     const runSearch = useCallback(async () => {
         const trimmed = query.trim()
         if (!enabled || trimmed.length < minQueryLength) {
+            abortRef.current?.abort()
             setData([])
             setError(null)
             setIsLoading(false)
@@ -51,7 +53,7 @@ export const usePlaylistSearch = ({
                 .select(
                     'id, name, description, owner_username, image_url, track_count'
                 )
-                .ilike('name', `%${trimmed}%`)
+                .ilike('name', `%${escapeLike(trimmed)}%`)
                 .limit(limit)
                 .abortSignal(controller.signal)
 

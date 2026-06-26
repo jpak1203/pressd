@@ -5,7 +5,7 @@ import { LuSearch } from 'react-icons/lu'
 import { FaArrowCircleRight } from 'react-icons/fa'
 import { TiDeleteOutline } from 'react-icons/ti'
 
-const SearchBar = () => {
+export const SearchBar = () => {
     const navigate = useNavigate()
     const [searchValue, setSearchValue] = useState('')
     const hasSearchText = searchValue.trim().length > 0
@@ -117,4 +117,3 @@ const SearchBar = () => {
     )
 }
 
-export default SearchBar
