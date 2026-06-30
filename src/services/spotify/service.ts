@@ -9,6 +9,13 @@ import type {
     ItemDetail,
     ItemType,
 } from '@/features/detail/types/detail'
+import {
+    spotifySearchResponseSchema,
+    itemDetailSchema,
+    discographyResultSchema,
+    albumTracksResponseSchema,
+    parseEdgeResponse,
+} from '@/services/spotify/schemas'
 
 const supabaseFnUrl = import.meta.env.VITE_SUPABASE_FN_URL
 const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
@@ -56,7 +63,11 @@ export const searchSpotify = async (
         throw new Error(`Spotify search failed (${res.status}): ${message}`)
     }
 
-    return res.json() as Promise<SpotifySearchResponse>
+    return parseEdgeResponse(
+        spotifySearchResponseSchema,
+        await res.json(),
+        'spotify-search'
+    )
 }
 
 export const lookupSpotifyItem = async (
@@ -79,7 +90,11 @@ export const lookupSpotifyItem = async (
         throw new Error(`Spotify lookup failed (${res.status}): ${message}`)
     }
 
-    return res.json() as Promise<ItemDetail>
+    return parseEdgeResponse(
+        itemDetailSchema,
+        await res.json(),
+        'spotify-lookup'
+    )
 }
 
 export const fetchDiscographyFromEdge = async (
@@ -97,7 +112,11 @@ export const fetchDiscographyFromEdge = async (
     })
 
     if (!res.ok) throw new Error(`Discography fetch failed (${res.status})`)
-    return res.json() as Promise<DiscographyResult>
+    return parseEdgeResponse(
+        discographyResultSchema,
+        await res.json(),
+        'spotify-discography'
+    )
 }
 
 export const fetchAlbumTracksFromEdge = async (
@@ -115,6 +134,10 @@ export const fetchAlbumTracksFromEdge = async (
     })
 
     if (!res.ok) throw new Error(`Album tracks fetch failed (${res.status})`)
-    const data = await res.json() as { tracks: AlbumTrackItem[] }
+    const data = parseEdgeResponse(
+        albumTracksResponseSchema,
+        await res.json(),
+        'spotify-album-tracks'
+    )
     return data.tracks
 }
